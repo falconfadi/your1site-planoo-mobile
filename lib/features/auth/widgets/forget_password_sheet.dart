@@ -5,7 +5,7 @@ import 'package:centro_partner/features/auth/data/usecase/forget_password_usecas
 import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/form_utils/form_state_mixin.dart';
 import 'package:centro_partner/core/ui/widgets/custom_text_field.dart';
@@ -17,7 +17,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ForgetPasswordSheet extends StatefulWidget {
 
-  ForgetPasswordSheet({Key? key}) : super(key: key);
+  const ForgetPasswordSheet({super.key});
 
   @override
   State<ForgetPasswordSheet> createState() => _ForgetPasswordSheetState();

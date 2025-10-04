@@ -15,7 +15,7 @@ class ResetPasswordParams extends BaseParams {
     this.confirmationPassword,
   });
 
-  toJson() {
+  Map<String, String?> toJson() {
     return {
       "phone": phone,
       "password": password,

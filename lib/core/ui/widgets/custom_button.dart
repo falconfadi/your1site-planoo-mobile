@@ -5,19 +5,19 @@ import '../../constants/app_colors.dart';
 import '../../constants/app_styles.dart';
 
 class CustomButton extends StatelessWidget {
-  double? height;
-  double? width;
-  String? buttonName;
-  TextStyle? textStyle;
-  String? icon;
-  Color? iconColor;
-  Color? backgroundColor;
-  Color? borderSideColor;
-  double? borderRadius;
-  VoidCallback? function;
-  EdgeInsets? padding;
+  final double? height;
+  final double? width;
+  final String? buttonName;
+  final TextStyle? textStyle;
+  final String? icon;
+  final Color? iconColor;
+  final Color? backgroundColor;
+  final Color? borderSideColor;
+  final double? borderRadius;
+  final VoidCallback? function;
+  final EdgeInsets? padding;
 
-  CustomButton({super.key,
+  const CustomButton({super.key,
     this.height,
     this.width,
     this.buttonName,
@@ -35,7 +35,7 @@ class CustomButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(
-          padding: padding ?? EdgeInsets.all(4),
+          padding: padding ?? EdgeInsets.only(left: 20.w,right: 20.w,top: 10.h,bottom: 5.h),
           minimumSize: Size(width ?? double.infinity, height ?? 60.h),
           backgroundColor: backgroundColor!,
           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -52,10 +52,12 @@ class CustomButton extends StatelessWidget {
             SvgPicture.asset(icon!, color: iconColor ?? AppColors.primaryColor),
           SizedBox(width: (buttonName != null) ? 5.w : 0),
           buttonName == null ? Center() :
-            Text(
-              buttonName!,
-              textAlign: TextAlign.center,
-              style: textStyle ?? AppTheme.titleSmall.copyWith(color: AppColors.whiteColor),
+            Expanded(
+              child: Text(
+                buttonName!,
+                textAlign: TextAlign.center,
+                style: textStyle ?? AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.whiteColor),
+              ),
             ),
         ],
       )

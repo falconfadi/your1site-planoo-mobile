@@ -5,11 +5,10 @@ const headerAuth = HttpHeaders.authorizationHeader;
 const headerAccept = HttpHeaders.acceptHeader;
 const headerContentType = HttpHeaders.contentTypeHeader;
 
-const kAccessToken = 'Token';
+const kAccessToken = '';
 const kAccessTokenExpirationDate = 'Token Expiration';
 const userID = 'userId';
 const accountType = 'type';
-const isFillInfo = '0';
 
 const String baseUrl = "";  // todo add the base url later
 

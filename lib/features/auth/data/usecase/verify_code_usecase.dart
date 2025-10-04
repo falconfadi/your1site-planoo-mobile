@@ -9,7 +9,7 @@ class VerifyCodeParams extends BaseParams {
 
   VerifyCodeParams({this.phone,this.code});
 
-  toJson() {
+  Map<String, String?> toJson() {
     return {
       "phone": phone,
       "code": code,

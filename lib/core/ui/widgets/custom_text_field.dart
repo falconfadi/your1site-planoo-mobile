@@ -75,7 +75,7 @@ class CustomTextField extends StatefulWidget {
   });
 
   @override
-  _CustomTextFieldState createState() => _CustomTextFieldState();
+  State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
@@ -109,7 +109,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         children: [
           TextFormField(
             key: widget.fieldStateKey,
-            style: AppTheme.labelMedium,
+            style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
             textAlignVertical: TextAlignVertical.center,
             keyboardType: widget.keyboardType ?? TextInputType.text,
             focusNode: _focusNode,
@@ -145,7 +145,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               filled: true,
               hint: widget.label,
               hintText: widget.labelText,
-              hintStyle: widget.labelStyle ?? AppTheme.labelMedium.copyWith(color: AppColors.grayColor),
+              hintStyle: widget.labelStyle ?? AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp),
+              errorStyle: AppTheme.textTheme.bodyLarge!.copyWith(color: AppColors.redColor),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide(width: 0.5,color: widget.borderColor ?? AppColors.mediumGrayColor),
@@ -168,7 +169,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ),
               prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon!,
                   color: widget.prefixIconColor ?? AppColors.grayColor, size: 20) : null,
-              contentPadding: EdgeInsets.symmetric(horizontal: 15,vertical: widget.maxLine! > 1 ? 15 : 0),
+              isCollapsed: true,
+              contentPadding: EdgeInsets.only(left: 15.w,right: 15.w,top: 15.w,bottom: 8.w),
               suffixIcon: widget.suffixIcon != null ? IconButton(icon: SvgPicture.asset(widget.suffixIcon!,
                   color: AppColors.lightGrayColor, width: 25),
                   onPressed: widget.onSuffixTap) : widget.isPassword == true ? IconButton(icon: SvgPicture.asset(showPassword == false ? unVisiblePassword : visiblePassword,

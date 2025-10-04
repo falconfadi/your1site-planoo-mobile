@@ -1,21 +1,23 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
-import 'package:centro_partner/core/clasess/app_storage.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/errors/unauthorized_error.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
 import 'package:centro_partner/features/auth/data/model/login_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/login_usecase.dart';
 import 'package:centro_partner/features/auth/ui/sign_up_screen.dart';
 import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
+import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
 import 'package:centro_partner/features/auth/widgets/forget_password_sheet.dart';
-import 'package:centro_partner/features/nav_bar/ui/nav_bar_screen.dart';
+import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/form_utils/form_state_mixin.dart';
@@ -29,7 +31,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 class SignInScreen extends StatefulWidget {
 
-  SignInScreen({super.key});
+  const SignInScreen({super.key});
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -60,22 +62,20 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 30.h),
-                Image.asset(logo,width: 200.w,height: 120.h),
-                SizedBox(height: 15.h),
+                Image.asset(logo,width: 1.sw,height: 90.h),
                 Text(AppLocalization.of(context).translate("sign_in").toUpperCase(),
-                    style: AppTheme.titleMedium.copyWith(fontSize: 25)),
-                SizedBox(height: 30.h),
+                    style: AppTheme.textTheme.headlineSmall!.copyWith(fontSize: 26.sp)),
+                SizedBox(height: 40.h),
                 CustomTextField(
                   autoFocus: false,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.phone,
-
                   prefixIcon: Icons.phone,
                   validator: (value) {
                     return BaseValidator.validateValue(
                       context,
                       value!,
-                      [RequiredValidator()],
+                      [RequiredValidator(),PhoneNumberValidator(value: value)],
                     );
                   },
                   focusNode: form.nodes[0],
@@ -109,7 +109,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                         CustomSheet.show(
                             isDismissible: true,
                             header: Text(AppLocalization.of(context).translate("forget_password"),
-                              style: AppTheme.bodyMedium,
+                              style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
                             ),
                             padding: 30.w,
                             context: context,
@@ -117,73 +117,48 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                         );
                       },
                       child: Text("${AppLocalization.of(context).translate("forget_password")}?",
-                          style: AppTheme.labelMedium.copyWith(color: AppColors.primaryColor)
+                          style: AppTheme.textTheme.bodyLarge!.copyWith(color: AppColors.primaryColor)
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 50.h),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomButton(
-                        width: 1.sw,
-                        backgroundColor: Colors.transparent,
-                        borderSideColor: Colors.transparent,
-                        borderRadius: 10.r,
-                        textStyle: AppTheme.titleSmall.copyWith(color: AppColors.primaryColor),
-                        buttonName: AppLocalization.of(context).translate("sign_up"),
-                        function: () => Navigation.pushReplacement(SignUpScreen()),
-                      ),
-                    ),
-                    SizedBox(width: 15.w),
-                    Expanded(
-                      child: CreateModel(
-                        withValidation: true,
-                        onSuccess: (LoginModel model) async {
-                          await saveLoginTokens(model.token!);
-                          AppStorage.saveData(key: userID, value: model.user!.id);
-                          AppStorage.saveData(key: accountType, value: model.user!.role);
-                          AppStorage.saveData(key: isFillInfo, value: model.user!.isFilled);
-                          if(model.user!.role == "court" && model.user!.isFilled == 0) {
-                            // todo go to fill info of court
-                          } else if(model.user!.role != "court" && model.user!.isFilled == 0) {
-                            // todo go to fill info of trainer
-                          } else {
-                            if(model.user!.role != "court") {
-                              // todo check info of court
-                            } else {
-                              // todo check info of trainer
-                            }
-                          }
-                        },
-                        onError: (String errorMessage) {
-                          if (errorMessage == UnauthorizedError(message: errorMessage).message) {
-                            Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[0].text));
-                          } else {
-                            Dialogs.showQuestion(context, title: errorMessage);
-                          }
-                        },
-                        onTap: () {
-                          return form.validate();
-                        },
-                        useCaseCallBack: (model) => LoginUseCase(AuthRepository()).call(
-                            params: LoginParams(
-                              phone: form.controllers[0].text,
-                              password: form.controllers[1].text,
-                            )),
-                        child: CustomButton(
-                          width: 1.sw,
-                          backgroundColor: AppColors.primaryColor,
-                          borderRadius: 10.r,
-                          buttonName: AppLocalization.of(context).translate("sign_in"),
-                          // todo remove later
-                          function: () => Navigation.pushReplacement(NavBarScreen(pageIndex: 1)),
-                        ),
-                      )
-                    ),
-                  ],
+                CreateModel(
+                  withValidation: true,
+                  onSuccess: (LoginModel model) async {
+                    await saveLoginTokens(model.token!);
+                    AppStorage.saveData(key: userID, value: model.user!.id);
+                    AppStorage.saveData(key: accountType, value: model.user!.role);
+                    Navigation.pushReplacement(NavBarScreen(pageIndex: 1));
+                  },
+                  onError: (String errorMessage) {
+                    if (errorMessage == UnauthorizedError(message: errorMessage).message) {
+                      Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[0].text));
+                    } else {
+                      Dialogs.showQuestion(context, title: errorMessage);
+                    }
+                  },
+                  onTap: () {
+                    return form.validate();
+                  },
+                  useCaseCallBack: (model) => LoginUseCase(AuthRepository()).call(
+                      params: LoginParams(
+                        phone: form.controllers[0].text,
+                        password: form.controllers[1].text,
+                      )),
+                  child: CustomButton(
+                    backgroundColor: AppColors.primaryColor,
+                    borderRadius: 10.r,
+                    buttonName: AppLocalization.of(context).translate("sign_in"),
+                    // todo remove later
+                    function: () => Navigation.pushReplacement(NavBarScreen(pageIndex: 0)),
+                  ),
                 ),
+                SizedBox(height: 80.h),
+                FooterWidget(
+                    text: "${AppLocalization.of(context).translate("do_not_have_account")}?",
+                    link: AppLocalization.of(context).translate("sign_up"),
+                    linkTap: () => Navigation.pushReplacement(SignUpScreen())),
                 SizedBox(height: 50.h),
               ],
             ),

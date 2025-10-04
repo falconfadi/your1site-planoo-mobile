@@ -36,35 +36,40 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  pinput: ^5.0.1
+  pinput: ^5.0.2
   intl: ^0.20.2
   shared_preferences: ^2.5.3
   flutter_bloc: ^9.1.1
   bloc: ^9.0.0
-  flutter_svg: ^2.2.0
-  dio: ^5.8.0+1
-  image_picker: ^1.1.2
+  flutter_svg: ^2.2.1
+  dio: ^5.9.0
+  image_picker: ^1.2.0
   flutter_screenutil: ^5.9.3
   awesome_dialog: ^3.2.1
   cached_network_image: ^3.4.1
   tuple: ^2.0.2
-  flashy_tab_bar2: ^0.0.10
+  persistent_bottom_nav_bar: ^6.2.1
   pull_to_refresh: ^2.0.0
   equatable: ^2.0.7
   dartz: ^0.10.1
   flutter_rating_bar: ^4.0.1
   modal_bottom_sheet: ^3.0.0
   jwt_decoder: ^2.0.1
-  firebase_core: ^3.15.1
-  firebase_messaging: ^15.2.9
-  flutter_local_notifications: ^19.3.0
-  syncfusion_flutter_calendar: ^30.1.39
+  firebase_core: ^4.1.1
+  firebase_messaging: ^16.0.2
+  flutter_local_notifications: ^19.4.2
+  syncfusion_flutter_calendar: ^31.1.21
   video_player: ^2.10.0
   responsive_grid: ^2.4.4
   geolocator: ^14.0.2
-  google_maps_flutter: ^2.12.3
+  google_maps_flutter: ^2.13.1
   location: ^8.0.1
   geocode: ^1.0.3
+  responsive_grid_list: ^1.4.1
+  carousel_slider: ^5.1.1
+  url_launcher: ^6.3.2
+  mocktail: ^1.0.4
+  bloc_test: ^10.0.0
 
 dev_dependencies:
   flutter_test:
@@ -83,12 +88,8 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
 
-  # The following line ensures that the Material Icons font is
-  # included with your application, so that you can use the icons in
-  # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
     - assets/fonts/
@@ -96,30 +97,15 @@ flutter:
     - assets/images/
     - assets/l10n/
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/to/resolution-aware-images
 
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/to/asset-from-package
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
   fonts:
-    - family: Montserrat
+    - family: Tajawal
       fonts:
-        - asset: assets/fonts/Montserrat-Regular.otf
+        - asset: assets/fonts/Tajawal-Regular.ttf
           weight: 400
-        - asset: assets/fonts/Montserrat-Medium.otf
+        - asset: assets/fonts/Tajawal-Medium.ttf
           weight: 500
-        - asset: assets/fonts/Montserrat-SemiBold.otf
-          weight: 600
-        - asset: assets/fonts/Montserrat-Bold.otf
+        - asset: assets/fonts/Tajawal-Bold.ttf
           weight: 700
-        - asset: assets/fonts/Montserrat-ExtraBold.otf
+        - asset: assets/fonts/Tajawal-ExtraBold.ttf
           weight: 800
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package

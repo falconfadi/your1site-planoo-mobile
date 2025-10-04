@@ -1,4 +1,4 @@
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
@@ -61,9 +61,15 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
         if (_isOverflowing)
           GestureDetector(
             onTap: () => setState(() => _expanded = !_expanded),
-            child: Text(
-              _expanded ? "" : AppLocalization.of(context).translate("see_all"),
-              style: AppTheme.labelSmall.copyWith(color: AppColors.primaryColor)
+            child: _expanded ? Center() : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalization.of(context).translate("see_more"),
+                  style: AppTheme.textTheme.titleLarge!.copyWith(color: AppColors.turquoiseColor)
+                ),
+                Icon(Icons.keyboard_arrow_down_outlined,size: 18,color: AppColors.turquoiseColor)
+              ],
             ),
           )
       ],

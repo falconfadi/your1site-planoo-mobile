@@ -7,21 +7,23 @@ import 'package:centro_partner/features/auth/data/usecase/resend_code_usecase.da
 import 'package:centro_partner/features/auth/data/usecase/verify_code_usecase.dart';
 import 'package:centro_partner/features/auth/ui/reset_password_screen.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
+import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
 
+
 class VerificationCodeScreen extends StatefulWidget {
 
   final String? phoneNumber;
-  bool fromSingUp;
+  final bool fromSingUp;
 
-  VerificationCodeScreen({required this.phoneNumber,this.fromSingUp = true,super.key});
+  const VerificationCodeScreen({required this.phoneNumber,this.fromSingUp = true,super.key});
 
   @override
   State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
@@ -32,7 +34,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   static PinTheme defaultPinTheme = PinTheme(
     width: 50.w,
     height: 80.h,
-    textStyle: AppTheme.bodyMedium.copyWith(fontSize: 20),
+    textStyle: AppTheme.textTheme.headlineMedium,
     decoration: BoxDecoration(
       color: AppColors.whiteColor,
       border: Border.all(color: AppColors.blackColor),
@@ -121,25 +123,25 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: widget.fromSingUp ? 30.h : 0 ),
-              Image.asset(logo,width: 200.w,height: 120.h),
-              SizedBox(height: 20.h),
+              SizedBox(height: widget.fromSingUp ? 30.h : 0),
+              Image.asset(logo,width: 1.sw,height: 90.h),
+              SizedBox(height: 40.h),
               RichText(
                 text: TextSpan(
                   text: "${AppLocalization.of(context).translate("we_sent_you_code")} ",
-                  style: AppTheme.labelLarge,
+                  style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
                   children: [
                     TextSpan(
                       text: " ",
                     ),
                     TextSpan(
                       text: "${widget.phoneNumber} ",
-                      style: AppTheme.titleMedium.copyWith(fontSize: 16),
+                      style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 40.h),
+              SizedBox(height: 20.h),
               Pinput(
                 length: 5,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -184,7 +186,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   },
                 ),
               ),
-              SizedBox(height: 100.h),
+              SizedBox(height: 80.h),
               CreateModel(
                 withValidation: false,
                 onSuccess: (result) {
@@ -199,25 +201,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                     return null;
                   }
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(AppLocalization.of(context).translate("did_not_receive_code"),
-                        style: AppTheme.titleMedium.copyWith(fontSize: 14)),
-                    SizedBox(width: 4.w),
-                    Text(!enableResend ?
-                    _seconds > 0 ? ' ($_seconds)' : ''
-                        : AppLocalization.of(context).translate("resend"),
-                        style: AppTheme.titleMedium.copyWith(
-                            fontSize: 14,
-                            color: AppColors.primaryColor,
-                            decoration: _seconds > 0 ? null : TextDecoration.underline,
-                            decorationColor: _seconds > 0 ? null : AppColors.primaryColor
-                    ))
-                  ],
+                child: FooterWidget(
+                  text: AppLocalization.of(context).translate("did_not_receive_code"),
+                  link: !enableResend ?
+                  _seconds > 0 ? ' ($_seconds)' : ''
+                      : AppLocalization.of(context).translate("resend"),
                 ),
               ),
-              SizedBox(height: 30.h),
+              SizedBox(height: 50.h),
             ],
           ),
         ),

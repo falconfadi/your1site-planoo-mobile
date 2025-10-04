@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:centro_partner/core/clasess/Keys.dart';
+import 'package:centro_partner/core/classes/Keys.dart';
 
 class Navigation {
 

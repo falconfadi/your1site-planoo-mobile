@@ -1,4 +1,4 @@
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/errors/bad_request_error.dart';
 import 'package:centro_partner/core/errors/not_found_error.dart';
 import '/core/ui/widgets/rounded_animated_button.dart';
@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import '../../errors/error_helper.dart';
 import '../../errors/unauthorized_error.dart';
 
+// ignore: must_be_immutable
 class GeneralErrorWidget extends StatefulWidget {
+
   final VoidCallback? onTap;
   Widget? body;
   final error;
@@ -23,7 +25,7 @@ class GeneralErrorWidget extends StatefulWidget {
   });
 
   @override
-  _GeneralErrorWidgetState createState() => _GeneralErrorWidgetState();
+  State<GeneralErrorWidget> createState() => _GeneralErrorWidgetState();
 }
 
 class _GeneralErrorWidgetState extends State<GeneralErrorWidget> {

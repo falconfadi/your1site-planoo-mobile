@@ -8,7 +8,7 @@ import 'package:centro_partner/features/auth/data/usecase/reset_password_usecase
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/form_utils/form_state_mixin.dart';
 import 'package:centro_partner/core/ui/widgets/custom_text_field.dart';
@@ -20,9 +20,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
 
-  String phone;
+  final String phone;
 
-  ResetPasswordScreen({required this.phone,super.key});
+  const ResetPasswordScreen({required this.phone,super.key});
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -45,8 +45,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Image.asset(logo,width: 200.w,height: 120.h),
-                SizedBox(height: 30.h),
+                Image.asset(logo,width: 1.sw,height: 90.h),
+                SizedBox(height: 40.h),
                 CustomTextField(
                   autoFocus: false,
                   isPassword: true,

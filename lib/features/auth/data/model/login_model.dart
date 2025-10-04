@@ -17,6 +17,7 @@ class LoginResponse extends ApiResponse<LoginModel> {
   }
 }
 
+// ignore: must_be_immutable
 class LoginModel extends BaseModel{
 
   UserModel? user;
@@ -33,11 +34,11 @@ class LoginModel extends BaseModel{
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (user != null) {
       data['user'] = user!.toJson();
     }
-    data['token'] = this.token;
+    data['token'] = token;
     return data;
   }
 }

@@ -17,9 +17,9 @@ class Result<Data> {
 }
 
 class RemoteResult<Data extends BaseModel> extends Result<Data> {
-  RemoteResult({Data? data, BaseError? error}) : super(data: data, error: error);
+  RemoteResult({super.data, super.error});
 }
 
 class PaginatedResult<Data extends BaseModel> extends Result<List<Data>> {
-  PaginatedResult({List<Data>? data, BaseError? error}) : super(data: data, error: error);
+  PaginatedResult({super.data, super.error});
 }

@@ -24,7 +24,7 @@ class RoundedAnimatedButton extends StatefulWidget {
       this.onPressed});
 
   @override
-  _RoundedAnimatedButtonState createState() => _RoundedAnimatedButtonState();
+  State<RoundedAnimatedButton> createState() => _RoundedAnimatedButtonState();
 }
 
 class _RoundedAnimatedButtonState extends State<RoundedAnimatedButton> {

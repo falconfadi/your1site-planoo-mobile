@@ -12,7 +12,7 @@ class IconTextWidget extends StatelessWidget {
   final TextStyle? textStyle;
   final Color? iconColor;
 
-  IconTextWidget({super.key,
+  const IconTextWidget({super.key,
     required this.icon,
     this.iconSize,
     required this.text,
@@ -24,11 +24,13 @@ class IconTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SvgPicture.asset(icon,width: iconSize,color: iconColor ?? AppColors.mediumGrayColor),
+        SvgPicture.asset(icon,width: iconSize,color: iconColor ?? AppColors.blackColor),
         SizedBox(width: 5.w),
         Expanded(
-          child: Text(text,style: textStyle ??
-          AppTheme.bodyMedium.copyWith(color: AppColors.darkGrayColor)),
+          child: Padding(
+            padding: EdgeInsets.only(top: 5.sp),
+            child: Text(text,style: textStyle ?? AppTheme.textTheme.labelLarge),
+          ),
         )
       ],
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 var customFooter = CustomFooter(

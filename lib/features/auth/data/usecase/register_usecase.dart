@@ -16,7 +16,7 @@ class RegisterParams extends BaseParams {
     this.firebaseToken,
   });
 
-  toJson() {
+  Map<String, String?> toJson() {
     return {
       "phone": phone,
       "email": email,

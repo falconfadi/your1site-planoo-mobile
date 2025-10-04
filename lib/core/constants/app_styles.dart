@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'app_colors.dart';
 
 class AppTheme {
 
-  static const String font = 'Montserrat';
+  static const String font = 'Tajawal';
 
   static TextTheme textTheme = TextTheme(
+    headlineMedium: headlineMedium,
     headlineSmall: headlineSmall,
     titleLarge: titleLarge,
     titleMedium: titleMedium,
     titleSmall: titleSmall,
+    bodyLarge: bodyLarge,
     bodyMedium: bodyMedium,
     bodySmall: bodySmall,
     labelLarge: labelLarge,
@@ -17,66 +20,80 @@ class AppTheme {
     labelSmall: labelSmall,
   );
 
-  static TextStyle headlineSmall = const TextStyle(
+  static TextStyle headlineMedium = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w800,
-    fontSize: 24,
+    fontSize: 20.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle titleLarge = const TextStyle(
+  static TextStyle headlineSmall = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w700,
-    fontSize: 20,
+    fontSize: 18.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle titleMedium = const TextStyle(
+  static TextStyle titleLarge = TextStyle(
     fontFamily: font,
-    fontWeight: FontWeight.w600,
-    fontSize: 18,
+    fontWeight: FontWeight.w700,
+    fontSize: 16.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle titleSmall = const TextStyle(
+  static TextStyle titleMedium = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w700,
+    fontSize: 14.sp,
+    color: AppColors.blackColor,
+  );
+
+  static TextStyle titleSmall = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w700,
+    fontSize: 12.sp,
+    color: AppColors.blackColor,
+  );
+
+  static TextStyle bodyLarge = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w500,
-    fontSize: 16,
+    fontSize: 16.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle bodyMedium = const TextStyle(
+  static TextStyle bodyMedium = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w500,
-    fontSize: 14,
+    fontSize: 14.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle bodySmall = const TextStyle(
+  static TextStyle bodySmall = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w500,
-    fontSize: 12,
+    fontSize: 12.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle labelLarge = const TextStyle(
+  static TextStyle labelLarge = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w400,
-    fontSize: 16,
+    fontSize: 16.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle labelMedium = const TextStyle(
+  static TextStyle labelMedium = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w400,
-    fontSize: 14,
+    fontSize: 14.sp,
     color: AppColors.blackColor,
   );
 
-  static TextStyle labelSmall = const TextStyle(
+  static TextStyle labelSmall = TextStyle(
     fontFamily: font,
     fontWeight: FontWeight.w400,
-    fontSize: 12,
+    fontSize: 12.sp,
     color: AppColors.blackColor,
   );
 }

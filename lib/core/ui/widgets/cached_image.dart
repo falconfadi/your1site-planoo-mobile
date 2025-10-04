@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:centro_partner/core/constants/app_images.dart';
+import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/ui/widgets/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +11,7 @@ class CachedImage extends StatelessWidget {
   final double? borderRadius;
   final Color? borderColor;
   final double? borderWidth;
+  final bool? errorForUser;
 
   const CachedImage({
     super.key,
@@ -20,7 +21,8 @@ class CachedImage extends StatelessWidget {
     required this.fit,
     this.borderRadius,
     this.borderColor,
-    this.borderWidth
+    this.borderWidth,
+    this.errorForUser = false
   });
 
   @override
@@ -43,12 +45,8 @@ class CachedImage extends StatelessWidget {
             height: height,
             width: width,
             placeholder: (context, url) => const Center(child: LoadingIndicator()),
-            errorWidget: (context, url, error) => Image.asset(
-              profileHolder,
-              height: 50,
-              width: 50,
-              fit: BoxFit.cover,
-            ),
+            errorWidget: (context, url, error) => Icon(
+                errorForUser! ? Icons.person : Icons.image_not_supported_outlined,color: AppColors.grayColor),
           ),
         ),
       ),

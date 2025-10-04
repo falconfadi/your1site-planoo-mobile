@@ -1,6 +1,5 @@
 import 'dart:ui';
-import 'package:centro_partner/core/clasess/Keys.dart';
-import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/classes/Keys.dart';
 import '/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,13 +12,13 @@ class CustomSheet<T> extends StatelessWidget {
   final bool? addHeader;
   final double? padding;
 
-  const CustomSheet._({Key? key,
+  const CustomSheet._({super.key,
     required this.child,
     required this.header,
     this.isDismissible,
     this.addHeader = true,
     this.padding
-  }) : super(key: key);
+  });
 
 
   static Future<T?> show<T>({
@@ -43,9 +42,9 @@ class CustomSheet<T> extends StatelessWidget {
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(50.r))),
     builder: (_) => CustomSheet._(
       header: header,
-      child: child,
       addHeader: addHeader,
       padding: padding,
+      child: child,
     ),
   );
 
@@ -69,9 +68,10 @@ class CustomSheet<T> extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 40.h),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(onTap: () => Navigation.pop() ,child: const Icon(Icons.arrow_back_outlined,color: AppColors.blackColor,size: 25),),
+                      InkWell(onTap: () => Navigator.pop(context) ,child: const Icon(Icons.arrow_back_outlined,color: AppColors.blackColor,size: 25)),
                       header,
                       SizedBox(width: 25.w,height: 25.h)
                     ],

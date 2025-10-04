@@ -12,7 +12,7 @@ final String? password;
 
   LoginParams({this.phone, this.password});
 
-  toJson() {
+  Map<String, String?> toJson() {
     return {
       "phone": phone,
       "password": password,

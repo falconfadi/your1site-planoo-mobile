@@ -1,31 +1,23 @@
-import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
-import 'package:centro_partner/core/clasess/app_storage.dart';
+import 'dart:io';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
-import 'package:centro_partner/core/constants/end_point.dart';
-import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
+import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
-import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
-import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
-import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
-import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
-import 'package:centro_partner/features/profile/ui/create_stadium_screen.dart';
-import 'package:centro_partner/features/profile/ui/create_trainer_screen.dart';
-import 'package:centro_partner/features/profile/ui/partner_details_screen.dart';
-import 'package:centro_partner/features/profile/ui/terms_and_conditions_screen.dart';
-import 'package:centro_partner/features/profile/widget/change_language_sheet.dart';
-import 'package:centro_partner/features/profile/widget/change_password_sheet.dart';
-import 'package:centro_partner/features/profile/widget/profile_card_widget.dart';
+import 'package:centro_partner/core/utils/project_utils/pick_image.dart';
+import 'package:centro_partner/features/home/widget/view_image_widget.dart';
+import 'package:centro_partner/features/profile/widget/edit_profile_sheet.dart';
+import 'package:centro_partner/features/profile/widget/profile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileScreen extends StatefulWidget {
 
-  ProfileScreen({super.key});
+  const ProfileScreen({super.key});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -33,213 +25,122 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
-  bool isExpanded = false;
+  File? photo;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldColor,
-      appBar: CustomHeader(title: "",isNavBar: false),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            InkWell(
-              onTap: () => Navigation.push(PartnerDetailsScreen()),
-              child: Container(
-                width: 1.sw,
-                padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 30.w),
-                color: AppColors.whiteColor,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+        backgroundColor: AppColors.whiteColor,
+        appBar: CustomHeader(title: AppLocalization.of(context).translate("profile"), isNavBar: true),
+        body: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: 30.h),
+              Center(
+                child: Stack(
                   children: [
                     Container(
-                      width: 50.w,
-                      height: 50.w,
+                      padding: EdgeInsets.all(5.w),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.primaryColor),
-                        shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(10.r),
+                          border: Border.all(color: AppColors.mediumGrayColor)
                       ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 2),
-                        child: Image.asset(logo),
+                      child: ViewImageWidget(
+                        image: "https://smithhousestrategy.com/wp-content/uploads/2024/02/sports.jpg",
+                        width: 100.w,
+                        height: 100.w,
+                        borderRadius: 10.r,
                       ),
                     ),
-                    SizedBox(width: 15.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(AppLocalization.of(context).translate("partner_details"),
-                              style: AppTheme.bodyMedium),
-                          Text(AppLocalization.of(context).translate("partner_profile_information"),
-                              style: AppTheme.labelSmall.copyWith(color: AppColors.mediumGrayColor)),
-                        ],
+                    Positioned(
+                      bottom: 0,
+                      right: 0.w,
+                      child: InkWell(
+                          onTap: () async {
+                            await PickImage.selectImage(image: photo);
+                          },
+                          child: Container(
+                            width: 35.w,
+                            height: 35.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(7.r),
+                            ),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.r),
+                                color: AppColors.turquoiseColor,
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(image),
+                              ),
+                            ),
+                          )
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
-            ),
-            SizedBox(height: 20.h),
-            ProfileCard(
-              onTap: () => Navigation.push(CreateStadiumScreen(isEdit: true)),
-              icon: stadium,
-              title: "stadium_details",
-            ),
-            // todo enable it when account type = trainer
-            // SizedBox(height: 20.h),
-            // ProfileCard(
-            //   onTap: () => Navigation.push(CreateTrainerScreen(isEdit: true)),
-            //   icon: trainer,
-            //   title: "trainer_details",
-            // ),
-            SizedBox(height: 20.h),
-            Column(
-              children: [
-                ProfileCard(
-                  onTap: () {
-                    setState(() {
-                      isExpanded = !isExpanded;
-                    });
-                  },
-                  icon: key,
-                  title: "account",
-                  subtitle: "manage_your_account",
-                  withDropDownIcon: true,
-                ),
-                AnimatedContainer(
-                  duration: Duration(microseconds: 400),
-                  curve: Curves.easeInOut,
-                  padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 10.h),
-                  margin: EdgeInsets.symmetric(horizontal: 15.w),
+              SizedBox(height: 40.h),
+              ProfileCard(title: "name",subtitle: "maya"),
+              SizedBox(height: 15.h),
+              ProfileCard(title: "phone",subtitle: "098744552"),
+              SizedBox(height: 20.h),
+              ProfileCard(title: "email_address",subtitle: "maya@gmail.com"),
+              SizedBox(height: 15.h),
+              Card(
+                color: AppColors.whiteColor,
+                elevation: 3,
+                shadowColor: AppColors.gray2Color,
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 10.h,horizontal: 20.w),
                   decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: isExpanded
-                      ? Column(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ProfileCard(
-                        onTap: () {
+                      Text(AppLocalization.of(context).translate("description"),style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 20.sp)),
+                      SizedBox(height: 5.w),
+                      ExpandableTextWidget(
+                          text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+                          style: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp)
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 15.h),
+              Row(
+                  children: [
+                    Expanded(flex: 1,child: Center()),
+                    Expanded(
+                      child: CustomButton(
+                        height: 40.h,
+                        backgroundColor: AppColors.turquoiseColor,
+                        borderRadius: 10.r,
+                        buttonName: AppLocalization.of(context).translate("edit_profile"),
+                        function: () {
                           CustomSheet.show(
                               isDismissible: true,
-                              header: Text(
-                                AppLocalization.of(context).translate("change_password"),
-                                style: AppTheme.bodyMedium,
+                              header: Text(AppLocalization.of(context).translate("edit_profile"),
+                                style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
                               ),
-                              padding: 20.w,
+                              padding: 30.w,
                               context: context,
-                              child: ChangePasswordSheet());
-                        },
-                        icon: lock,
-                        iconColor: AppColors.primaryColor,
-                        title: "change_password",
-                      ),
-                      SizedBox(height: 10.h),
-                      ProfileCard(
-                        onTap: () {
-                          Dialogs.showQuestion(context,
-                            title: "",content: Column(
-                              children: [
-                                ListTile(
-                                  title: Text("${AppLocalization.of(context).translate("are_you_sure")}?",textAlign: TextAlign.center,
-                                    style: AppTheme.titleSmall.copyWith(color: AppColors.mediumGrayColor),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            btnOk: CustomButton(
-                              height: 40.h,
-                              width: 1.sw,
-                              backgroundColor: AppColors.whiteColor,
-                              borderRadius: 8.r,
-                              buttonName: AppLocalization.of(context).translate("ok"),
-                              textStyle: AppTheme.titleSmall.copyWith(fontSize: 15, color: AppColors.blackColor),
-                              function: () {
-                                // todo call delete account api
-                              },
-                            ),
+                              child: EditProfileSheet()
                           );
                         },
-                        icon: delete,
-                        iconColor: AppColors.redColor,
-                        title: "delete_account",
-                      )
-                    ],
-                  )
-                      : null,
-                ),
-              ],
-            ),
-            SizedBox(height: isExpanded == false ? 0 : 20.h),
-            ProfileCard(
-              onTap: () => CustomSheet.show(
-                  isDismissible: true,
-                  header: Text(AppLocalization.of(context).translate("language"),
-                    style: AppTheme.bodyMedium,
-                  ),
-                  padding: 30.w,
-                  context: context,
-                  child: ChangeLanguageSheet()),
-              icon: language,
-              title: "language",
-            ),
-            SizedBox(height: 20.h),
-            ProfileCard(
-              onTap: () => Navigation.push(TermsAndConditionsScreen()),
-              icon: termsAndCondition,
-              title: "terms_conditions",
-            ),
-            SizedBox(height: 20.h),
-            ProfileCard(
-              onTap: () {
-                Dialogs.showQuestion(context,
-                  title: "",content: Column(
-                    children: [
-                      ListTile(
-                        title: Text("${AppLocalization.of(context).translate("are_you_sure")}?",textAlign: TextAlign.center,
-                          style: AppTheme.titleSmall.copyWith(color: AppColors.mediumGrayColor),
-                        ),
                       ),
-                    ],
-                  ),
-                  btnOk: CreateModel(
-                    withValidation: false,
-                    onSuccess: (data) async {
-                      AppStorage.removeData(key: kAccessToken);
-                      AppStorage.removeData(key: userID);
-                      AppStorage.removeData(key: accountType);
-                      Navigation.pushReplacement(SignInScreen());
-                    },
-                    onTap: () {},
-                    useCaseCallBack: (data) {
-                      return LogoutUseCase(AuthRepository()).call(
-                          params: LogoutParams());
-                    },
-                    child: CustomButton(
-                      height: 40.h,
-                      width: 1.sw,
-                      backgroundColor: AppColors.whiteColor,
-                      borderRadius: 8.r,
-                      buttonName: AppLocalization.of(context).translate("ok"),
-                      textStyle: AppTheme.titleSmall.copyWith(fontSize: 15, color: AppColors.blackColor),
-                      // todo remove later
-                      function: () {
-                        AppStorage.removeData(key: kAccessToken);
-                        AppStorage.removeData(key: userID);
-                        AppStorage.removeData(key: accountType);
-                        Navigation.pushReplacement(SignInScreen());
-                      },
                     ),
-                  ),
-                );
-              },
-              icon: logout,
-              title: "log_out",
-            ),
-            SizedBox(height: 50.h),
-          ],
-        ),
-      ),
+                  ]
+              ),
+              SizedBox(height: 30.h),
+            ],
+          ),
+        )
     );
   }
 }

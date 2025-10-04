@@ -23,6 +23,8 @@ import 'models_factory.dart';
 
 class ApiProvider {
 
+  static final Dio dio = Dio(options);
+
   static var options = BaseOptions(
     baseUrl: baseUrl,
     connectTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
@@ -35,7 +37,6 @@ class ApiProvider {
       return status != null && status < 500;
     }
   );
-  static final Dio dio = Dio(options);
 
   static Future<Either<BaseError, T>> uploadFilesWithKeys<T>({
     required String url,
@@ -160,8 +161,9 @@ class ApiProvider {
         decodedJson = response.data;
       }
 
-      if (decodedJson['payload'] == false || decodedJson['payload'] == true)
+      if (decodedJson['payload'] == false || decodedJson['payload'] == true) {
         decodedJson['payload'] = {'': ''};
+      }
       if (kDebugMode) {
         printWrapped(decodedJson.toString());
       }
@@ -266,8 +268,9 @@ class ApiProvider {
         decodedJson = response.data;
       }
 
-      if (decodedJson['payload'] == false || decodedJson['payload'] == true)
+      if (decodedJson['payload'] == false || decodedJson['payload'] == true) {
         decodedJson['payload'] = {'': ''};
+      }
       if (kDebugMode) {
         printWrapped(decodedJson.toString());
       }

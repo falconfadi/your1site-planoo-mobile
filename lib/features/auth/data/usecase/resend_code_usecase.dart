@@ -9,7 +9,7 @@ class ResendCodeParams extends BaseParams {
 
   ResendCodeParams({this.phone});
 
-  toJson(){
+  Map<String, String?> toJson(){
     return {
       "phone": phone
     };

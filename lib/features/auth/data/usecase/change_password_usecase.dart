@@ -15,7 +15,7 @@ class ChangePasswordParams extends BaseParams {
     this.confirmationPassword,
   });
 
-  toJson() {
+  Map<String, String?> toJson() {
     return {
       "old_password": oldPassword,
       "new_password": newPassword,

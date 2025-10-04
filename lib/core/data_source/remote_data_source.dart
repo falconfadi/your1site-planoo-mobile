@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:centro_partner/core/clasess/app_storage.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/errors/custom_error.dart';
 import 'package:centro_partner/core/errors/socket_error.dart';
 import '../constants/end_point.dart';
@@ -15,9 +15,9 @@ import '../responses/api_response.dart';
 import 'model.dart';
 
 abstract class RemoteDataSource {
-  static Future<Either<BaseError, Data>> request<Data extends BaseModel, Response extends ApiResponse<Data>>({
+  static Future<Either<BaseError, Data>> request<Data extends BaseModel, Resp extends ApiResponse<Data>>({
     required String responseStr,
-    required Response Function(Map<String, dynamic>) converter,
+    required Resp Function(Map<String, dynamic>) converter,
     required HttpMethod method,
     required String url,
     Map<String, dynamic>? queryParameters,
@@ -36,7 +36,7 @@ abstract class RemoteDataSource {
     headers.putIfAbsent(headerLanguageKey, () => '${AppStorage.getData(key: headerLanguageKey)}');
     headers.putIfAbsent(headerAccept, () => 'application/json');
     headers.putIfAbsent(headerContentType, () => 'application/json');
-    final response = await ApiProvider.sendObjectRequest<Response>(
+    final response = await ApiProvider.sendObjectRequest<Resp>(
       method: method,
       url: url,
       headers: headers,
@@ -52,9 +52,9 @@ abstract class RemoteDataSource {
     debugPrint('is right : ${response.isRight()}');
     if (response.isLeft()) {
       debugPrint('is left');
-      return Left((response as Left<BaseError, Response>).value);
+      return Left((response as Left<BaseError, Resp>).value);
     } else {
-      debugPrint('response right ${(response as Right<BaseError, Response>).value}');
+      debugPrint('response right ${(response as Right<BaseError, Resp>).value}');
       final resValue = response.value;
       return Right(resValue.data);
     }

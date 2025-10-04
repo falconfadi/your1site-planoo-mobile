@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'base_validator.dart';
 
 class PhoneNumberValidator extends BaseValidator {

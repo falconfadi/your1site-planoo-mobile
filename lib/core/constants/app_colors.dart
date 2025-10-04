@@ -6,8 +6,7 @@ class AppColors {
   static const scaffoldColor = Color(0xffF5F5F5);
 
   /// PRIMARY COLOR ///
-  static const primaryColor = Color(0xFF3A9BDC);
-  static const darkPrimaryColor = Color(0xff007D6E);
+  static const primaryColor = Color(0xFF462e8e);
 
   /// BLACK & WHITE COLOR ///
   static const whiteColor = Color(0xffFFFFFF);
@@ -21,6 +20,9 @@ class AppColors {
   static const mediumGrayColor = Color(0xff757575);
   static const darkGrayColor = Color(0xff222222);
 
+  /// BLUE ///
+  static const turquoiseColor = Color(0xFF04CEC8);
+
   /// RED ///
   static const redColor = Color(0xFFF44336);
 
@@ -31,5 +33,8 @@ class AppColors {
   static const darkGreenColor = Color(0xFF007c00);
 
   /// PURPLE COLOR ///
-  static const darkPurpleColor = Color(0xffDE5AFF);
+  static const lightPurpleColor = Color(0xFFD0BCFF);
+
+  /// PINK COLOR ///
+  static const lightPinkColor = Color(0xFFE6E0E9);
 }

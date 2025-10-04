@@ -1,5 +1,5 @@
-import 'package:centro_partner/core/clasess/Keys.dart';
-import 'package:centro_partner/core/clasess/app_storage.dart';
+import 'package:centro_partner/core/classes/Keys.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
@@ -7,7 +7,7 @@ import 'package:centro_partner/features/auth/ui/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:centro_partner/core/clasess/app_localization.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -82,7 +82,6 @@ class _MyAppState extends State<MyApp> {
             theme: ThemeData(
               iconTheme: IconThemeData(color: AppColors.blackColor),
               textTheme: AppTheme.textTheme,
-              useMaterial3: true,
             ),
             home: SplashScreen()
         );

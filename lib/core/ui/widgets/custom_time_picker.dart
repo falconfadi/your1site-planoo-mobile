@@ -7,38 +7,26 @@ Future<TimeOfDay?> customTimePicker(BuildContext context) async {
     context: context,
     initialTime: TimeOfDay.now(),
     builder: (context, child) {
-      return Theme(
-        data: ThemeData(
-          useMaterial3: false,
-          timePickerTheme: TimePickerThemeData(
-            backgroundColor: AppColors.whiteColor,
-            hourMinuteColor: AppColors.primaryColor.withOpacity(0.1),
-            hourMinuteTextColor: AppColors.primaryColor,
-            dayPeriodColor: AppColors.primaryColor.withOpacity(0.1),
-            dayPeriodTextColor: AppColors.primaryColor,
-            dialBackgroundColor: AppColors.primaryColor.withOpacity(0.05),
-            dialHandColor: AppColors.primaryColor,
-            dialTextColor: AppColors.primaryColor,
-            entryModeIconColor: AppColors.primaryColor,
-            helpTextStyle: TextStyle(
-              color: AppColors.primaryColor,
-              fontSize: 16.sp,
+      return MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+        child: Theme(
+          data: ThemeData(
+            timePickerTheme: TimePickerThemeData(
+              backgroundColor: AppColors.whiteColor,
+              hourMinuteColor: AppColors.lightPinkColor,
+              dayPeriodColor: AppColors.lightPurpleColor,
+              dialBackgroundColor: AppColors.lightPinkColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
             ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8.r),
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+              primary: AppColors.primaryColor,
+              onPrimary: AppColors.whiteColor,
             ),
           ),
-          colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: AppColors.primaryColor,
-            onPrimary: AppColors.whiteColor,
-          ),
-          textButtonTheme: TextButtonThemeData(
-            style: ButtonStyle(
-              foregroundColor: MaterialStateProperty.all(AppColors.primaryColor),
-            ),
-          ),
+          child: child!,
         ),
-        child: child!,
       );
     },
   );

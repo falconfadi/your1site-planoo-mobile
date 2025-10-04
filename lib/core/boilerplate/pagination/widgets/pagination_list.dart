@@ -38,7 +38,7 @@ class PaginationList<Model> extends StatefulWidget {
         this.onRefresh});
 
   @override
-  _PaginationListState<Model> createState() => _PaginationListState<Model>();
+  State<PaginationList<Model>> createState() => _PaginationListState<Model>();
 }
 
 class _PaginationListState<Model> extends State<PaginationList<Model>> {
@@ -60,7 +60,7 @@ class _PaginationListState<Model> extends State<PaginationList<Model>> {
     return _buildConsumer();
   }
 
-  _buildConsumer() {
+  BlocConsumer<PaginationCubit<Model>, PaginationState> _buildConsumer() {
     return BlocConsumer<PaginationCubit<Model>, PaginationState>(
         bloc: cubit,
         listener: (context, state) {
@@ -94,7 +94,7 @@ class _PaginationListState<Model> extends State<PaginationList<Model>> {
         });
   }
 
-  smartRefresher(List<Model> list) {
+  SmartRefresher smartRefresher(List<Model> list) {
     Widget child;
     if (list.isEmpty && widget.withEmptyWidget) {
       child = widget.noDataWidget ?? const NoDataWidget();

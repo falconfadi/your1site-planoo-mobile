@@ -13,7 +13,7 @@ class CustomDropDown extends StatelessWidget  {
   final void Function(dynamic)? onChanged;
 
 
-  CustomDropDown({
+  const CustomDropDown({super.key,
     required this.width,
     required this.height,
     required this.text,
@@ -33,17 +33,22 @@ class CustomDropDown extends StatelessWidget  {
             border: Border.all(color: AppColors.blackColor,width: 0.5)
         ),
         child: Padding(
-          padding: EdgeInsets.only(left: 15.w,right: 10.w),
-          child: DropdownButton(
-              dropdownColor: AppColors.whiteColor,
-              isExpanded: true,
-              hint: Text(text, style: AppTheme.labelMedium.copyWith(color: AppColors.grayColor)),
-              icon: const Icon(Icons.keyboard_arrow_down_outlined,size: 22),
-              iconEnabledColor: AppColors.grayColor,
-              value: value,
-              items: items,
-              underline: Container(),
-              onChanged: onChanged
+          padding: EdgeInsets.only(left: 15.w,right: 10.w,top: 5.h),
+          child: Theme(
+            data: Theme.of(context).copyWith(
+              focusColor: AppColors.extraLightGrayColor,
+            ),
+            child: DropdownButton(
+                dropdownColor: AppColors.whiteColor,
+                isExpanded: true,
+                hint: Text(text, style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor)),
+                icon: const Icon(Icons.keyboard_arrow_down_outlined,size: 22),
+                iconEnabledColor: AppColors.grayColor,
+                value: value,
+                items: items,
+                underline: Container(),
+                onChanged: onChanged,
+            ),
           ),
         )
     );

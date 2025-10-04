@@ -9,7 +9,7 @@ class ForgetPasswordParams extends BaseParams {
 
   ForgetPasswordParams({this.phone});
 
-  toJson(){
+  Map<String, String?> toJson(){
     return {
       "phone": phone
     };

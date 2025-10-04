@@ -1,15 +1,19 @@
+import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
+import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:centro_partner/core/clasess/app_storage.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'dart:async';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashScreen extends StatefulWidget {
 
-  SplashScreen({super.key});
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -21,15 +25,8 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 2), () async {
-      if(((AppStorage.getData(key: accountType) == "court" && AppStorage.getData(key: isFillInfo) == 1) ||
-          (AppStorage.getData(key: accountType) != "court" && AppStorage.getData(key: isFillInfo) == 1)) &&
-          AppStorage.getData(key: kAccessToken) != null
-      ) {
-        if(AppStorage.getData(key: accountType) == "court") {
-          // todo check info of court
-        } else {
-          // todo check info of trainer
-        }
+      if(AppStorage.getData(key: kAccessToken) != null) {
+        Navigation.pushReplacement(NavBarScreen(pageIndex: 0));
       } else {
         Navigation.pushReplacement(SignInScreen());
       }
@@ -40,8 +37,44 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      body: Center(
-        child: Image.asset(logo),
+      body: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.all(10.w),
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(splash),
+                fit: BoxFit.cover
+              )
+            ),
+          ),
+          Container(
+            color: Colors.transparent.withOpacity(0.1),
+          ),
+          Positioned(
+            top: 1.sh * 0.05,
+            left: 1.sw * 0.15,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Image.asset(logo,height: 100.h,width: 1.sw),
+                RichText(
+                  text: TextSpan(
+                    text: AppLocalization.of(context).translate("plan_your"),
+                    style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 24.sp,color: AppColors.primaryColor),
+                    children: [
+                      TextSpan(text: " "),
+                      TextSpan(
+                        text: AppLocalization.of(context).translate("life"),
+                        style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 26.sp,color: AppColors.primaryColor),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
