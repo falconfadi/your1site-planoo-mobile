@@ -49,7 +49,7 @@ class _EditDaysSheetState extends State<EditDaysSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(child: Text(widget.daysList[index]["day"],style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 18.sp))),
+                        Expanded(child: Text(widget.daysList[index]["day"],style: AppTheme.bodyLarge.copyWith(fontSize: 18.sp))),
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -84,7 +84,7 @@ class _EditDaysSheetState extends State<EditDaysSheet> {
                             child: CustomContainerInfoWidget(
                               height: 45.h,
                               title: formatTime24(time: widget.daysList[index]["from_time"]),
-                              textStyle: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+                              textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
                             ),
                           ),
                         ),
@@ -102,7 +102,7 @@ class _EditDaysSheetState extends State<EditDaysSheet> {
                             child: CustomContainerInfoWidget(
                               height: 45.h,
                               title: formatTime24(time: widget.daysList[index]["to_time"]),
-                              textStyle: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+                              textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
                             ),
                           ),
                         ),

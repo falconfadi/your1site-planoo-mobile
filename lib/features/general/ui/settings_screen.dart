@@ -38,7 +38,7 @@ class SettingsScreen extends StatelessWidget {
               onTap: () => CustomSheet.show(
                   isDismissible: true,
                   header: Text(AppLocalization.of(context).translate("app_language"),
-                    style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
+                    style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                   ),
                   padding: 30.w,
                   context: context,

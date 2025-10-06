@@ -26,7 +26,7 @@ class CustomContainerInfoWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(title,style: textStyle ?? AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor)),
+            Text(title,style: textStyle ?? AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor)),
             SizedBox(width: 20.w),
             const Flexible(child: Icon(Icons.keyboard_arrow_down_outlined,color: AppColors.grayColor))
           ],

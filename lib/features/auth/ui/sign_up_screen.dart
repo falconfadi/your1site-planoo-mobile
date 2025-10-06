@@ -52,7 +52,7 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                   SizedBox(height: 10.h),
                   Image.asset(logo,width: 1.sw,height: 90.h),
                   Text(AppLocalization.of(context).translate("sign_up").toUpperCase(),
-                      style: AppTheme.textTheme.headlineSmall!.copyWith(fontSize: 25.sp)),
+                      style: AppTheme.headlineSmall.copyWith(fontSize: 25.sp)),
                   SizedBox(height: 40.h),
                   CustomDropDown(
                     width: 1.sw,
@@ -70,7 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                         child: Row(
                           children: [
                             SizedBox(width: 8.w),
-                            Expanded(child: Text(AppLocalization.of(context).translate(value.name), style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp))),
+                            Expanded(child: Text(AppLocalization.of(context).translate(value.name), style: AppTheme.labelLarge.copyWith(fontSize: 18.sp))),
                           ],
                         ),
                       );

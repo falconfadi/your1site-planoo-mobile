@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(splash),
-                fit: BoxFit.cover
+                fit: BoxFit.fill
               )
             ),
           ),
@@ -61,12 +61,12 @@ class _SplashScreenState extends State<SplashScreen> {
                 RichText(
                   text: TextSpan(
                     text: AppLocalization.of(context).translate("plan_your"),
-                    style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 24.sp,color: AppColors.primaryColor),
+                    style: AppTheme.labelLarge.copyWith(fontSize: 24.sp,color: AppColors.primaryColor),
                     children: [
                       TextSpan(text: " "),
                       TextSpan(
                         text: AppLocalization.of(context).translate("life"),
-                        style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 26.sp,color: AppColors.primaryColor),
+                        style: AppTheme.bodyLarge.copyWith(fontSize: 26.sp,color: AppColors.primaryColor),
                       ),
                     ],
                   ),

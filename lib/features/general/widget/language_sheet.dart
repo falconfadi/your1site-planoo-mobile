@@ -44,7 +44,7 @@ class _LanguageSheetState extends State<LanguageSheet> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(language.name, style: AppTheme.textTheme.labelLarge),
+                  Text(language.name, style: AppTheme.labelLarge),
                   InkWell(
                     onTap: () {
                       setState(() {

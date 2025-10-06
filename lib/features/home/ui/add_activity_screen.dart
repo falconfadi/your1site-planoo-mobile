@@ -97,7 +97,7 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                         child: Row(
                           children: [
                             SizedBox(width: 8.w),
-                            Expanded(child: Text(value, style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp))),
+                            Expanded(child: Text(value, style: AppTheme.labelLarge.copyWith(fontSize: 18.sp))),
                           ],
                         ),
                       );
@@ -125,7 +125,7 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                             Expanded(
                               child: Text(
                                 "${session.value} ${AppLocalization.of(context).translate("minute")}",
-                                style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+                                style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
                               ),
                             ),
                           ],

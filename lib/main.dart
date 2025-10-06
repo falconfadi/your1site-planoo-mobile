@@ -12,6 +12,7 @@ import 'package:centro_partner/core/classes/app_localization.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AppStorage.init();
+  await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
 }
 
@@ -78,10 +79,11 @@ class _MyAppState extends State<MyApp> {
               return supportedLocales.first;
             },
             debugShowCheckedModeBanner: false,
-            title: '',
+            title: 'Planoo',
             theme: ThemeData(
               iconTheme: IconThemeData(color: AppColors.blackColor),
               textTheme: AppTheme.textTheme,
+              useMaterial3: true,
             ),
             home: SplashScreen()
         );

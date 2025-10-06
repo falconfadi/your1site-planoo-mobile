@@ -109,7 +109,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         children: [
           TextFormField(
             key: widget.fieldStateKey,
-            style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+            style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
             textAlignVertical: TextAlignVertical.center,
             keyboardType: widget.keyboardType ?? TextInputType.text,
             focusNode: _focusNode,
@@ -145,8 +145,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               filled: true,
               hint: widget.label,
               hintText: widget.labelText,
-              hintStyle: widget.labelStyle ?? AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp),
-              errorStyle: AppTheme.textTheme.bodyLarge!.copyWith(color: AppColors.redColor),
+              hintStyle: widget.labelStyle ?? AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp),
+              errorStyle: AppTheme.bodyLarge.copyWith(color: AppColors.redColor),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide(width: 0.5,color: widget.borderColor ?? AppColors.mediumGrayColor),

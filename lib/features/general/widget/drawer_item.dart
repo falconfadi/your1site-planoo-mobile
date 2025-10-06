@@ -24,7 +24,7 @@ class DrawerItem extends StatelessWidget {
         padding: EdgeInsets.only(top: 5.h),
         child: Text(
           title,
-          style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 18.sp),
+          style: AppTheme.bodyLarge.copyWith(fontSize: 18.sp),
         ),
       ),
     );

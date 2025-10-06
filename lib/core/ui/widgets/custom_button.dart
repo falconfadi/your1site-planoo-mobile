@@ -56,7 +56,7 @@ class CustomButton extends StatelessWidget {
               child: Text(
                 buttonName!,
                 textAlign: TextAlign.center,
-                style: textStyle ?? AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.whiteColor),
+                style: textStyle ?? AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
               ),
             ),
         ],

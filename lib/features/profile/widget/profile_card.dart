@@ -23,9 +23,9 @@ class ProfileCard extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(AppLocalization.of(context).translate(title),style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 20.sp))),
+          Expanded(child: Text(AppLocalization.of(context).translate(title),style: AppTheme.labelLarge.copyWith(fontSize: 20.sp))),
           SizedBox(width: 5.w),
-          Text(subtitle,style: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor,fontSize: 20.sp)),
+          Text(subtitle,style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 20.sp)),
         ],
       ),
     );

@@ -37,7 +37,7 @@ class StatusWidget extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 5.h),
           child: Text(statusText,
-            style: AppTheme.textTheme.bodyLarge!.copyWith(color: statusColor),
+            style: AppTheme.bodyLarge.copyWith(color: statusColor),
             textAlign: TextAlign.center,
           ),
         ),

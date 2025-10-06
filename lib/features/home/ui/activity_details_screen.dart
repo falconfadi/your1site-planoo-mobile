@@ -103,7 +103,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                   child: Text(
                                     AppLocalization.of(context).translate("activate"),
                                     // AppLocalization.of(context).translate("deactivate"),
-                                    style: AppTheme.textTheme.bodyLarge,
+                                    style: AppTheme.bodyLarge,
                                   ),
                                 ),
                                 onTap: () {
@@ -116,7 +116,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                   child: Center(
                                     child: Text(
                                       AppLocalization.of(context).translate("edit"),
-                                      style: AppTheme.textTheme.bodyLarge,
+                                      style: AppTheme.bodyLarge,
                                     ),
                                   ),
                                   onTap: () => Navigation.push(AddActivityScreen(isEdit: true))
@@ -127,14 +127,14 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                   child: Center(
                                     child: Text(
                                       AppLocalization.of(context).translate("edit_days"),
-                                      style: AppTheme.textTheme.bodyLarge,
+                                      style: AppTheme.bodyLarge,
                                     ),
                                   ),
                                   onTap: () {
                                     CustomSheet.show(
                                         isDismissible: true,
                                         header: Text(AppLocalization.of(context).translate("workdays"),
-                                          style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
+                                          style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                                         ),
                                         padding: 30.w,
                                         context: context,
@@ -148,7 +148,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                   child: Center(
                                     child: Text(
                                       AppLocalization.of(context).translate("delete"),
-                                      style: AppTheme.textTheme.bodyLarge!.copyWith(color: AppColors.redColor),
+                                      style: AppTheme.bodyLarge.copyWith(color: AppColors.redColor),
                                     ),
                                   ),
                                   onTap: () {
@@ -157,7 +157,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                         children: [
                                           ListTile(
                                             title: Text("${AppLocalization.of(context).translate("are_you_sure")}?",textAlign: TextAlign.center,
-                                              style: AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.mediumGrayColor),
+                                              style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
                                             ),
                                           ),
                                         ],
@@ -168,7 +168,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                         backgroundColor: AppColors.redColor,
                                         borderRadius: 8.r,
                                         buttonName: AppLocalization.of(context).translate("ok"),
-                                        textStyle: AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.whiteColor),
+                                        textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
                                         function: () {
                                           // todo delete api later
                                         },
@@ -193,7 +193,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   Row(
                     children: [
                       Expanded(
-                        child: Text("Tennis",style: AppTheme.textTheme.headlineMedium!.copyWith(
+                        child: Text("Tennis",style: AppTheme.headlineMedium.copyWith(
                           fontSize: 24.sp
                         )),
                       ),
@@ -205,26 +205,26 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                           // OpenUrl.launchUrls(Uri.parse(activityUrl));
                         },
                         child: Text(AppLocalization.of(context).translate("show_map"),
-                            style: AppTheme.textTheme.titleLarge!.copyWith(
+                            style: AppTheme.titleLarge.copyWith(
                               color: AppColors.turquoiseColor
                         )),
                       ),
                     ],
                   ),
-                  Text("Racket sport played on a rectangular court divided by a net",style: AppTheme.textTheme.labelLarge),
+                  Text("Racket sport played on a rectangular court divided by a net",style: AppTheme.labelLarge),
                   SizedBox(height: 5.h),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
                       Text(" 4.5 (200 ${AppLocalization.of(context).translate("reviews")})",
-                          style: AppTheme.textTheme.labelMedium!.copyWith(color: AppColors.mediumGrayColor)),
+                          style: AppTheme.labelMedium.copyWith(color: AppColors.mediumGrayColor)),
                     ],
                   ),
                   SizedBox(height: 10.h),
                   ExpandableTextWidget(
                       text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                    style: AppTheme.textTheme.labelLarge,
+                    style: AppTheme.labelLarge,
                   ),
                   SizedBox(height: 10.h),
                   Card(
@@ -244,12 +244,12 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                             child: RichText(
                               text: TextSpan(
                                 text: AppLocalization.of(context).translate("session_duration"),
-                                style: AppTheme.textTheme.headlineMedium,
+                                style: AppTheme.headlineMedium,
                                 children: [
-                                  TextSpan(text: " 30 ",style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp)),
+                                  TextSpan(text: " 30 ",style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
                                   TextSpan(
                                     text: AppLocalization.of(context).translate("minute"),
-                                    style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+                                    style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
                                   ),
                                 ],
                               ),
@@ -278,7 +278,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(AppLocalization.of(context).translate("workdays"),
-                                  style: AppTheme.textTheme.headlineMedium,
+                                  style: AppTheme.headlineMedium,
                                 ),
                                 SizedBox(height: 10.h),
                                 Container(
@@ -301,8 +301,8 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             crossAxisAlignment: CrossAxisAlignment.center,
                                             children: [
-                                              Flexible(child: Text(workdaysList[index]["day"],style: AppTheme.textTheme.titleLarge!.copyWith(color: AppColors.primaryColor))),
-                                              Flexible(child: Text("${formatTime24(time: workdaysList[index]["from_time"])} - ${formatTime24(time: workdaysList[index]["to_time"])}",style: AppTheme.textTheme.labelLarge)),
+                                              Flexible(child: Text(workdaysList[index]["day"],style: AppTheme.titleLarge.copyWith(color: AppColors.primaryColor))),
+                                              Flexible(child: Text("${formatTime24(time: workdaysList[index]["from_time"])} - ${formatTime24(time: workdaysList[index]["to_time"])}",style: AppTheme.labelLarge)),
                                             ],
                                           ),
                                         );
@@ -336,7 +336,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(AppLocalization.of(context).translate("facilities"),
-                                  style: AppTheme.textTheme.headlineMedium,
+                                  style: AppTheme.headlineMedium,
                                 ),
                                 SizedBox(height: 10.h),
                                 Container(
@@ -361,7 +361,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                             children: [
                                               Flexible(child: Icon(facilitiesList[index]["icon"],color: AppColors.mediumGrayColor)),
                                               SizedBox(height: 10.h),
-                                              Flexible(child: Text(facilitiesList[index]["name"],style: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor))),
+                                              Flexible(child: Text(facilitiesList[index]["name"],style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor))),
                                             ],
                                           ),
                                         );
@@ -406,10 +406,10 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(AppLocalization.of(context).translate("price"),
-                    style: AppTheme.textTheme.bodyMedium,
+                    style: AppTheme.bodyMedium,
                   ),
                   Text("\$199",
-                    style: AppTheme.textTheme.headlineSmall!.copyWith(
+                    style: AppTheme.headlineSmall.copyWith(
                       color: AppColors.primaryColor,
                       fontSize: 24.sp
                     ),

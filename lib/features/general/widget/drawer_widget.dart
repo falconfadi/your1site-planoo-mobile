@@ -52,8 +52,7 @@ class DrawerWidget extends StatelessWidget {
                       title: Text(
                         "${AppLocalization.of(context).translate("are_you_sure")}?",
                         textAlign: TextAlign.center,
-                        style: AppTheme.textTheme.headlineSmall!
-                            .copyWith(color: AppColors.mediumGrayColor),
+                        style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
                       ),
                     ),
                   ],
@@ -64,8 +63,7 @@ class DrawerWidget extends StatelessWidget {
                   backgroundColor: AppColors.redColor,
                   borderRadius: 8.r,
                   buttonName: AppLocalization.of(context).translate("ok"),
-                  textStyle: AppTheme.textTheme.headlineSmall!
-                      .copyWith(color: AppColors.whiteColor),
+                  textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
                   function: () {
                     // todo logout api later
                   },

@@ -41,7 +41,7 @@ class CustomDropDown extends StatelessWidget  {
             child: DropdownButton(
                 dropdownColor: AppColors.whiteColor,
                 isExpanded: true,
-                hint: Text(text, style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor)),
+                hint: Text(text, style: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor)),
                 icon: const Icon(Icons.keyboard_arrow_down_outlined,size: 22),
                 iconEnabledColor: AppColors.grayColor,
                 value: value,

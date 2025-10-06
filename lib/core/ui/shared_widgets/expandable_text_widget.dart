@@ -66,7 +66,7 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
               children: [
                 Text(
                   AppLocalization.of(context).translate("see_more"),
-                  style: AppTheme.textTheme.titleLarge!.copyWith(color: AppColors.turquoiseColor)
+                  style: AppTheme.titleLarge.copyWith(color: AppColors.turquoiseColor)
                 ),
                 Icon(Icons.keyboard_arrow_down_outlined,size: 18,color: AppColors.turquoiseColor)
               ],

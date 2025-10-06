@@ -102,11 +102,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(AppLocalization.of(context).translate("description"),style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 20.sp)),
+                      Text(AppLocalization.of(context).translate("description"),style: AppTheme.labelLarge.copyWith(fontSize: 20.sp)),
                       SizedBox(height: 5.w),
                       ExpandableTextWidget(
                           text: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-                          style: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp)
+                          style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp)
                       ),
                     ],
                   ),
@@ -126,7 +126,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           CustomSheet.show(
                               isDismissible: true,
                               header: Text(AppLocalization.of(context).translate("edit_profile"),
-                                style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
+                                style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                               ),
                               padding: 30.w,
                               context: context,

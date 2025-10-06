@@ -10,7 +10,7 @@ class NoDataWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(AppLocalization.of(context).translate("no_data_found"),
-        style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 20.sp),
+        style: AppTheme.titleLarge.copyWith(fontSize: 20.sp),
       ),
     );
   }

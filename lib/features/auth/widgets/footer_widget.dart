@@ -16,11 +16,11 @@ class FooterWidget extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(text,style: AppTheme.textTheme.titleLarge),
+        Text(text,style: AppTheme.titleLarge),
         SizedBox(width: 4.w),
         InkWell(
           onTap: linkTap,
-          child: Text(link,style: AppTheme.textTheme.headlineSmall!.copyWith(
+          child: Text(link,style: AppTheme.headlineSmall.copyWith(
               color: AppColors.primaryColor,
             decoration: TextDecoration.underline,
             decorationColor: AppColors.primaryColor

@@ -39,7 +39,7 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
           onTap: () {
             CustomSheet.show(
               isDismissible: true,
-              header: Text(widget.title, style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp)),
+              header: Text(widget.title, style: AppTheme.titleLarge.copyWith(fontSize: 18.sp)),
               padding: 30.w,
               context: context,
               child: Column(
@@ -73,7 +73,7 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                                     : AppColors.extraLightGrayColor,
                               ),
                               child: Center(
-                                child: Text(widget.labelBuilder(item),style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp)),
+                                child: Text(widget.labelBuilder(item),style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
                               ),
                             ),
                           );
@@ -115,7 +115,7 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.labelBuilder(item), style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp)),
+                    Text(widget.labelBuilder(item), style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
                   ],
                 ),
               ),

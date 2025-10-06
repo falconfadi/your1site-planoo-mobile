@@ -34,7 +34,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   static PinTheme defaultPinTheme = PinTheme(
     width: 50.w,
     height: 80.h,
-    textStyle: AppTheme.textTheme.headlineMedium,
+    textStyle: AppTheme.headlineMedium,
     decoration: BoxDecoration(
       color: AppColors.whiteColor,
       border: Border.all(color: AppColors.blackColor),
@@ -129,14 +129,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               RichText(
                 text: TextSpan(
                   text: "${AppLocalization.of(context).translate("we_sent_you_code")} ",
-                  style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+                  style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
                   children: [
                     TextSpan(
                       text: " ",
                     ),
                     TextSpan(
                       text: "${widget.phoneNumber} ",
-                      style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
+                      style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                     ),
                   ],
                 ),

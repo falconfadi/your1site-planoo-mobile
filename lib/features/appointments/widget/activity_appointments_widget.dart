@@ -46,7 +46,7 @@ class ActivityAppointmentsWidget extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                     child: Text(appointment["category"],
                         maxLines: 1,overflow: TextOverflow.ellipsis,
-                        style: AppTheme.textTheme.bodyMedium!.copyWith(fontSize: 18.sp)
+                        style: AppTheme.bodyMedium.copyWith(fontSize: 18.sp)
                     ),
                   ),
                   Padding(
@@ -55,7 +55,7 @@ class ActivityAppointmentsWidget extends StatelessWidget {
                         icon: image.appointment,
                         iconSize: 18.w,
                         text: appointment["date"],
-                      textStyle: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor),
+                      textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
                     )
                   ),
                   Padding(
@@ -64,7 +64,7 @@ class ActivityAppointmentsWidget extends StatelessWidget {
                         icon: image.time,
                         iconSize: 20.w,
                         text: "${appointment["from_time"]} - ${appointment["to_time"]}",
-                        textStyle: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor),
+                        textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
                       )
                   ),
                   Padding(
@@ -73,7 +73,7 @@ class ActivityAppointmentsWidget extends StatelessWidget {
                         icon: image.user,
                         iconSize: 18.w,
                         text: appointment["user"],
-                        textStyle: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor),
+                        textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
                       )
                   ),
                 ],

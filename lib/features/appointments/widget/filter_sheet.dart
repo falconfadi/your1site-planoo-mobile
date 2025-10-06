@@ -45,7 +45,7 @@ class _FilterSheetState extends State<FilterSheet> {
                   SizedBox(width: 8.w),
                   Expanded(
                     child: Text(status.name,
-                      style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp),
+                      style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
                     ),
                   ),
                 ],
@@ -65,7 +65,7 @@ class _FilterSheetState extends State<FilterSheet> {
           },
           child: CustomContainerInfoWidget(
             title: date == null ? AppLocalization.of(context).translate("date") : convertDate(date: date.toString()),
-            textStyle: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: date == null ?
+            textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: date == null ?
             AppColors.mediumGrayColor : AppColors.blackColor),
           ),
         ),

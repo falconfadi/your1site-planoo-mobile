@@ -37,7 +37,7 @@ class SettingsWidget extends StatelessWidget {
           SizedBox(width: 15.w),
           Expanded(
             child: Text(AppLocalization.of(context).translate(title),
-                style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 18.sp)
+                style: AppTheme.bodyLarge.copyWith(fontSize: 18.sp)
             ),
           ),
           trailing ?? Icon(Icons.keyboard_arrow_right_outlined)

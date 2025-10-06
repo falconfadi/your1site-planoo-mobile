@@ -37,7 +37,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: CustomHeader(title: AppLocalization.of(context).translate("appointments"), isNavBar: true),
-        body: SingleChildScrollView(
+        body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +50,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       CustomSheet.show(
                           isDismissible: true,
                           header: Text(AppLocalization.of(context).translate("filter"),
-                            style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
+                            style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                           ),
                           padding: 30.w,
                           context: context,
@@ -73,10 +73,9 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                 ],
               ),
               SizedBox(height: 10.h),
-              SizedBox(
-                height: 1.sh - 320.h,
-                child: selectedTab == 0 ?
-                ListView.builder(
+              selectedTab == 0 ?
+              Expanded(
+                child: ListView.builder(
                   shrinkWrap: true,
                   itemCount: activityAppointmentsList.length,
                   itemBuilder: (context,index) {
@@ -84,9 +83,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                         onTap: () => Navigation.push(ActivityAppointmentDetailsScreen(appointment: activityAppointmentsList[index])),
                         child: ActivityAppointmentsWidget(appointment: activityAppointmentsList[index]));
                     },
-                ) : Center()
-              ),
-              SizedBox(height: 20.h),
+                ),
+              ) : Center(),
             ],
           ),
         )

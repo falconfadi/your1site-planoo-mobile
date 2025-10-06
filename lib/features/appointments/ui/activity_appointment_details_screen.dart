@@ -60,7 +60,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                         padding: EdgeInsets.symmetric(horizontal: 5.w),
                         child: Text("Basketball Practice",
                             maxLines: 2,overflow: TextOverflow.ellipsis,
-                            style: AppTheme.textTheme.headlineMedium),
+                            style: AppTheme.headlineMedium),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 6.w),
@@ -68,7 +68,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(widget.appointment["category"],
-                                style: AppTheme.textTheme.headlineSmall!.copyWith(
+                                style: AppTheme.headlineSmall.copyWith(
                                   color: AppColors.primaryColor
                                 )
                             ),
@@ -84,7 +84,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                           iconSize: 18.w,
                           iconColor: AppColors.mediumGrayColor,
                           text: "Damascus, AL mazaa",
-                          textStyle: AppTheme.textTheme.labelLarge!.copyWith(color: AppColors.mediumGrayColor),
+                          textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
                         )
                       )
                     ],
@@ -111,7 +111,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(AppLocalization.of(context).translate("about_appointment"),
-                              style: AppTheme.textTheme.headlineMedium,
+                              style: AppTheme.headlineMedium,
                             ),
                             SizedBox(height: 20.h),
                             StatusWidget(
@@ -127,7 +127,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                   icon: image.appointment,
                                   iconSize: 20.w,
                                   text: widget.appointment["date"],
-                                  textStyle: AppTheme.textTheme.labelLarge!.copyWith(
+                                  textStyle: AppTheme.labelLarge.copyWith(
                                     fontSize: 18.sp, color: AppColors.mediumGrayColor),
                                 )
                             ),
@@ -138,7 +138,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                   icon: image.time,
                                   iconSize: 22.w,
                                   text: "${widget.appointment["from_time"]} - ${widget.appointment["to_time"]}",
-                                  textStyle: AppTheme.textTheme.labelLarge!.copyWith(
+                                  textStyle: AppTheme.labelLarge.copyWith(
                                       fontSize: 18.sp, color: AppColors.mediumGrayColor),
                                 )
                             ),
@@ -162,7 +162,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                       child: Padding(
                                         padding: EdgeInsets.only(top: 5.h),
                                         child: Text(widget.appointment["user"],
-                                          style: AppTheme.textTheme.headlineMedium!.copyWith(
+                                          style: AppTheme.headlineMedium.copyWith(
                                               color: AppColors.mediumGrayColor),
                                         ),
                                       ),
@@ -187,7 +187,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                             children: [
                                               ListTile(
                                                 title: Text("${AppLocalization.of(context).translate("are_you_sure")}?",textAlign: TextAlign.center,
-                                                  style: AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.mediumGrayColor),
+                                                  style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
                                                 ),
                                               ),
                                             ],
@@ -198,7 +198,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                             backgroundColor: AppColors.redColor,
                                             borderRadius: 8.r,
                                             buttonName: AppLocalization.of(context).translate("ok"),
-                                            textStyle: AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.whiteColor),
+                                            textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
                                             function: () {
                                               // todo cancel api later
                                             },

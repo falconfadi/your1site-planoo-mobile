@@ -16,7 +16,7 @@ class Dialogs {
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
           backgroundColor: AppColors.mediumGrayColor,
-          content: Text(message, style: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: AppColors.whiteColor),
+          content: Text(message, style: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: AppColors.whiteColor),
       )),
     );
   }
@@ -34,7 +34,7 @@ class Dialogs {
         backgroundColor: AppColors.whiteColor,
         borderRadius: 10.r,
         buttonName: AppLocalization.of(context).translate("cancel"),
-        textStyle: AppTheme.textTheme.headlineSmall!.copyWith(color: AppColors.blackColor),
+        textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.blackColor),
         function: () {
           Navigation.pop();
         },
@@ -53,12 +53,12 @@ class Dialogs {
                 title: Text(
                   AppLocalization.of(context).translate("operation_error"),
                   textAlign: TextAlign.center,
-                  style: AppTheme.textTheme.headlineSmall!.copyWith(fontSize: 24),
+                  style: AppTheme.headlineSmall.copyWith(fontSize: 24),
                 ),
                 subtitle: Padding(
                   padding: EdgeInsets.only(top: 10.h),
                   child: Text(title!,textAlign: TextAlign.center,
-                    style: AppTheme.textTheme.titleLarge!.copyWith(color: AppColors.mediumGrayColor,fontSize: 20),
+                    style: AppTheme.titleLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 20),
                   ),
                 ),
               ),

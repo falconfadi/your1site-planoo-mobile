@@ -42,7 +42,7 @@ class _TabsWidgetState extends State<TabsWidget> {
                   ),
                   child: Row(
                     children: [
-                      Text(AppLocalization.of(context).translate(tab.name),style: AppTheme.textTheme.labelLarge!.copyWith(
+                      Text(AppLocalization.of(context).translate(tab.name),style: AppTheme.labelLarge.copyWith(
                         fontSize: 18.sp,
                           color: widget.selectedTab == index ?
                       AppColors.darkGrayColor : AppColors.mediumGrayColor))

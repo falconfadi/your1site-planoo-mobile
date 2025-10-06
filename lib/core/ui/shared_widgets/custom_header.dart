@@ -19,7 +19,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Text(title!, style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 22.sp)),
+      title: Text(title!, style: AppTheme.bodyLarge.copyWith(fontSize: 22.sp)),
       centerTitle: true,
       elevation: 1,
       toolbarHeight: 200.h,

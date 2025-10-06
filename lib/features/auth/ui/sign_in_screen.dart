@@ -64,7 +64,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                 SizedBox(height: 30.h),
                 Image.asset(logo,width: 1.sw,height: 90.h),
                 Text(AppLocalization.of(context).translate("sign_in").toUpperCase(),
-                    style: AppTheme.textTheme.headlineSmall!.copyWith(fontSize: 26.sp)),
+                    style: AppTheme.headlineSmall.copyWith(fontSize: 26.sp)),
                 SizedBox(height: 40.h),
                 CustomTextField(
                   autoFocus: false,
@@ -109,7 +109,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                         CustomSheet.show(
                             isDismissible: true,
                             header: Text(AppLocalization.of(context).translate("forget_password"),
-                              style: AppTheme.textTheme.titleLarge!.copyWith(fontSize: 18.sp),
+                              style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                             ),
                             padding: 30.w,
                             context: context,
@@ -117,7 +117,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                         );
                       },
                       child: Text("${AppLocalization.of(context).translate("forget_password")}?",
-                          style: AppTheme.textTheme.bodyLarge!.copyWith(color: AppColors.primaryColor)
+                          style: AppTheme.bodyLarge.copyWith(color: AppColors.primaryColor)
                       ),
                     ),
                   ],

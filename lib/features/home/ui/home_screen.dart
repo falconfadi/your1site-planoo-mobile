@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: CustomHeader(title: "",withLogo: true,isNavBar: true),
-        body: SingleChildScrollView(
+        body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
             children: [
@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: EdgeInsets.only(top: 3.h),
                       child: Text(AppLocalization.of(context).translate("add"),
-                        style: AppTheme.textTheme.bodyLarge!.copyWith(fontSize: 20.sp,color: AppColors.turquoiseColor),
+                        style: AppTheme.bodyLarge.copyWith(fontSize: 20.sp,color: AppColors.turquoiseColor),
                       ),
                     ),
                   ],
@@ -68,8 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   });
                 },
               ),
-              SizedBox(
-                height: 1.sh - 300.h,
+              Expanded(
                 child: ResponsiveGridList(
                   horizontalGridMargin: 10,
                   verticalGridMargin: 20,
@@ -94,7 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   )),
                 ),
               ),
-              SizedBox(height: 20.h),
             ],
           ),
         )

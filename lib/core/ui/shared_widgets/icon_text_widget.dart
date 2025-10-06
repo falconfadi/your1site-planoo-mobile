@@ -29,7 +29,7 @@ class IconTextWidget extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(top: 5.sp),
-            child: Text(text,style: textStyle ?? AppTheme.textTheme.labelLarge),
+            child: Text(text,style: textStyle ?? AppTheme.labelLarge),
           ),
         )
       ],

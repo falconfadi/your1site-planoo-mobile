@@ -60,7 +60,7 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                   child: CustomContainerInfoWidget(
                     title: widget.fromTime == null ? AppLocalization.of(context).translate("from_time") :
                     formatTime24(time: widget.fromTime!),
-                    textStyle: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: widget.fromTime == null ?
+                    textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: widget.fromTime == null ?
                     AppColors.mediumGrayColor : AppColors.blackColor),
                   ),
                 ),
@@ -79,7 +79,7 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                   child: CustomContainerInfoWidget(
                     title: widget.toTime == null ? AppLocalization.of(context).translate("to_time") :
                     formatTime24(time: widget.toTime!),
-                    textStyle: AppTheme.textTheme.labelLarge!.copyWith(fontSize: 18.sp,color: widget.toTime == null ?
+                    textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: widget.toTime == null ?
                     AppColors.mediumGrayColor : AppColors.blackColor),
                   ),
                 ),
