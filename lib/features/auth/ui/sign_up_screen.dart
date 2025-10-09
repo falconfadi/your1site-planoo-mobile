@@ -1,13 +1,16 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
+import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
-import 'package:centro_partner/core/constants/enum/account_type.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
 import 'package:centro_partner/core/utils/validators/email_validator.dart';
 import 'package:centro_partner/core/utils/validators/password_validator.dart';
 import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
+import 'package:centro_partner/features/auth/data/model/register_model.dart';
+import 'package:centro_partner/features/auth/data/model/user_type_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart';
+import 'package:centro_partner/features/auth/data/usecase/user_types_usecase.dart';
 import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
 import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +37,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
 
-  AccountType? selectAccountType;
+  String? selectAccountType;
 
   @override
   Widget build(BuildContext context) {
@@ -54,27 +57,37 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                   Text(AppLocalization.of(context).translate("sign_up").toUpperCase(),
                       style: AppTheme.headlineSmall.copyWith(fontSize: 25.sp)),
                   SizedBox(height: 40.h),
-                  CustomDropDown(
-                    width: 1.sw,
-                    height: 60.h,
-                    text: AppLocalization.of(context).translate("account_type"),
-                    value: selectAccountType,
-                    onChanged: (newValue) {
-                      setState(() {
-                        selectAccountType = newValue as AccountType?;
-                      });
+                  GetModel<UserTypeModel>(
+                    useCaseCallBack: () {
+                      return UserTypesUseCase(AuthRepository()).call(params: UserTypesParams());
                     },
-                    items: AccountType.values.map((AccountType value) {
-                      return DropdownMenuItem<AccountType>(
+                    withAnimation: false,
+                    modelBuilder: (model) => CustomDropDown(
+                      width: 1.sw,
+                      height: 60.h,
+                      text: AppLocalization.of(context).translate("account_type"),
+                      value: selectAccountType,
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectAccountType = newValue;
+                        });
+                      },
+                      items: model.userTypesList!.map((String value) => DropdownMenuItem<String>(
                         value: value,
                         child: Row(
                           children: [
                             SizedBox(width: 8.w),
-                            Expanded(child: Text(AppLocalization.of(context).translate(value.name), style: AppTheme.labelLarge.copyWith(fontSize: 18.sp))),
+                            Expanded(
+                              child: Text(
+                                value,
+                                style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
+                              ),
+                            ),
                           ],
                         ),
-                      );
-                    }).toList(),
+                      ))
+                          .toList(),
+                    ),
                   ),
                   SizedBox(height: 20.h),
                   selectAccountType == null ? Center() :
@@ -92,7 +105,7 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                     nextFocusNode: form.nodes[1],
                     textEditingController: form.controllers[0],
                     labelText: AppLocalization.of(context).translate(
-                        selectAccountType == null ? "name" : selectAccountType!.name == "stadium" ? "stadium_name" : "full_name"),
+                        selectAccountType == null ? "name" : selectAccountType! == "stadium" ? "stadium_name" : "full_name"),
                   ),
                   SizedBox(height: selectAccountType == null ? 0 : 20.h),
                   CustomTextField(
@@ -165,8 +178,11 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                   ),
                   SizedBox(height: 50.h),
                   CreateModel(
-                    onSuccess: (result) async {
-                      Navigation.pushReplacement(VerificationCodeScreen(phoneNumber: form.controllers[2].text));
+                    onSuccess: (RegisterModel result) async {
+                      Navigation.pushAndRemoveUntil(VerificationCodeScreen(
+                        phoneNumber: form.controllers[2].text,
+                        code: result.code,
+                      ));
                     },
                     withValidation: true,
                     onTap: () {
@@ -179,14 +195,17 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                     },
                     useCaseCallBack: ( model) {
                       return RegisterUseCase(AuthRepository()).call(
-                        // todo later add more information
                           params: RegisterParams(
+                            name: form.controllers[0].text,
                             email: form.controllers[1].text,
                             phone: form.controllers[2].text,
                             password: form.controllers[3].text,
                             confirmationPassword: form.controllers[3].text,
-                            type: selectAccountType!.name,
-                            // firebaseToken: FirebaseApi.deviceToken.toString() // todo enable it later
+                            accountType: selectAccountType,
+                            description: form.controllers[4].text,
+                            // todo change the firebaseToken later
+                            firebaseToken: "eevJy1ckQVia9XkDF"
+                            // firebaseToken: FirebaseApi.deviceToken.toString()
                           ));
                     },
                     child: CustomButton(
@@ -195,8 +214,6 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                       borderSideColor: AppColors.primaryColor,
                       borderRadius: 10.r,
                       buttonName: AppLocalization.of(context).translate("sign_up"),
-                      // todo remove later
-                      function: () => Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[2].text)),
                     ),
                   ),
                   SizedBox(height: 80.h),

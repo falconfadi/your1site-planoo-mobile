@@ -2,7 +2,6 @@ import 'package:centro_partner/core/boilerplate/create_model/widgets/create_mode
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
-import 'package:centro_partner/core/errors/unauthorized_error.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
@@ -128,18 +127,18 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                   onSuccess: (LoginModel model) async {
                     await saveLoginTokens(model.token!);
                     AppStorage.saveData(key: userID, value: model.user!.id);
-                    AppStorage.saveData(key: accountType, value: model.user!.role);
-                    Navigation.pushReplacement(NavBarScreen(pageIndex: 1));
-                  },
-                  onError: (String errorMessage) {
-                    if (errorMessage == UnauthorizedError(message: errorMessage).message) {
-                      Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[0].text));
-                    } else {
-                      Dialogs.showQuestion(context, title: errorMessage);
-                    }
+                    AppStorage.saveData(key: userType, value: model.user!.accountType);
+                    Navigation.pushAndRemoveUntil(NavBarScreen(pageIndex: 0));
                   },
                   onTap: () {
                     return form.validate();
+                  },
+                  onError: (String errorMessage) {
+                    if (errorMessage.toLowerCase().contains("unverified account")) {
+                      Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[0].text,fromSingUp: false));
+                    } else {
+                      Dialogs.showQuestion(context, title: errorMessage);
+                    }
                   },
                   useCaseCallBack: (model) => LoginUseCase(AuthRepository()).call(
                       params: LoginParams(
@@ -150,8 +149,6 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                     backgroundColor: AppColors.primaryColor,
                     borderRadius: 10.r,
                     buttonName: AppLocalization.of(context).translate("sign_in"),
-                    // todo remove later
-                    function: () => Navigation.pushReplacement(NavBarScreen(pageIndex: 0)),
                   ),
                 ),
                 SizedBox(height: 80.h),

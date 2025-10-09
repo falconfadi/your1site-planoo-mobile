@@ -27,29 +27,31 @@ class ViewImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        showAnimatedDialog(
-          context,
-          Center(
-            child: isFile == true ?
-            Container(
-              width: 1.sw,
-              height: 300.w,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: FileImage(file!),
-                    fit: BoxFit.cover,
-                  )
-              ),
-            ) : CachedImage(
-              imageUrl: image!,
-              width: 1.sw,
-              height: 300.w,
-              fit: BoxFit.cover,
+        if(image != "" || file != null) {
+          showAnimatedDialog(
+            context,
+            Center(
+                child: isFile == true ?
+                Container(
+                  width: 1.sw,
+                  height: 300.w,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: FileImage(file!),
+                        fit: BoxFit.cover,
+                      )
+                  ),
+                ) : CachedImage(
+                  imageUrl: image!,
+                  width: 1.sw,
+                  height: 300.w,
+                  fit: BoxFit.cover,
 
-            )
-          ),
-          dismissible: true,
-        );
+                )
+            ),
+            dismissible: true,
+          );
+        }
       },
       child: isFile == true ?
       Container(

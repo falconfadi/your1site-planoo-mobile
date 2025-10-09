@@ -1,3 +1,7 @@
+import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
+import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
+import 'package:centro_partner/features/profile/data/usecase/edit_user_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
@@ -11,14 +15,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EditProfileSheet extends StatefulWidget {
 
+  VoidCallback onImageUpdated;
+  LoginModel? model;
 
-  const EditProfileSheet({super.key});
+  EditProfileSheet({required this.onImageUpdated, super.key,  this.model});
 
   @override
   State<EditProfileSheet> createState() => _EditProfileSheetState();
 }
 
-class _EditProfileSheetState extends State<EditProfileSheet>   with FormStateMinxin {
+class _EditProfileSheetState extends State<EditProfileSheet> with FormStateMinxin {
+
+  @override
+  void initState() {
+    super.initState();
+    form.controllers[0].text = widget.model!.user!.name!;
+    form.controllers[1].text = widget.model!.user!.description!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +72,25 @@ class _EditProfileSheetState extends State<EditProfileSheet>   with FormStateMin
               labelText: AppLocalization.of(context).translate("description"),
             ),
             SizedBox(height: 30.h),
-            CustomButton(
-              width: 1.sw,
-              backgroundColor: AppColors.primaryColor,
-              borderRadius: 10.r,
-              buttonName: AppLocalization.of(context).translate("save"),
-              function: () {
-                // todo edit profile api
+            CreateModel(
+              withValidation: false,
+              loadingHeight: 20.h,
+              onTap: () {},
+              onSuccess: (model) {
+                widget.onImageUpdated();
+                Navigator.pop(context);
               },
+              useCaseCallBack: (model) => EditUserUseCase(ProfileRepository()).call(
+                  params: EditUserParams(
+                    name: form.controllers[0].text,
+                    description: form.controllers[1].text
+                  )),
+              child: CustomButton(
+                width: 1.sw,
+                backgroundColor: AppColors.primaryColor,
+                borderRadius: 10.r,
+                buttonName: AppLocalization.of(context).translate("save"),
+              ),
             ),
             SizedBox(height: 30.h),
           ],

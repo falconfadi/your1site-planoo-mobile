@@ -25,6 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 2), () async {
+      // todo later check account type
       if(AppStorage.getData(key: kAccessToken) != null) {
         Navigation.pushReplacement(NavBarScreen(pageIndex: 0));
       } else {

@@ -20,10 +20,11 @@ import 'package:pinput/pinput.dart';
 
 class VerificationCodeScreen extends StatefulWidget {
 
-  final String? phoneNumber;
+  final String phoneNumber;
+  final int? code;
   final bool fromSingUp;
 
-  const VerificationCodeScreen({required this.phoneNumber,this.fromSingUp = true,super.key});
+  const VerificationCodeScreen({required this.phoneNumber,this.code,this.fromSingUp = true,super.key});
 
   @override
   State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
@@ -138,6 +139,11 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       text: "${widget.phoneNumber} ",
                       style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                     ),
+                    // todo remove later
+                    TextSpan(
+                      text: "(${widget.code})",
+                      style: AppTheme.titleLarge.copyWith(fontSize: 18.sp,color: AppColors.turquoiseColor),
+                    ),
                   ],
                 ),
               ),
@@ -158,16 +164,16 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 onTap: () {},
                 onSuccess: (data) {
                   if(!widget.fromSingUp) {
-                    Navigation.push(ResetPasswordScreen(phone: widget.phoneNumber!));
+                    Navigation.push(ResetPasswordScreen(phone: widget.phoneNumber));
                   } else {
                     Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("account_verified"));
-                    Navigation.pushReplacement(SignInScreen());
+                    Navigation.pushAndRemoveUntil(SignInScreen());
                   }
                 },
                 useCaseCallBack: (model) {
                   return VerifyCodeUseCase(AuthRepository()).call(
                       params: VerifyCodeParams(
-                          phone: widget.phoneNumber!, code: codeController.text));
+                          phone: widget.phoneNumber, code: codeController.text));
                 },
                 child: CustomButton(
                   width: 1.sw,
@@ -175,15 +181,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                   borderSideColor: AppColors.primaryColor,
                   borderRadius: 10.r,
                   buttonName: AppLocalization.of(context).translate("verify"),
-                  // todo remove later
-                  function: () {
-                    if(!widget.fromSingUp) {
-                      Navigation.push(ResetPasswordScreen(phone: widget.phoneNumber!));
-                    } else {
-                      Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("account_verified"));
-                      Navigation.pushReplacement(SignInScreen());
-                    }
-                  },
                 ),
               ),
               SizedBox(height: 80.h),

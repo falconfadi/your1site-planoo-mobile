@@ -1,12 +1,13 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/ui/widgets/cached_image.dart';
+import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ImagesSliderWidget extends StatefulWidget {
 
-  final List<String> imgList;
+  final List<ImageModel> imgList;
 
   const ImagesSliderWidget({super.key,required this.imgList});
 
@@ -47,7 +48,7 @@ class _CenterImagesViewState extends State<ImagesSliderWidget> {
           itemCount: widget.imgList.length,
           itemBuilder: (BuildContext context, int photoIndex, int realIndex) {
             return CachedImage(
-              imageUrl: widget.imgList[photoIndex].toString(),
+              imageUrl: widget.imgList.isEmpty ? "" : widget.imgList[photoIndex].url!,
               fit: BoxFit.cover,
               width: 1.sw,
             );

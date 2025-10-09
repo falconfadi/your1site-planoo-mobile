@@ -85,7 +85,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
                 CreateModel(
                   onSuccess: (result) async {
                     Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("password_reseted"));
-                    Navigation.pushReplacement(SignInScreen());
+                    Navigation.pushAndRemoveUntil(SignInScreen());
                   },
                   withValidation: true,
                   onTap: () {
@@ -105,11 +105,6 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
                     borderSideColor: AppColors.primaryColor,
                     borderRadius: 10.r,
                     buttonName: AppLocalization.of(context).translate("reset"),
-                    // todo remove later
-                    function: () {
-                      Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("password_reseted"));
-                      Navigation.pushReplacement(SignInScreen());
-                    },
                   ),
                 ),
                 SizedBox(height: 30.h),

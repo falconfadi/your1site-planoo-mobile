@@ -42,6 +42,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    // AppStorage.removeData(key: kAccessToken);
+    // AppStorage.removeData(key: userID);
+    // AppStorage.removeData(key: userType);
     /// load application language:
     AppStorage.loadLanguage().then((languageCode) {
       setState(() {

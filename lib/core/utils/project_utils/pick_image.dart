@@ -3,13 +3,15 @@ import 'package:image_picker/image_picker.dart';
 
 class PickImage {
 
-  static Future<void> selectImage({required File? image}) async {
+  static Future<File?> selectImage({required ImageSource imageSource}) async {
     final imagePicker = ImagePicker();
-    var pickedFile = await imagePicker.pickImage(source: ImageSource.gallery, imageQuality: 25);
-
+    final pickedFile = await imagePicker.pickImage(
+      source: imageSource,
+      imageQuality: 25,
+    );
     if (pickedFile != null) {
-      image = File(pickedFile.path);
+      return File(pickedFile.path);
     }
+    return null;
   }
-
 }

@@ -52,8 +52,8 @@ class _ForgetPasswordSheetState extends State<ForgetPasswordSheet>  with FormSta
             SizedBox(height: 50.h),
             CreateModel(
                 onSuccess: (model) async {
-                  Navigation.pop();
-                  Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[0].text,fromSingUp: false));
+                  // todo send code to VerificationCodeScreen
+                  Navigation.popThenPush(VerificationCodeScreen(phoneNumber: form.controllers[0].text,fromSingUp: false));
                 },
                 withValidation: true,
                 onTap: () {
@@ -70,11 +70,6 @@ class _ForgetPasswordSheetState extends State<ForgetPasswordSheet>  with FormSta
                   backgroundColor: AppColors.primaryColor,
                   borderRadius: 10.r,
                   buttonName: AppLocalization.of(context).translate("send"),
-                  // todo remove later
-                  function: () {
-                    Navigation.pop();
-                    Navigation.push(VerificationCodeScreen(phoneNumber: form.controllers[0].text,fromSingUp: false));
-                  },
                 ),
             ),
             SizedBox(height: 50.h),

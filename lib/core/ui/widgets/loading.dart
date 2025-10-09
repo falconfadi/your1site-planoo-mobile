@@ -1,15 +1,12 @@
+import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:flutter/cupertino.dart';
 
 class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({super.key, this.padding});
 
-  final double? padding;
+  const LoadingIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 0),
-      child: CupertinoActivityIndicator(),
-    );
+    return CupertinoActivityIndicator(color: AppColors.turquoiseColor);
   }
 }

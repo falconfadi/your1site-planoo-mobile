@@ -21,7 +21,6 @@ class Dialogs {
     );
   }
 
-  // todo check when binding api
   static void showQuestion(BuildContext context, {String? title, Widget? content, Widget? btnOk}) {
     AwesomeDialog(
       dialogBackgroundColor: AppColors.whiteColor,
@@ -53,12 +52,12 @@ class Dialogs {
                 title: Text(
                   AppLocalization.of(context).translate("operation_error"),
                   textAlign: TextAlign.center,
-                  style: AppTheme.headlineSmall.copyWith(fontSize: 24),
+                  style: AppTheme.titleLarge.copyWith(fontSize: 22.sp),
                 ),
                 subtitle: Padding(
                   padding: EdgeInsets.only(top: 10.h),
                   child: Text(title!,textAlign: TextAlign.center,
-                    style: AppTheme.titleLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 20),
+                    style: AppTheme.bodyLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp),
                   ),
                 ),
               ),

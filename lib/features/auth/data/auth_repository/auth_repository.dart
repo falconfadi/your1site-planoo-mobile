@@ -4,6 +4,8 @@ import 'package:centro_partner/core/http/http_method.dart';
 import 'package:centro_partner/core/repository/core_repository.dart';
 import 'package:centro_partner/core/results/result.dart';
 import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/register_model.dart';
+import 'package:centro_partner/features/auth/data/model/user_type_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/change_password_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/forget_password_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/login_usecase.dart';
@@ -11,19 +13,21 @@ import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/resend_code_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/reset_password_usecase.dart';
+import 'package:centro_partner/features/auth/data/usecase/user_types_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/verify_code_usecase.dart';
 
 
 class AuthRepository extends CoreRepository {
 
-  Future<Result<bool>> register({required RegisterParams params}) async {
-    final result = await RemoteDataSource.noModelRequest(
+  Future<Result<RegisterModel>> register({required RegisterParams params}) async {
+    final result = await RemoteDataSource.request(
         withAuthentication: false,
         url: registerUrl,
         data: params.toJson(),
-        method: HttpMethod.POST
-    );
-    return noModelCall(result: result);
+        method: HttpMethod.POST,
+        responseStr: 'RegisterResponse',
+        converter: (json) => RegisterResponse.fromJson(json));
+    return call(result: result);
   }
 
   Future<Result<bool>> verify({required VerifyCodeParams params}) async {
@@ -94,6 +98,16 @@ class AuthRepository extends CoreRepository {
       method: HttpMethod.POST,
     );
     return noModelCall(result: result);
+  }
+
+  Future<Result<UserTypeModel>> getUserTypes({required UserTypesParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: false,
+        url: userTypesUrl,
+        method: HttpMethod.GET,
+        responseStr: 'UserTypeResponse',
+        converter: (json) => UserTypeResponse.fromJson(json));
+    return call(result: result);
   }
 
 }

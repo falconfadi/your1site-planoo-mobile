@@ -1,6 +1,7 @@
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/errors/bad_request_error.dart';
 import 'package:centro_partner/core/errors/not_found_error.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '/core/ui/widgets/rounded_animated_button.dart';
 import 'package:flutter/material.dart';
 import '../../errors/error_helper.dart';
@@ -65,8 +66,8 @@ class _GeneralErrorWidgetState extends State<GeneralErrorWidget> {
             padding: const EdgeInsets.all(12.0),
             child: Text(
               widget.message ?? errorHelper.getErrorMessage(widget.error),
-              style: const TextStyle(
-                fontSize: 11,
+              style: TextStyle(
+                fontSize: 11.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),

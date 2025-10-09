@@ -8,6 +8,7 @@ class CustomSheet<T> extends StatelessWidget {
 
   final Widget child;
   final Widget header;
+  final Widget? action;
   final bool? isDismissible;
   final bool? addHeader;
   final double? padding;
@@ -15,6 +16,7 @@ class CustomSheet<T> extends StatelessWidget {
   const CustomSheet._({super.key,
     required this.child,
     required this.header,
+    this.action,
     this.isDismissible,
     this.addHeader = true,
     this.padding
@@ -25,6 +27,7 @@ class CustomSheet<T> extends StatelessWidget {
     required BuildContext? context,
     required Widget child,
     required Widget header,
+    Widget? action,
     bool addHeader = true,
     double? padding,
     ValueChanged<BuildContext>? onClose,
@@ -42,6 +45,7 @@ class CustomSheet<T> extends StatelessWidget {
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(50.r))),
     builder: (_) => CustomSheet._(
       header: header,
+      action: action,
       addHeader: addHeader,
       padding: padding,
       child: child,
@@ -73,7 +77,7 @@ class CustomSheet<T> extends StatelessWidget {
                     children: [
                       InkWell(onTap: () => Navigator.pop(context) ,child: const Icon(Icons.arrow_back_outlined,color: AppColors.blackColor,size: 25)),
                       header,
-                      SizedBox(width: 25.w,height: 25.h)
+                      action ?? SizedBox(width: 25.w,height: 25.h)
                     ],
                   )
                 ),

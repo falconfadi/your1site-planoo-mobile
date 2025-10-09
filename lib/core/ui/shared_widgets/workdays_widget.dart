@@ -1,11 +1,14 @@
+import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
-import 'package:centro_partner/core/constants/enum/days_enum.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_multi_items_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_time_picker.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
+import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
+import 'package:centro_partner/features/home/data/model/days_model.dart';
+import 'package:centro_partner/features/home/data/usecase/days_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -15,8 +18,16 @@ class WorkdaysWidget extends StatefulWidget {
   final Set<String> selectedDays;
   TimeOfDay? fromTime;
   TimeOfDay? toTime;
+  final ValueChanged<TimeOfDay?> onFromTimeChanged;
+  final ValueChanged<TimeOfDay?> onToTimeChanged;
 
-  WorkdaysWidget({super.key,required this.selectedDays,required this.fromTime,required this.toTime});
+  WorkdaysWidget({super.key,
+    required this.selectedDays,
+    required this.fromTime,
+    required this.toTime,
+    required this.onFromTimeChanged,
+    required this.onToTimeChanged,
+  });
 
   @override
   State<WorkdaysWidget> createState() => _WorkdaysWidgetState();
@@ -30,17 +41,24 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
-          SelectMultiItemsWidget<DaysEnum, String>(
-            title: AppLocalization.of(context).translate("workdays"),
-            list: DaysEnum.values,
-            selectedIds: widget.selectedDays,
-            labelBuilder: (item) => item.name,
-            idBuilder: (item) => item.name,
-            onSelect: (ids) {
-              setState(() {
-                widget.selectedDays.addAll(ids);
-              });
+          GetModel<DaysModel>(
+            loadingHeight: 60.h,
+            useCaseCallBack: () {
+              return DaysUseCase(HomeRepository()).call(params: DaysParams());
             },
+            withAnimation: false,
+            modelBuilder: (model) => SelectMultiItemsWidget<String, String>(
+              title: AppLocalization.of(context).translate("workdays"),
+              list: model.daysList ?? [],
+              selectedIds: widget.selectedDays,
+              labelBuilder: (item) => item,
+              idBuilder: (item) => item,
+              onSelect: (ids) {
+                setState(() {
+                  widget.selectedDays.addAll(ids);
+                });
+              },
+            )
           ),
           SizedBox(height: widget.selectedDays.isEmpty ? 0 : 20.h),
           widget.selectedDays.isEmpty ? Center() :
@@ -52,9 +70,7 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                   onTap: () async {
                     TimeOfDay? selected = await selectTime(context, widget.fromTime);
                     if (selected != null) {
-                      setState(() {
-                        widget.fromTime = selected;
-                      });
+                      widget.onFromTimeChanged(selected);
                     }
                   },
                   child: CustomContainerInfoWidget(
@@ -71,9 +87,7 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                   onTap: () async {
                     TimeOfDay? selected = await selectTime(context, widget.toTime);
                     if (selected != null) {
-                      setState(() {
-                        widget.toTime = selected;
-                      });
+                      widget.onToTimeChanged(selected);
                     }
                   },
                   child: CustomContainerInfoWidget(

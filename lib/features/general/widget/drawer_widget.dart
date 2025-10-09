@@ -1,10 +1,16 @@
+import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
+import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
+import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/features/general/ui/about_screen.dart';
 import 'package:centro_partner/features/general/ui/settings_screen.dart';
 import 'package:centro_partner/features/general/ui/terms_and_conditions_screen.dart';
@@ -57,16 +63,27 @@ class DrawerWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                btnOk: CustomButton(
-                  height: 40.h,
-                  width: 1.sw,
-                  backgroundColor: AppColors.redColor,
-                  borderRadius: 8.r,
-                  buttonName: AppLocalization.of(context).translate("ok"),
-                  textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
-                  function: () {
-                    // todo logout api later
+                btnOk: CreateModel(
+                  withValidation: false,
+                  onTap: () {},
+                  onSuccess: (data) {
+                    AppStorage.removeData(key: kAccessToken);
+                    AppStorage.removeData(key: userID);
+                    AppStorage.removeData(key: userType);
+                    Navigation.pushAndRemoveUntil(SignInScreen());
                   },
+                  useCaseCallBack: (model) {
+                    return LogoutUseCase(AuthRepository()).call(
+                        params: LogoutParams());
+                  },
+                  child: CustomButton(
+                    height: 40.h,
+                    width: 1.sw,
+                    backgroundColor: AppColors.redColor,
+                    borderRadius: 8.r,
+                    buttonName: AppLocalization.of(context).translate("ok"),
+                    textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
+                  ),
                 ),
               );
             },

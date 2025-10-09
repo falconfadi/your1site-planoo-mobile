@@ -1,0 +1,95 @@
+import 'dart:io';
+import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/utils/project_utils/pick_image.dart';
+import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
+import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
+import 'package:centro_partner/features/profile/data/usecase/upload_profile_image_usecase.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+
+class PickImageSheet extends StatefulWidget {
+
+  VoidCallback onImageUpdated;
+  LoginModel? model;
+
+  PickImageSheet({required this.onImageUpdated, super.key,  this.model});
+
+  @override
+  State<PickImageSheet> createState() => _PickImageSheetState();
+}
+
+class _PickImageSheetState extends State<PickImageSheet> {
+
+  File? image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _buildPickOption(
+              icon: Icons.image_outlined,
+              labelKey: "gallery",
+              source: ImageSource.gallery,
+            ),
+            _buildPickOption(
+              icon: Icons.camera_alt_outlined,
+              labelKey: "camera",
+              source: ImageSource.camera,
+            ),
+          ],
+        ),
+        SizedBox(height: 20.h),
+      ],
+    );
+  }
+
+  Widget _buildPickOption({required IconData icon, required String labelKey, required ImageSource source}) {
+    return CreateModel<ProfileImageModel>(
+      withValidation: false,
+      onTap: () async {},
+      onSuccess: (data) {
+        widget.onImageUpdated();
+        Navigator.pop(context);
+      },
+      useCaseCallBack: (data) async {
+        image = await PickImage.selectImage(imageSource: source);
+
+        return UploadProfileImageUseCase(ProfileRepository()).call(
+          params: UploadProfileImageParams(file: image!),
+        );
+      },
+      child: Column(
+        children: [
+          Container(
+            width: 60.w,
+            height: 60.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: AppColors.turquoiseColor,
+            ),
+            child: Center(
+              child: Icon(icon, size: 30, color: AppColors.whiteColor),
+            ),
+          ),
+          SizedBox(height: 10.h),
+          Center(
+            child: Text(
+              AppLocalization.of(context).translate(labelKey),
+              style: AppTheme.titleLarge,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

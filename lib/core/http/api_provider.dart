@@ -67,9 +67,11 @@ class ApiProvider {
         multipartList.add(await MultipartFile.fromFile(file.path, filename: fileName));
       }
 
+      // Assign as list or single file depending on count
       dataMap[entry.key] = multipartList.length == 1 ? multipartList.first : multipartList;
     }
 
+    // Optionally add any required fixed data
     dataMap['MnD'] = 'MnD';
 
     try {

@@ -99,6 +99,52 @@ abstract class RemoteDataSource {
     }
   }
 
+  static Future<Either<BaseError, Data>> upload<Data>({
+    required String responseStr,
+    required Data Function(Map<String, dynamic>) converter,
+    required String url,
+    required Map<String, List<File>> filesMap, // <- updated
+    Map<String, dynamic>? data,
+    Map<String, dynamic>? queryParameters,
+    bool withAuthentication = false,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+    CancelToken? cancelToken,
+  }) async {
+    ModelsFactory.getInstance()!.registerModel(responseStr, converter);
+    final Map<String, String> headers = {};
+
+    if (withAuthentication) {
+      await checkTokenValidation();
+      final String token = AppStorage.getData(key: kAccessToken);
+      debugPrint(token);
+      headers.putIfAbsent(headerAuth, () => 'Bearer $token');
+    }
+    headers.putIfAbsent(headerAccept, () => 'application/json');
+    headers.putIfAbsent(headerContentType, () => 'application/json');
+    final response = await ApiProvider.uploadFilesWithKeys<Data>(
+      url: url,
+      filesMap: filesMap,
+      data: data,
+      headers: headers,
+      queryParameters: queryParameters,
+      cancelToken: cancelToken,
+      onSendProgress: onSendProgress,
+      onReceiveProgress: onReceiveProgress,
+      strString: responseStr,
+    );
+
+    print('is right : ${response.isRight()}');
+    if (response.isLeft()) {
+      print('is left');
+      return Left((response as Left<BaseError, Data>).value);
+    } else {
+      print('response right ${(response as Right<BaseError, Data>).value}');
+      return Right((response as Right<BaseError, Data>).value);
+    }
+  }
+
+  // todo check later
   static Future<Either<BaseError, void>?> checkTokenValidation() async {
     final String? token = await AppStorage.getData(key: kAccessToken);
 
@@ -161,48 +207,4 @@ abstract class RemoteDataSource {
     }
   }
 
-  static Future<Either<BaseError, Data>> upload<Data>({
-    required String responseStr,
-    required Data Function(Map<String, dynamic>) converter,
-    required String url,
-    required Map<String, List<File>> filesMap, // <- updated
-    Map<String, dynamic>? data,
-    Map<String, dynamic>? queryParameters,
-    bool withAuthentication = false,
-    ProgressCallback? onSendProgress,
-    ProgressCallback? onReceiveProgress,
-    CancelToken? cancelToken,
-  }) async {
-    ModelsFactory.getInstance()!.registerModel(responseStr, converter);
-    final Map<String, String> headers = {};
-
-    if (withAuthentication) {
-      await checkTokenValidation();
-      final String token = AppStorage.getData(key: kAccessToken);
-      debugPrint(token);
-      headers.putIfAbsent(headerAuth, () => 'Bearer $token');
-    }
-    headers.putIfAbsent(headerAccept, () => 'application/json');
-    headers.putIfAbsent(headerContentType, () => 'application/json');
-    final response = await ApiProvider.uploadFilesWithKeys<Data>(
-      url: url,
-      filesMap: filesMap,
-      data: data,
-      headers: headers,
-      queryParameters: queryParameters,
-      cancelToken: cancelToken,
-      onSendProgress: onSendProgress,
-      onReceiveProgress: onReceiveProgress,
-      strString: responseStr,
-    );
-
-    print('is right : ${response.isRight()}');
-    if (response.isLeft()) {
-      print('is left');
-      return Left((response as Left<BaseError, Data>).value);
-    } else {
-      print('response right ${(response as Right<BaseError, Data>).value}');
-      return Right((response).value);
-    }
-  }
 }
