@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
+import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/photos_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_multi_items_widget.dart';
@@ -14,12 +16,16 @@ import 'package:centro_partner/features/home/data/model/activity/activity_detail
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
+import 'package:centro_partner/features/home/data/model/location_model.dart';
 import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/edit_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/categories_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/create_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facilities_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/facility/create_facility_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/facility/delete_facility_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/session_durations_usecase.dart';
+import 'package:centro_partner/features/home/ui/create_location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
@@ -51,21 +57,22 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
   TimeOfDay? fromTime;
   TimeOfDay? toTime;
   int? selectedSession;
+  LocationModel? selectedLocation;
   Set<int> selectedFacilitiesId = {};
   List<File> photosList = <File>[];
-
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     if(widget.isEdit == true) {
       form.controllers[0].text = widget.activity!.name!;
-      form.controllers[3].text = widget.activity!.description!;
+      form.controllers[2].text = widget.activity!.description!;
       selectedSession = widget.activity!.sessionDuration;
       form.controllers[1].text = widget.activity!.price.toString();
+      selectedLocation = widget.activity!.location!;
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -214,16 +221,29 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                     labelText: AppLocalization.of(context).translate("price"),
                   ),
                   SizedBox(height: 20.h),
-                  if(widget.isEdit == false)
-                    CustomTextField(
-                    autoFocus: false,
-                    autoValidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.number,
-                    focusNode: form.nodes[2],
-                    textEditingController: form.controllers[2],
-                    labelText: AppLocalization.of(context).translate("location"),
+                  InkWell(
+                    onTap: () async {
+                      final result = await Navigation.push(
+                        CreateLocationScreen(
+                          ownerType: widget.isEdit == true ? "activity" : null,
+                          ownerId: widget.isEdit == true ? widget.activity!.iD! : null,
+                          location: selectedLocation,
+                          isEdit: widget.isEdit == true ? true : false,
+                        ),
+                      );
+                      if (result != null && result is LocationModel) {
+                        setState(() {
+                          selectedLocation = result;
+                        });
+                      }
+                    },
+                    child: CustomContainerInfoWidget(
+                      title: selectedLocation == null ? AppLocalization.of(context).translate("location") :
+                      "${selectedLocation!.lat!.toStringAsFixed(6)} | ${selectedLocation!.long!.toStringAsFixed(6)}",
+                      textStyle: selectedLocation == null ? null : AppTheme.labelLarge.copyWith(fontSize: 18.sp),
+                    ),
                   ),
-                  if(widget.isEdit == false) SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   CustomTextField(
                     autoFocus: false,
                     maxLine: 3,
@@ -235,21 +255,30 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                         [RequiredValidator()],
                       );
                     },
-                    focusNode: form.nodes[3],
-                    textEditingController: form.controllers[3],
+                    focusNode: form.nodes[2],
+                    textEditingController: form.controllers[2],
                     labelText: AppLocalization.of(context).translate("description"),
                   ),
-                  if(widget.isEdit == false) SizedBox(height: 20.h),
-                  if(widget.isEdit == false)
-                    PhotosWidget(photos: photosList),
-                  if(widget.isEdit == false) SizedBox(height: 20.h),
-                  if(widget.isEdit == false)
-                    GetModel<FacilityModel>(
+                  SizedBox(height: 20.h),
+                  PhotosWidget(
+                    ownerType: widget.isEdit == true ? "activity" : null,
+                    ownerId: widget.isEdit == true ? widget.activity!.iD! : null,
+                    photos: photosList,
+                    isEdit: widget.isEdit == true ? true : false,
+                  ),
+                  SizedBox(height: 20.h),
+                  // todo if facilities used in multi features must make it in separate widget
+                  GetModel<FacilityModel>(
                     useCaseCallBack: () {
                       return FacilitiesUseCase(HomeRepository())
                           .call(params: FacilitiesParams());
                     },
                     withAnimation: false,
+                    onSuccess: (result) {
+                      if(widget.isEdit == true) {
+                        selectedFacilitiesId = widget.activity!.facilitiesList!.map((f) => f.ID!).toSet();
+                      }
+                    },
                     modelBuilder: (model) => SelectMultiItemsWidget(
                       title: AppLocalization.of(context).translate("facilities"),
                       list: model.facilitiesList!,
@@ -258,7 +287,35 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                       idBuilder: (item) => item.ID!,
                       onSelect: (ids) {
                         setState(() {
-                          selectedFacilitiesId.addAll(ids);
+                          selectedFacilitiesId = ids;
+                        });
+                        _debounce?.cancel();
+                        _debounce = Timer(const Duration(milliseconds: 400), () async {
+                          if(widget.isEdit == true) {
+                            await CreateFacilityUseCase(HomeRepository()).call(
+                              params: CreateFacilityParams(
+                                ownerType: "activity",
+                                ownerId: widget.activity!.iD!,
+                                facilities: selectedFacilitiesId.toList(),
+                              ),
+                            );
+                          }
+                        });
+                      },
+                      isDelete: widget.isEdit == true ? true : false,
+                      onDelete: (id) async {
+                        setState(() {
+                          selectedFacilitiesId.remove(id);
+                        });
+                        _debounce?.cancel();
+                        _debounce = Timer(const Duration(milliseconds: 400), () async {
+                          await DeleteFacilityUseCase(HomeRepository()).call(
+                            params: DeleteFacilityParams(
+                              ownerType: "activity",
+                              ownerId: widget.activity!.iD!,
+                              facilities: [id],
+                            ),
+                          );
                         });
                       },
                     ),
@@ -290,11 +347,10 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("session_duration_required"));
                                 return false;
                               }
-                              // todo enable it later
-                              // if (location == null) {
-                              //   Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("location_required"));
-                              //   return false;
-                              // }
+                              if (selectedLocation == null) {
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("location_required"));
+                                return false;
+                              }
                               if (selectedFacilitiesId.isEmpty) {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("facility_required"));
                                 return false;
@@ -321,9 +377,9 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                                     endTime: formatTime24(time: toTime!),
                                     sessionDuration: selectedSession!,
                                     price: form.controllers[1].text,
-                                    description: form.controllers[3].text,
-                                    latitude: 33.333329999, // todo get from map later
-                                    longitude: 32.332219999, // todo get from map later
+                                    description: form.controllers[2].text,
+                                    latitude: selectedLocation!.lat!,
+                                    longitude: selectedLocation!.long!,
                                     files: photosList,
                                     tags: selectedFacilitiesId.toList(),
                                   )
@@ -336,7 +392,7 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                                   categoryId: selectCategory!.ID!,
                                   sessionDuration: selectedSession!,
                                   price: form.controllers[1].text,
-                                  description: form.controllers[3].text,
+                                  description: form.controllers[2].text,
                                 )
                             );
                           },
@@ -360,5 +416,5 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
   }
 
   @override
-  int numberOfFields() => 4;
+  int numberOfFields() => 3;
 }

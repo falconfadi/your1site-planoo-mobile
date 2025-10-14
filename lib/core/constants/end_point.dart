@@ -7,6 +7,7 @@ const headerContentType = HttpHeaders.contentTypeHeader;
 
 const kAccessToken = 'access_token';
 const kAccessTokenExpirationDate = 'token_expiration';
+const kLastTokenRefresh = 'last_token_refresh';
 const userID = 'user_id';
 const userType = 'user_type';
 
@@ -47,3 +48,15 @@ const String allWorkdaysUrl = "day/all";
 const String deleteWorkdayUrl = "day/delete";
 const String toggleActivationWorkdayUrl = "day/toggleActivation";
 const String editWorkdayUrl = "day/update";
+/// location
+const String editLocationUrl = "location/update";
+/// media
+const String getMediaUrl = "media/all";
+const String createMediaUrl = "media/create";
+const String deleteMediaUrl = "media/delete";
+/// facility
+const String createFacilityUrl = "tag/create";
+const String deleteFacilityUrl = "tag/delete";
+/// appointment
+const String checkActivityAppointmentUrl = "appointment/check";
+const String createActivityAppointmentUrl = "appointment/create";

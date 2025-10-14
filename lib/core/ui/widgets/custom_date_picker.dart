@@ -2,12 +2,23 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Future<dynamic> customDatePicker(BuildContext context) async {
+Future<dynamic> customDatePicker( BuildContext context, {int? allowedWeekday}) async {
+  DateTime now = DateTime.now();
+  DateTime initialDate = now;
+  if (allowedWeekday != null && now.weekday != allowedWeekday) {
+    int daysUntilNext = (allowedWeekday - now.weekday) % 7;
+    if (daysUntilNext <= 0) daysUntilNext += 7;
+    initialDate = now.add(Duration(days: daysUntilNext));
+  }
   return showDatePicker(
     context: context,
-    initialDate: DateTime.now(),
+    initialDate: initialDate,
     firstDate: DateTime(1900),
-    lastDate: DateTime.now(),
+    lastDate: DateTime(2100),
+
+    selectableDayPredicate: allowedWeekday != null
+        ? (DateTime day) => day.weekday == allowedWeekday
+        : (DateTime day) => true,
     builder: (context, child) {
       return Theme(
         data: ThemeData(
@@ -30,8 +41,8 @@ Future<dynamic> customDatePicker(BuildContext context) async {
   );
 }
 
-Future<DateTime?> selectDate(BuildContext context, DateTime? date) async {
-  DateTime? picked = await customDatePicker(context);
+Future<DateTime?> selectDate(BuildContext context, DateTime? date,{int? allowedWeekday}) async {
+  DateTime? picked = await customDatePicker(context,allowedWeekday: allowedWeekday);
   if (picked != null && picked != date) {
     date = picked;
   }

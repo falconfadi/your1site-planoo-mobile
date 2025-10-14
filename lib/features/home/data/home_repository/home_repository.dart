@@ -8,6 +8,7 @@ import 'package:centro_partner/features/home/data/model/activity/all_activities_
 import 'package:centro_partner/features/home/data/model/category_model.dart';
 import 'package:centro_partner/features/home/data/model/days_model.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
+import 'package:centro_partner/features/home/data/model/location/all_medias_model.dart';
 import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/all_workdays_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/workday_model.dart';
@@ -20,13 +21,18 @@ import 'package:centro_partner/features/home/data/usecase/categories_usecase.dar
 import 'package:centro_partner/features/home/data/usecase/activity/create_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/days_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facilities_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/facility/create_facility_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/facility/delete_facility_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/location/edit_location_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/media/all_medias_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/media/create_media_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/media/delete_medial_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/session_durations_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/all_workdays_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/create_workday_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/delete_workday_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/edit_workday_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/toggle_activation_workday_usecase.dart';
-
 
 class HomeRepository extends CoreRepository {
 
@@ -188,6 +194,73 @@ class HomeRepository extends CoreRepository {
         responseStr: 'WorkdayResponse',
         converter: (json) => WorkdayResponse.fromJson(json));
     return call(result: result);
+  }
+
+  /// location
+  Future<Result<bool>> editLocation({required EditLocationParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+        withAuthentication: true,
+        url: "$editLocationUrl/${params.ownerType}/${params.ownerId}",
+        data: params.toJson(),
+        method: HttpMethod.PATCH,
+    );
+    return noModelCall(result: result);
+  }
+
+  /// media
+  Future<Result<AllMediasModel>> getAllMedias({required AllMediasParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: "$getMediaUrl/${params.ownerType}/${params.ownerId}",
+        method: HttpMethod.GET,
+        responseStr: 'AllMediasResponse',
+        converter: (json) => AllMediasResponse.fromJson(json));
+    return call(result: result);
+  }
+
+  Future<Result<AllMediasModel>> createMedia({required CreateMediaParams params}) async {
+    final result = await RemoteDataSource.upload<AllMediasModel>(
+      withAuthentication: true,
+      url: "$createMediaUrl/${params.ownerType}/${params.ownerId}",
+      data: params.toJson(),
+      responseStr: 'AllMediasModel',
+      converter: (json) => AllMediasModel.fromJson(json),
+      filesMap: {
+        'media[][file]': [params.file],
+      },
+    );
+    return call(result: result);
+  }
+
+  Future<Result<bool>> deleteMedia({required DeleteMediaParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: "$deleteMediaUrl/${params.ownerType}/${params.ownerId}",
+      data: params.toJson(),
+      method: HttpMethod.DELETE,
+    );
+    return noModelCall(result: result);
+  }
+
+  /// facility
+  Future<Result<bool>> createFacility({required CreateFacilityParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: "$createFacilityUrl/${params.ownerType}/${params.ownerId}",
+      data: params.toJson(),
+      method: HttpMethod.POST,
+    );
+    return noModelCall(result: result);
+  }
+
+  Future<Result<bool>> deleteFacility({required DeleteFacilityParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: "$deleteFacilityUrl/${params.ownerType}/${params.ownerId}",
+      data: params.toJson(),
+      method: HttpMethod.DELETE,
+    );
+    return noModelCall(result: result);
   }
 
 }

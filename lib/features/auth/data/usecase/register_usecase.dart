@@ -1,4 +1,3 @@
-import 'package:centro_partner/features/auth/data/model/register_model.dart';
 import '../../../../core/params/base_params.dart';
 import '../../../../core/results/result.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -28,19 +27,19 @@ class RegisterParams extends BaseParams {
       "password_confirmation": confirmationPassword,
       "account_type": accountType,
       "description": description,
-      "fb_token": firebaseToken
+      "firebase_token": firebaseToken
     };
   }
 }
 
 
-class RegisterUseCase extends UseCase<RegisterModel, RegisterParams> {
+class RegisterUseCase extends UseCase<bool, RegisterParams> {
   final AuthRepository repository;
 
   RegisterUseCase(this.repository);
 
   @override
-  Future<Result<RegisterModel>> call({required RegisterParams params}) {
+  Future<Result<bool>> call({required RegisterParams params}) {
     return repository.register(params: params);
   }
 }

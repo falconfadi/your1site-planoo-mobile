@@ -9,9 +9,18 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
+        android:allowBackup="false"
         android:label="centro_partner"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="high_importance_channel" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/notification_icon" />
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCK5k9cVEE5aQZ4yfQ_qN1yWX9j9-e6_SA" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

@@ -64,7 +64,6 @@ dependencies:
   geolocator: ^14.0.2
   google_maps_flutter: ^2.13.1
   location: ^8.0.1
-  geocode: ^1.0.3
   responsive_grid_list: ^1.4.1
   carousel_slider: ^5.1.1
   url_launcher: ^6.3.2

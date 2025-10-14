@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "703371350637",
+    "project_id": "planoo-436fc",
+    "storage_bucket": "planoo-436fc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703371350637:android:84423ee20de22a04376564",
+        "android_client_info": {
+          "package_name": "com.example.centro_partner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsHNpqpJ_RoYTyAbyXmcEgnfICQDBxY5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

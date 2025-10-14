@@ -23,20 +23,21 @@ import 'models_factory.dart';
 
 class ApiProvider {
 
+  static final BaseOptions options = BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
+          milliseconds: 30000),
+      receiveTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
+          milliseconds: 30000),
+      followRedirects: false,
+      maxRedirects: 0,
+      validateStatus: (status) {
+        return status != null && status < 500;
+      }
+  );
+
   static final Dio dio = Dio(options);
 
-  static var options = BaseOptions(
-    baseUrl: baseUrl,
-    connectTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
-        milliseconds: 30000),
-    receiveTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
-        milliseconds: 30000),
-    followRedirects: false,
-    maxRedirects: 0,
-    validateStatus: (status) {
-      return status != null && status < 500;
-    }
-  );
 
   static Future<Either<BaseError, T>> uploadFilesWithKeys<T>({
     required String url,
@@ -49,10 +50,7 @@ class ApiProvider {
     CancelToken? cancelToken,
     required String strString,
   }) async {
-    final Map<String, dynamic> dataMap = {};
-    if (data != null) {
-      dataMap.addAll(data);
-    }
+    final Map<String, dynamic> dataMap = {...?data};
 
     if (queryParameters != null) {
       queryParameters = Map<String, dynamic>.from(queryParameters);
@@ -60,18 +58,15 @@ class ApiProvider {
 
     for (final entry in filesMap.entries) {
       final List<File> fileList = entry.value;
-      List<MultipartFile> multipartList = [];
 
-      for (final file in fileList) {
+      final multipartList = await Future.wait(fileList.map((file) async {
         final fileName = file.path.split("/").last;
-        multipartList.add(await MultipartFile.fromFile(file.path, filename: fileName));
-      }
+        return MultipartFile.fromFile(file.path, filename: fileName);
+      }));
 
-      // Assign as list or single file depending on count
       dataMap[entry.key] = multipartList.length == 1 ? multipartList.first : multipartList;
     }
 
-    // Optionally add any required fixed data
     dataMap['MnD'] = 'MnD';
 
     try {
@@ -85,11 +80,9 @@ class ApiProvider {
         cancelToken: cancelToken,
       );
 
-      var decodedJson = response.data is String ? json.decode(response.data) : response.data;
+      final decodedJson = _normalizeResponse(response.data);
+      debugPrint('response : $decodedJson');
 
-      decodedJson['payload'] ??= {'id': 0, 'file': ''};
-
-      debugPrint('respooooooonse : $decodedJson');
       return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
     } on DioError catch (e) {
       return Left(handleDioError(e));
@@ -108,98 +101,22 @@ class ApiProvider {
     required String strString,
   }) async {
     try {
-      debugPrint('[$method: $url] data : [$data]');
+      debugPrint('[${method.name}: $url] data : [$data]');
       debugPrint('queryParameters : [$queryParameters]');
-
-      dio.options.headers = headers;
-
       debugPrint(jsonEncode(data));
 
-      Response response;
-      switch (method) {
-        case HttpMethod.GET:
-          response = await dio.get(
-            url,
-            queryParameters: queryParameters,
-          );
-          break;
-        case HttpMethod.POST:
-          response = await dio.post(
-            url,
-            data: data,
-            queryParameters: queryParameters ?? {},
-          );
+      final response = await _sendRequest(method, url, data, headers, queryParameters);
+      final decodedJson = _normalizeResponse(response.data);
 
-          break;
-        case HttpMethod.PUT:
-          response = await dio.put(
-            url,
-            data: data,
-            queryParameters: queryParameters,
-          );
-          break;
-        case HttpMethod.DELETE:
-          response = await dio.delete(
-            url,
-            data: data,
-            queryParameters: queryParameters,
-          );
-        case HttpMethod.PATCH:
-          response = await dio.patch(
-            url,
-            data: data,
-            queryParameters: queryParameters,
-          );
-          break;
-      }
-
-      var decodedJson;
-
-      if (response.data is String) {
-        debugPrint(response.toString());
-        decodedJson = json.decode(response.data);
-        debugPrint(decodedJson);
-      } else {
-        decodedJson = response.data;
-      }
-
-      if (decodedJson['payload'] == false || decodedJson['payload'] == true) {
-        decodedJson['payload'] = {'': ''};
-      }
-      if (kDebugMode) {
-        printWrapped(decodedJson.toString());
-      }
-
-      if ((response.statusCode)! > 199 && (response.statusCode)! < 300) {
-        if (decodedJson['message'] != null || decodedJson['message'] != "") {
-          if (decodedJson['payload'] != null) {
-            return Right(ModelsFactory.getInstance()!.createModel<T>(
-                decodedJson, strString));
-          } else {
-            return Left(CustomError(
-                errorMessage: _extractErrorMessage(decodedJson)
-            ));
-          }
-        } else {
-          return Left(CustomError(
-            errorMessage: _extractErrorMessage(decodedJson)
-          ));
+      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
+        if ((decodedJson['message'] ?? '').isNotEmpty && decodedJson['payload'] != null) {
+          return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
         }
-      } else {
-        return Left(CustomError(
-          errorMessage: _extractErrorMessage(decodedJson)
-        ));
       }
-    }
-
-    on DioException catch (e) {
-      print(e.response);
+      return Left(CustomError(errorMessage: _extractErrorMessage(decodedJson)));
+    } on DioException catch (e) {
       return Left(handleDioError(e));
-    }
-
-    on SocketException catch (e, stacktrace) {
-      print(e);
-      print(stacktrace);
+    } on SocketException {
       return const Left(SocketError(message: 'please check your connection'));
     }
   }
@@ -213,110 +130,60 @@ class ApiProvider {
     CancelToken? cancelToken,
   }) async {
     try {
-      debugPrint('lllllllllllllllllllllllllllllllll$headers');
-      debugPrint('[$method: $url] data : [$data]');
+      debugPrint('[${method.name}: $url] data : [$data]');
       debugPrint('queryParameters : [$queryParameters]');
-
       debugPrint(jsonEncode(data));
 
-      dio.options.headers = headers;
+      final response = await _sendRequest(method, url, data, headers, queryParameters);
+      final decodedJson = _normalizeResponse(response.data);
 
-      Response response;
-      switch (method) {
-        case HttpMethod.GET:
-          response = await dio.get(
-            url,
-            queryParameters: queryParameters,
-          );
-          break;
-        case HttpMethod.POST:
-          response = await dio.post(
-            url,
-            data: data,
-            queryParameters: queryParameters ?? {},
-          );
-          break;
-        case HttpMethod.PUT:
-          response = await dio.put(
-            url,
-            data: data,
-            queryParameters: queryParameters,
-          );
-          break;
-        case HttpMethod.DELETE:
-          response = await dio.delete(
-            url,
-            data: data,
-            queryParameters: queryParameters,
-          );
-        case HttpMethod.PATCH:
-          response = await dio.patch(
-            url,
-            data: data,
-            queryParameters: queryParameters,
-          );
-          break;
-      }
-
-      var decodedJson;
-
-      if (response.data is String) {
-        if (response.data == "") {
+      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
+        if ((decodedJson['message'] ?? '').isNotEmpty || decodedJson['status'] != null) {
           return const Right(true);
-        } else {
-          decodedJson = json.decode(response.data);
-        }
-      } else {
-        decodedJson = response.data;
-      }
-
-      if (decodedJson['payload'] == false || decodedJson['payload'] == true) {
-        decodedJson['payload'] = {'': ''};
-      }
-      if (kDebugMode) {
-        printWrapped(decodedJson.toString());
-      }
-
-      if ((response.statusCode)! > 199 && (response.statusCode)! < 300) {
-        if (decodedJson['message'] != null && decodedJson['message'] != "") {
-          return const Right(true);
-        } else if (decodedJson['status'] != null) {
-          return const Right(true);
-        } else {
-          return Left(CustomError(
-              errorMessage: _extractErrorMessage(decodedJson)
-          ));
         }
       }
-      else {
-        return Left(CustomError(
-            errorMessage: _extractErrorMessage(decodedJson)
-        ));
-      }
-    }
 
-    on DioError catch (e) {
-      print(e.message);
+      return Left(CustomError(errorMessage: _extractErrorMessage(decodedJson)));
+    } on DioError catch (e) {
       return Left(handleDioError(e));
-    }
-
-    // Couldn't reach out the server
-    on SocketException catch (e, stacktrace) {
-      print(e);
-      print(stacktrace);
+    } on SocketException {
       return const Left(SocketError(message: 'please check your connection'));
     }
   }
 
-  static void printWrapped(String text) {
-    final pattern = RegExp('.{1,800}'); // 800 is the size of each chunk
-    pattern.allMatches(text).forEach((match) => print(match.group(0)));
+  static Future<Response> _sendRequest(
+      HttpMethod method,
+      String url,
+      Map<String, dynamic>? data,
+      Map<String, String>? headers,
+      Map<String, dynamic>? queryParameters,
+      ) async {
+    final options = Options(headers: headers);
+    switch (method) {
+      case HttpMethod.GET:
+        return await dio.get(url, queryParameters: queryParameters, options: options);
+      case HttpMethod.POST:
+        return await dio.post(url, data: data, queryParameters: queryParameters, options: options);
+      case HttpMethod.PUT:
+        return await dio.put(url, data: data, queryParameters: queryParameters, options: options);
+      case HttpMethod.DELETE:
+        return await dio.delete(url, data: data, queryParameters: queryParameters, options: options);
+      case HttpMethod.PATCH:
+        return await dio.patch(url, data: data, queryParameters: queryParameters, options: options);
+    }
+  }
+
+  static Map<String, dynamic> _normalizeResponse(dynamic data) {
+    final decoded = data is String ? json.decode(data) : data;
+    if (decoded['payload'] == false || decoded['payload'] == true) {
+      decoded['payload'] = {'': ''};
+    }
+    decoded['payload'] ??= {'id': 0, 'file': ''};
+    return decoded;
   }
 
   static BaseError handleDioError(DioException error) {
-    if (kDebugMode) {
-      print('error : $error');
-    }
+    if (kDebugMode) debugPrint('error : $error');
 
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.sendTimeout ||
@@ -326,102 +193,74 @@ class ApiProvider {
       return CancelError();
     } else if (error.type == DioExceptionType.unknown) {
       return UnknownError();
-    } else {
-      if (error is SocketException) {
-        return const SocketError(message: 'Please check your connection');
-      }
-
-      if (error.response != null && error.response!.data != null) {
-        final responseData = error.response!.data;
-
-        try {
-          Map<String, dynamic> decodedJson;
-
-          if (responseData is String) {
-            print('1');
-            // If the response is a string, try to decode it
-            decodedJson = jsonDecode(responseData);
-          } else if (responseData is Map<String, dynamic>) {
-            print('2');
-            // If responseData is already a decoded JSON object
-            decodedJson = responseData;
-          } else {
-            print('3');
-            return const HttpError(message: 'An unknown error occurred');
-          }
-
-          switch (error.response!.statusCode) {
-            case 400:
-              return BadRequestError(
-                  message: _extractErrorMessage(decodedJson));
-            case 401:
-              return UnauthorizedError(message: _extractErrorMessage(decodedJson));
-            case 403:
-              return ForbiddenError(message: decodedJson["error"]);
-            case 404:
-              return NotFoundError(
-                  message: decodedJson['message'], code: decodedJson['code']);
-            case 409:
-              return ConflictError(
-                  message: decodedJson['message'], code: decodedJson['code']);
-            case 500:
-              debugPrint(decodedJson.toString());
-              return InternalServerError();
-            default:
-              return HttpError(message: _extractErrorMessage(decodedJson));
-          }
-        } catch (e) {
-          debugPrint('Error parsing response: $e');
-          return const HttpError(message: 'An unknown error occurred');
-        }
-      }
-
-      return const HttpError(message: 'An unknown error occurred');
     }
+
+    final responseData = error.response?.data;
+    if (responseData != null) {
+      try {
+        final decodedJson = responseData is String ? jsonDecode(responseData) : responseData;
+        switch (error.response!.statusCode) {
+          case 400:
+            return BadRequestError(message: _extractErrorMessage(decodedJson));
+          case 401:
+            return UnauthorizedError(message: _extractErrorMessage(decodedJson));
+          case 403:
+            return ForbiddenError(message: decodedJson["error"]);
+          case 404:
+            return NotFoundError(message: decodedJson['message'], code: decodedJson['code']);
+          case 409:
+            return ConflictError(message: decodedJson['message'], code: decodedJson['code']);
+          case 500:
+            return InternalServerError();
+          default:
+            return HttpError(message: _extractErrorMessage(decodedJson));
+        }
+      } catch (e) {
+        debugPrint('Error parsing response: $e');
+        return const HttpError(message: 'An unknown error occurred');
+      }
+    }
+
+    return const HttpError(message: 'An unknown error occurred');
   }
 
   static String _extractErrorMessage(Map<String, dynamic> decodedJson) {
-    if (decodedJson.containsKey("payload") &&
-        decodedJson["payload"] != null &&
-        decodedJson["payload"].containsKey("errors")) {
+    final payload = decodedJson["payload"];
+    if (payload is Map<String, dynamic> && payload.containsKey("errors")) {
+      final errors = payload["errors"];
+      final List<String> errorMessages = [];
 
-      final errors = decodedJson["payload"]["errors"];
-
-      List<String> errorMessages = [];
-
-      if (errors is Map<String, dynamic> && errors.isNotEmpty) {
-        // Case 1: If `errors` is a Map (key-value pair)
-        print("1");
-        errors.forEach((key, value) {
-          if (value is List && value.isNotEmpty) {
-            errorMessages.addAll(value.map((e) => e.toString())); // Convert to string
+      if (errors is Map<String, dynamic>) {
+        debugPrint("Extracting errors from Map<String, List>");
+        errors.forEach((_, value) {
+          if (value is List) {
+            errorMessages.addAll(value.map((e) => e.toString()));
           }
         });
-      } else if (errors is List && errors.isNotEmpty) {
-        print("2");
-        // Case 2: If `errors` is a List (array of objects)
-        for (var errorItem in errors) {
-          if (errorItem is Map<String, dynamic>) {
-            errorItem.forEach((key, value) {
-              if (value is List && value.isNotEmpty) {
+      } else if (errors is List) {
+        debugPrint("Extracting errors from List<Map<String, List>>");
+        for (final item in errors) {
+          if (item is Map<String, dynamic>) {
+            item.forEach((_, value) {
+              if (value is List) {
                 errorMessages.addAll(value.map((e) => e.toString()));
               }
             });
           }
         }
-      } else {
-        // Case 3: errors is string
+      } else if (errors is String) {
+        debugPrint("Extracting errors from String");
         return errors;
       }
 
       if (errorMessages.isNotEmpty) {
-        return errorMessages.join(" "); // Join all messages with space
+        return errorMessages.join(" ");
       }
     }
 
-    // If no specific error messages found, return the general message
-    if (decodedJson.containsKey("message") && decodedJson["message"] is String) {
-      return decodedJson["message"];
+    final message = decodedJson["message"];
+    if (message is String && message.trim().isNotEmpty) {
+      return message;
     }
 
     return "An unknown error occurred";

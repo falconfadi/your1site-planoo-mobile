@@ -1,6 +1,6 @@
 import 'package:centro_partner/core/classes/Keys.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
-import 'package:centro_partner/features/appointments/ui/appointments_screen.dart';
+import 'package:centro_partner/features/appointment/ui/appointments_screen.dart';
 import 'package:centro_partner/features/home/ui/home_screen.dart';
 import 'package:centro_partner/features/general/widget/drawer_widget.dart';
 import 'package:centro_partner/features/profile/ui/profile_screen.dart';

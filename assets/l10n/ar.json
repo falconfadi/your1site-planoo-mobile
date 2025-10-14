@@ -99,5 +99,12 @@
   "location_required": "Location is required",
   "facility_required": "Facility is required",
   "book": "Book",
-  "workday": "Workday"
+  "workday": "Workday",
+  "pick_location": "Pick location",
+  "check": "Check",
+  "activity": "Activity",
+  "day": "Day",
+  "slots": "Slots",
+  "note": "Note",
+  "activity_booked_successfully": "Activity has been booked successfully"
 }

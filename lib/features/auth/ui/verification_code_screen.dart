@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
@@ -21,10 +22,9 @@ import 'package:pinput/pinput.dart';
 class VerificationCodeScreen extends StatefulWidget {
 
   final String phoneNumber;
-  final int? code;
   final bool fromSingUp;
 
-  const VerificationCodeScreen({required this.phoneNumber,this.code,this.fromSingUp = true,super.key});
+  const VerificationCodeScreen({required this.phoneNumber,this.fromSingUp = true,super.key});
 
   @override
   State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
@@ -63,15 +63,14 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
     super.initState();
     codeController = TextEditingController();
 
-    // todo enable later
-    // FirebaseApi.verificationCodeNotifier.addListener(() {
-    //   final code = FirebaseApi.verificationCodeNotifier.value;
-    //   if (code != null && code.isNotEmpty) {
-    //     setState(() {
-    //       codeController.text = code;
-    //     });
-    //   }
-    // });
+    FirebaseApi.verificationCodeNotifier.addListener(() {
+      final code = FirebaseApi.verificationCodeNotifier.value;
+      if (code != null && code.isNotEmpty) {
+        setState(() {
+          codeController.text = code;
+        });
+      }
+    });
 
     if(!widget.fromSingUp) {
       _seconds=0;
@@ -136,13 +135,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       text: " ",
                     ),
                     TextSpan(
-                      text: "${widget.phoneNumber} ",
+                      text: widget.phoneNumber,
                       style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
-                    ),
-                    // todo remove later
-                    TextSpan(
-                      text: "(${widget.code})",
-                      style: AppTheme.titleLarge.copyWith(fontSize: 18.sp,color: AppColors.turquoiseColor),
                     ),
                   ],
                 ),

@@ -1,5 +1,6 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
@@ -7,7 +8,6 @@ import 'package:centro_partner/core/utils/validators/email_validator.dart';
 import 'package:centro_partner/core/utils/validators/password_validator.dart';
 import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
-import 'package:centro_partner/features/auth/data/model/register_model.dart';
 import 'package:centro_partner/features/auth/data/model/user_type_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/user_types_usecase.dart';
@@ -178,11 +178,8 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                   ),
                   SizedBox(height: 50.h),
                   CreateModel(
-                    onSuccess: (RegisterModel result) async {
-                      Navigation.pushAndRemoveUntil(VerificationCodeScreen(
-                        phoneNumber: form.controllers[2].text,
-                        code: result.code,
-                      ));
+                    onSuccess: (result) async {
+                      Navigation.pushAndRemoveUntil(VerificationCodeScreen(phoneNumber: form.controllers[2].text));
                     },
                     withValidation: true,
                     onTap: () {
@@ -203,9 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                             confirmationPassword: form.controllers[3].text,
                             accountType: selectAccountType,
                             description: form.controllers[4].text,
-                            // todo change the firebaseToken later
-                            firebaseToken: "eevJy1ckQVia9XkDF"
-                            // firebaseToken: FirebaseApi.deviceToken.toString()
+                            firebaseToken: FirebaseApi.deviceToken.toString()
                           ));
                     },
                     child: CustomButton(

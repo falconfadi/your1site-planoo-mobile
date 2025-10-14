@@ -1,7 +1,6 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
-import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
 import 'package:centro_partner/core/ui/widgets/custom_time_picker.dart';

@@ -15,6 +15,8 @@ class SelectMultiItemsWidget<T, ID> extends StatefulWidget {
   final String Function(T) labelBuilder;
   final ID Function(T) idBuilder;
   final void Function(Set<ID>) onSelect;
+  final bool? isDelete;
+  final void Function(ID)? onDelete;
 
   const SelectMultiItemsWidget({
     super.key,
@@ -24,6 +26,8 @@ class SelectMultiItemsWidget<T, ID> extends StatefulWidget {
     required this.labelBuilder,
     required this.idBuilder,
     required this.onSelect,
+    this.isDelete,
+    this.onDelete
   });
 
   @override
@@ -106,18 +110,33 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
             final item =
             widget.list.firstWhere((e) => widget.idBuilder(e) == id);
             return UnconstrainedBox(
-              child: Container(
-                padding: EdgeInsets.only(left: 10.w,right: 10.w,top: 10.h,bottom: 5.h),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10.r),
-                  color: AppColors.primaryColor.withOpacity(0.1),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(widget.labelBuilder(item), style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
-                  ],
-                ),
+              child: Stack(
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(left: 15.w,right: 15.w,top: widget.isDelete == true ? 20.h : 15.h,bottom: 10.h),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.r),
+                      color: AppColors.primaryColor.withOpacity(0.1),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(widget.labelBuilder(item), style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
+                      ],
+                    ),
+                  ),
+                  if(widget.isDelete == true)
+                    Positioned(
+                      right: 0,
+                      child: InkWell(
+                          onTap: () {
+                            if(widget.isDelete == true) {
+                              widget.onDelete!(id);
+                            }
+                          },
+                          child: Icon(Icons.close))
+                    )
+                ],
               ),
             );
           }).toList(),

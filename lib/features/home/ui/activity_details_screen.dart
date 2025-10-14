@@ -7,10 +7,13 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
+import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/project_utils/open_url.dart';
+import 'package:centro_partner/features/appointment/widget/book_activity_sheet.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
+import 'package:centro_partner/features/home/data/model/activity/activity_details_model.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/activity_details_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/delete_activity_usecase.dart';
@@ -35,8 +38,8 @@ class ActivityDetailsScreen extends StatefulWidget {
 
 class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
 
-  int price = 0;
   GetModelCubit<ActivityModel>? refreshCubit;
+  ActivityDetailsModel? activityDetailsModel;
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +55,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
         },
         onSuccess: (ActivityModel result) {
           setState(() {
-            price = result.activity!.price!;
+            activityDetailsModel = result.activity;
           });
         },
         withAnimation: false,
@@ -439,7 +442,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   Text(AppLocalization.of(context).translate("price"),
                     style: AppTheme.bodyMedium,
                   ),
-                  Text(price.toString(),
+                  Text(activityDetailsModel == null ? "" : activityDetailsModel!.price.toString(),
                     style: AppTheme.headlineSmall.copyWith(
                       color: AppColors.primaryColor,
                       fontSize: 24.sp
@@ -456,7 +459,15 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                 borderRadius: 10.r,
                 buttonName: AppLocalization.of(context).translate("book"),
                 function: () {
-                  // todo book api later
+                  CustomSheet.show(
+                      isDismissible: true,
+                      header: Text(AppLocalization.of(context).translate("book"),
+                        style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                      ),
+                      padding: 30.w,
+                      context: context,
+                      child: BookActivitySheet(activity: activityDetailsModel!)
+                  );
                 },
               ),
             ),

@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +17,24 @@ import '../responses/api_response.dart';
 import 'model.dart';
 
 abstract class RemoteDataSource {
+
+  static Future<Map<String, String>> _buildHeaders({bool withAuthentication = false}) async {
+    final Map<String, String> headers = {
+      headerLanguageKey: '${await AppStorage.getData(key: headerLanguageKey) ?? 'en'}',
+      headerAccept: 'application/json',
+      headerContentType: 'application/json',
+    };
+
+    if (withAuthentication) {
+     await checkTokenValidation();
+
+      final String? token = await AppStorage.getData(key: kAccessToken);
+      if (token != null) headers[headerAuth] = 'Bearer $token';
+    }
+
+    return headers;
+  }
+
   static Future<Either<BaseError, Data>> request<Data extends BaseModel, Resp extends ApiResponse<Data>>({
     required String responseStr,
     required Resp Function(Map<String, dynamic>) converter,
@@ -25,38 +45,28 @@ abstract class RemoteDataSource {
     bool withAuthentication = false,
   }) async {
     ModelsFactory.getInstance()!.registerModel(responseStr, converter);
-    final Map<String, String> headers = {};
 
-    if (withAuthentication) {
-      await checkTokenValidation();
-      final String token = AppStorage.getData(key: kAccessToken);
-      debugPrint(token);
-      headers.putIfAbsent(headerAuth, () => 'Bearer $token');
-    }
-    headers.putIfAbsent(headerLanguageKey, () => '${AppStorage.getData(key: headerLanguageKey)}');
-    headers.putIfAbsent(headerAccept, () => 'application/json');
-    headers.putIfAbsent(headerContentType, () => 'application/json');
-    final response = await ApiProvider.sendObjectRequest<Resp>(
-      method: method,
-      url: url,
-      headers: headers,
-      queryParameters: queryParameters,
-      data: data,
-      strString: responseStr,
-    );
-    debugPrint(response.toString());
+    try {
+      final headers = await _buildHeaders(
+          withAuthentication: withAuthentication);
 
-    if (kDebugMode) {
-      print('is right : ${response.isRight()}');
-    }
-    debugPrint('is right : ${response.isRight()}');
-    if (response.isLeft()) {
-      debugPrint('is left');
-      return Left((response as Left<BaseError, Resp>).value);
-    } else {
-      debugPrint('response right ${(response as Right<BaseError, Resp>).value}');
-      final resValue = response.value;
-      return Right(resValue.data);
+      final response = await ApiProvider.sendObjectRequest<Resp>(
+        method: method,
+        url: url,
+        headers: headers,
+        queryParameters: queryParameters,
+        data: data,
+        strString: responseStr,
+      );
+
+      debugPrint('Request $url isRight: ${response.isRight()}');
+
+      return response.fold(
+            (error) => Left(error),
+            (resp) => Right(resp.data),
+      );
+    } catch (e) {
+      return Left(CustomError(errorMessage: e.toString()));
     }
   }
 
@@ -67,35 +77,25 @@ abstract class RemoteDataSource {
     Map<String, dynamic>? data,
     bool withAuthentication = false,
   }) async {
-    final Map<String, String> headers = {};
+    try {
+      final headers = await _buildHeaders(withAuthentication: withAuthentication);
 
-    if (withAuthentication) {
-      await checkTokenValidation();
-      final String token = AppStorage.getData(key: kAccessToken);
-      headers.putIfAbsent(headerAuth, () => 'Bearer $token');
-    }
-    headers.putIfAbsent(headerLanguageKey, () => '${AppStorage.getData(key: headerLanguageKey)}');
-    headers.putIfAbsent(headerAccept, () => 'application/json');
-    headers.putIfAbsent(headerContentType, () => 'application/json');
-    final response = await ApiProvider.sendObjectWithOutResponseRequest(
-      method: method,
-      url: url,
-      headers: headers,
-      queryParameters: queryParameters,
-      data: data,
-    );
+      final response = await ApiProvider.sendObjectWithOutResponseRequest(
+        method: method,
+        url: url,
+        headers: headers,
+        queryParameters: queryParameters,
+        data: data,
+      );
 
-    if (kDebugMode) {
-      print('is right : ${response.isRight()}');
-    }
-    debugPrint('is right : ${response.isRight()}');
-    if (response.isLeft()) {
-      debugPrint('is left');
-      return Left((response as Left<BaseError, bool>).value);
-    } else {
-      debugPrint('response right ${(response as Right<BaseError, bool>).value}');
-      final resValue = response;
-      return resValue;
+      debugPrint('No model request $url isRight: ${response.isRight()}');
+
+      return response.fold(
+            (error) => Left(error),
+            (value) => Right(value),
+      );
+    } catch (e) {
+      return Left(CustomError(errorMessage: e.toString()));
     }
   }
 
@@ -103,7 +103,7 @@ abstract class RemoteDataSource {
     required String responseStr,
     required Data Function(Map<String, dynamic>) converter,
     required String url,
-    required Map<String, List<File>> filesMap, // <- updated
+    required Map<String, List<File>> filesMap,
     Map<String, dynamic>? data,
     Map<String, dynamic>? queryParameters,
     bool withAuthentication = false,
@@ -112,49 +112,42 @@ abstract class RemoteDataSource {
     CancelToken? cancelToken,
   }) async {
     ModelsFactory.getInstance()!.registerModel(responseStr, converter);
-    final Map<String, String> headers = {};
+    try {
+      final headers = await _buildHeaders(withAuthentication: withAuthentication);
 
-    if (withAuthentication) {
-      await checkTokenValidation();
-      final String token = AppStorage.getData(key: kAccessToken);
-      debugPrint(token);
-      headers.putIfAbsent(headerAuth, () => 'Bearer $token');
-    }
-    headers.putIfAbsent(headerAccept, () => 'application/json');
-    headers.putIfAbsent(headerContentType, () => 'application/json');
-    final response = await ApiProvider.uploadFilesWithKeys<Data>(
-      url: url,
-      filesMap: filesMap,
-      data: data,
-      headers: headers,
-      queryParameters: queryParameters,
-      cancelToken: cancelToken,
-      onSendProgress: onSendProgress,
-      onReceiveProgress: onReceiveProgress,
-      strString: responseStr,
-    );
+      final response = await ApiProvider.uploadFilesWithKeys<Data>(
+        url: url,
+        filesMap: filesMap,
+        data: data,
+        headers: headers,
+        queryParameters: queryParameters,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+        strString: responseStr,
+      );
 
-    print('is right : ${response.isRight()}');
-    if (response.isLeft()) {
-      print('is left');
-      return Left((response as Left<BaseError, Data>).value);
-    } else {
-      print('response right ${(response as Right<BaseError, Data>).value}');
-      return Right((response as Right<BaseError, Data>).value);
+      debugPrint('Upload $url isRight: ${response.isRight()}');
+
+      return response.fold(
+            (error) => Left(error),
+            (resp) => Right(resp),
+      );
+    } catch (e) {
+      return Left(CustomError(errorMessage: e.toString()));
     }
   }
 
-  // todo check later
   static Future<Either<BaseError, void>?> checkTokenValidation() async {
     final String? token = await AppStorage.getData(key: kAccessToken);
 
     if (token == null) {
-      // Navigation.pushAndRemoveUntil(LoginScreen()); // todo later
+      Navigation.pushAndRemoveUntil(SignInScreen());
       return const Left(CustomError(errorMessage: 'No token found'));
     }
 
     try {
-      Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+      final decodedToken = JwtDecoder.decode(token);
       int expirationTimestamp = decodedToken['exp'];
       DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(expirationTimestamp * 1000);
 
@@ -164,13 +157,28 @@ abstract class RemoteDataSource {
       if (expirationDate.isBefore(now)) {
         await AppStorage.removeData(key: kAccessToken);
         await AppStorage.removeData(key: kAccessTokenExpirationDate);
+        await AppStorage.removeData(key: kLastTokenRefresh);
 
-        // Navigation.pushAndRemoveUntil(LoginScreen()); // todo later
+        Navigation.pushAndRemoveUntil(SignInScreen());
         return const Left(CustomError(errorMessage: 'Token expired'));
-      } else if (difference <= 5) {
-        // Less than 5 minute left → refresh token
-        debugPrint('Refreshing token…');
+      } else if (difference <= 15) {
+        // Less than 15 minutes left → refresh token if needed
+        debugPrint('Checking if we should refresh token…');
+
         try {
+          final lastRefreshStr = await AppStorage.getData(key: kLastTokenRefresh);
+          if (lastRefreshStr != null) {
+            final lastRefresh = DateTime.parse(lastRefreshStr);
+            final sinceLastRefresh = now.difference(lastRefresh).inMinutes;
+
+            // If refreshed within last 150 mins (~2 hours), skip refresh
+            if (sinceLastRefresh < 115) {
+              debugPrint('Token recently refreshed ($sinceLastRefresh mins ago). Skipping refresh.');
+              return Right(null);
+            }
+          }
+
+          debugPrint('Refreshing token…');
           final response = await Dio().post(
             baseUrl + refreshTokenUrl,
             options: Options(
@@ -183,6 +191,8 @@ abstract class RemoteDataSource {
           if (response.statusCode == 200 && response.data['success'] == true) {
             final newToken = response.data['payload']['token'];
             await AppStorage.saveData(key: kAccessToken, value: newToken);
+            await AppStorage.saveData(key: kLastTokenRefresh, value: DateTime.now().toIso8601String());
+            debugPrint('Token refreshed successfully.');
           } else {
             return const Left(CustomError(errorMessage: 'Failed to refresh token'));
           }
@@ -190,21 +200,21 @@ abstract class RemoteDataSource {
           if (e.response?.statusCode == 401) {
             await AppStorage.removeData(key: kAccessToken);
             await AppStorage.removeData(key: kAccessTokenExpirationDate);
-            // Navigation.pushAndRemoveUntil(LoginScreen()); // todo later
+            await AppStorage.removeData(key: kLastTokenRefresh);
+            Navigation.pushAndRemoveUntil(SignInScreen());
           }
-          return const Left(SocketError(message: ''));
         } on SocketException {
           return const Left(SocketError(message: 'Connection error'));
         } catch (e) {
-          return const Left(CustomError(errorMessage: 'Unexpected error'));
+          return Left(CustomError(errorMessage: e.toString()));
         }
       }
 
       return Right(null); // Token is valid
     } catch (e) {
-      debugPrint('Error checking token: $e');
-      return const Left(CustomError(errorMessage: 'Failed to parse token'));
+      return Left(CustomError(errorMessage: e.toString()));
     }
   }
+
 
 }

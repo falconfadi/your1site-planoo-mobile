@@ -52,7 +52,6 @@ class _ForgetPasswordSheetState extends State<ForgetPasswordSheet>  with FormSta
             SizedBox(height: 50.h),
             CreateModel(
                 onSuccess: (model) async {
-                  // todo send code to VerificationCodeScreen
                   Navigation.popThenPush(VerificationCodeScreen(phoneNumber: form.controllers[0].text,fromSingUp: false));
                 },
                 withValidation: true,

@@ -4,16 +4,29 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/features/auth/ui/splash_screen.dart';
+import 'package:centro_partner/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
   await AppStorage.init();
   await ScreenUtil.ensureScreenSize();
   runApp(const MyApp());
+}
+
+@pragma("vm:entry-point")
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
 }
 
 class MyApp extends StatefulWidget {
@@ -45,6 +58,11 @@ class _MyAppState extends State<MyApp> {
     // AppStorage.removeData(key: kAccessToken);
     // AppStorage.removeData(key: userID);
     // AppStorage.removeData(key: userType);
+    FirebaseApi().requestNotificationPermission();
+    FirebaseApi().firebaseInit();
+    FirebaseApi().setupInteractMessage(context);
+    FirebaseApi().isTokenRefresh();
+    FirebaseApi().getDeviceToken();
     /// load application language:
     AppStorage.loadLanguage().then((languageCode) {
       setState(() {
