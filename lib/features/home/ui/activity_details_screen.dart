@@ -58,7 +58,6 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
             activityDetailsModel = result.activity;
           });
         },
-        withAnimation: false,
         modelBuilder: (model) => SingleChildScrollView(
           child: Column(
             children: [
@@ -459,15 +458,17 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                 borderRadius: 10.r,
                 buttonName: AppLocalization.of(context).translate("book"),
                 function: () {
-                  CustomSheet.show(
-                      isDismissible: true,
-                      header: Text(AppLocalization.of(context).translate("book"),
-                        style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
-                      ),
-                      padding: 30.w,
-                      context: context,
-                      child: BookActivitySheet(activity: activityDetailsModel!)
-                  );
+                  if(activityDetailsModel != null) {
+                    CustomSheet.show(
+                        isDismissible: true,
+                        header: Text(AppLocalization.of(context).translate("book"),
+                          style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                        ),
+                        padding: 30.w,
+                        context: context,
+                        child: BookActivitySheet(activity: activityDetailsModel!)
+                    );
+                  }
                 },
               ),
             ),

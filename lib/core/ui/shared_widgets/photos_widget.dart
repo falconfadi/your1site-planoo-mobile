@@ -115,7 +115,6 @@ class _PhotosWidgetState extends State<PhotosWidget> {
                         ownerId: widget.ownerId!
                     ));
               },
-              withAnimation: false,
               modelBuilder: (getModel) => Container(
                 height: 100.w,
                 margin: EdgeInsets.symmetric(horizontal: 5.w,vertical: 10.h),

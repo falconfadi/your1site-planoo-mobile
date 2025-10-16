@@ -55,7 +55,6 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
                 ownerId: widget.ownerId
               ));
         },
-        withAnimation: false,
         modelBuilder: (getModel) => SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(

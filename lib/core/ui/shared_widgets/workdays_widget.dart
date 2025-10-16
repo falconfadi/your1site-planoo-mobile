@@ -46,7 +46,6 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
             useCaseCallBack: () {
               return DaysUseCase(HomeRepository()).call(params: DaysParams());
             },
-            withAnimation: false,
             modelBuilder: (model) => SelectMultiItemsWidget<String, String>(
               title: AppLocalization.of(context).translate("workdays"),
               list: model.daysList ?? [],

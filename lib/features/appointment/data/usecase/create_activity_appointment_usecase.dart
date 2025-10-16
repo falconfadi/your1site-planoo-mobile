@@ -11,6 +11,7 @@ class CreateActivityAppointmentParams extends BaseParams {
   final int sessionDuration;
   final String time;
   final String? note;
+  final String customerPhone;
 
   CreateActivityAppointmentParams({
     required this.activityId,
@@ -18,7 +19,8 @@ class CreateActivityAppointmentParams extends BaseParams {
     required this.date,
     required this.sessionDuration,
     required this.time,
-    this.note
+    this.note,
+    required this.customerPhone
   });
 
   Map<String, dynamic> toJson() {
@@ -29,6 +31,7 @@ class CreateActivityAppointmentParams extends BaseParams {
       'session_duration': sessionDuration,
       'time': time,
       'notes': note,
+      'customer_phone': customerPhone,
     };
   }
 }

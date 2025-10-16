@@ -106,5 +106,10 @@
   "day": "Day",
   "slots": "Slots",
   "note": "Note",
-  "activity_booked_successfully": "Activity has been booked successfully"
+  "activity_booked_successfully": "Activity has been booked successfully",
+  "pull_up_to_load": "Pull up to load",
+  "load_failed": "Load Failed",
+  "release_to_load_more": "Release to load more",
+  "no_data_found": "No data found",
+  "customer_phone": "Customer phone"
 }

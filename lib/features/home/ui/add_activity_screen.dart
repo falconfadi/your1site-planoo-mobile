@@ -127,7 +127,6 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                         );
                       }
                     },
-                    withAnimation: false,
                     modelBuilder: (model) => CustomDropDown(
                       width: 1.sw,
                       height: 60.h,
@@ -175,7 +174,6 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                       return SessionDurationsUseCase(HomeRepository())
                           .call(params: SessionDurationsParams());
                     },
-                    withAnimation: false,
                     modelBuilder: (model) => CustomDropDown(
                       width: 1.sw,
                       height: 60.h,
@@ -273,7 +271,6 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                       return FacilitiesUseCase(HomeRepository())
                           .call(params: FacilitiesParams());
                     },
-                    withAnimation: false,
                     onSuccess: (result) {
                       if(widget.isEdit == true) {
                         selectedFacilitiesId = widget.activity!.facilitiesList!.map((f) => f.ID!).toSet();

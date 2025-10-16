@@ -27,6 +27,22 @@ class _FilterSheetState extends State<FilterSheet> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        InkWell(
+          onTap: () async {
+            DateTime? selectedDate = await selectDate(context, date);
+            if (selectedDate != null) {
+              setState(() {
+                date = selectedDate;
+              });
+            }
+          },
+          child: CustomContainerInfoWidget(
+            title: date == null ? AppLocalization.of(context).translate("date") : convertDate(date: date.toString()),
+            textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: date == null ?
+            AppColors.mediumGrayColor : AppColors.blackColor),
+          ),
+        ),
+        SizedBox(height: 20.h),
         CustomDropDown(
           width: 1.sw,
           height: 60.h,
@@ -53,22 +69,6 @@ class _FilterSheetState extends State<FilterSheet> {
             );
           }).toList(),
         ),
-        SizedBox(height: 20.h),
-        InkWell(
-          onTap: () async {
-            DateTime? selectedDate = await selectDate(context, date);
-            if (selectedDate != null) {
-              setState(() {
-                date = selectedDate;
-              });
-            }
-          },
-          child: CustomContainerInfoWidget(
-            title: date == null ? AppLocalization.of(context).translate("date") : convertDate(date: date.toString()),
-            textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: date == null ?
-            AppColors.mediumGrayColor : AppColors.blackColor),
-          ),
-        ),
         SizedBox(height: 30.h),
         CustomButton(
           width: 1.sw,
@@ -76,7 +76,7 @@ class _FilterSheetState extends State<FilterSheet> {
           borderRadius: 10.r,
           buttonName: AppLocalization.of(context).translate("apply"),
           function: () {
-            // todo filter api
+            Navigator.pop(context,{selectedStatus,date == null ? null : convertDate(date: date.toString(),format: "yyyy-MM-dd")});
           },
         ),
         SizedBox(height: 30.h),

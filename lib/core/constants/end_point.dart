@@ -58,5 +58,7 @@ const String deleteMediaUrl = "media/delete";
 const String createFacilityUrl = "tag/create";
 const String deleteFacilityUrl = "tag/delete";
 /// appointment
+const String allAppointmentsUrl = "appointment/all";
 const String checkActivityAppointmentUrl = "appointment/check";
 const String createActivityAppointmentUrl = "appointment/create";
+const String cancelActivityAppointmentUrl = "appointment/cancel";

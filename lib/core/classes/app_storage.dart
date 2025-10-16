@@ -45,11 +45,12 @@ class AppStorage {
     }
   }
 
-  static void saveLanguage(BuildContext context,String lang) {
-    saveData(key: headerLanguageKey,value: lang).then((val){
-      languageCode = lang;
+  static Future<void> saveLanguage(BuildContext context, String lang) async {
+    languageCode = lang;
+    await saveData(key: headerLanguageKey, value: lang);
+    if (context.mounted) {
       MyApp.setLocale(context, Locale(lang));
-    });
+    }
   }
 
   static void changeLanguage(BuildContext context, String lang) {

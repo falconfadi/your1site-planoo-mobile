@@ -5,12 +5,12 @@ import 'package:mocktail/mocktail.dart';
 import 'package:centro_partner/core/boilerplate/create_model/cubits/create_model_cubit.dart';
 import 'package:centro_partner/core/results/result.dart';
 
-class MockUseCase  extends Mock {
+class MockUseCase extends Mock {
   Future<Result>? call(dynamic data);
 }
 
 void main() {
-  late MockUseCase  mockUseCase;
+  late MockUseCase mockUseCase;
   late CreateModelCubit cubit;
 
   setUp(() {

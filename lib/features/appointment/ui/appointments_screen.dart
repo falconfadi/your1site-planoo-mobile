@@ -1,12 +1,16 @@
+import 'package:centro_partner/core/boilerplate/pagination/cubits/pagination_cubit.dart';
+import 'package:centro_partner/core/boilerplate/pagination/widgets/pagination_list.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/constants/enum/status_enum.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/tabs_widget.dart';
 import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
-import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
-import 'package:centro_partner/features/appointment/ui/activity_appointment_details_screen.dart';
+import 'package:centro_partner/features/appointment/data/appointment_repository/appointment_repository.dart';
+import 'package:centro_partner/features/appointment/data/model/appointment_details_model.dart';
+import 'package:centro_partner/features/appointment/ui/all_appointments_usecase.dart';
 import 'package:centro_partner/features/appointment/widget/activity_appointments_widget.dart';
 import 'package:centro_partner/features/appointment/widget/filter_sheet.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +28,9 @@ class AppointmentsScreen extends StatefulWidget {
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
 
   int selectedTab = 0;
-
-  List<Map<String,dynamic>> activityAppointmentsList = [
-    {"photo":"https://smithhousestrategy.com/wp-content/uploads/2024/02/sports.jpg","category":"Football","date":"15/10/2025","from_time":"10:00","to_time":"12:30","status": 0,"user":"Maya"},
-    {"photo":"https://smithhousestrategy.com/wp-content/uploads/2024/02/sports.jpg","category":"Basketball","date":"15/10/2025","from_time":"10:00","to_time":"12:30","status": 1,"user":"Dani"},
-    {"photo":"https://smithhousestrategy.com/wp-content/uploads/2024/02/sports.jpg","category":"Volleyball","date":"15/10/2025","from_time":"10:00","to_time":"12:30","status": 1,"user":"Ahmad"},
-    {"photo":"https://smithhousestrategy.com/wp-content/uploads/2024/02/sports.jpg","category":"Tennis","date":"15/10/2025","from_time":"10:00","to_time":"12:30","status": -1,"user":"Jojo"},
-  ];
+  late PaginationCubit cubit;
+  StatusEnum selectedStatus = StatusEnum.accepted;
+  String? date;
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +46,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               Row(
                 children: [
                   InkWell(
-                    onTap: () {
-                      CustomSheet.show(
+                    onTap: () async {
+                      final result = await CustomSheet.show(
                           isDismissible: true,
                           header: Text(AppLocalization.of(context).translate("filter"),
                             style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
@@ -56,6 +56,15 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                           context: context,
                           child: FilterSheet()
                       );
+                      if (result != null) {
+                        selectedStatus = result.first;
+                        if(result.last == null) {
+                          date = null;
+                        } else {
+                          date = result.last.toString();
+                        }
+                        setState(() {});
+                      }
                     },
                     child: SvgPicture.asset(filter,color: AppColors.turquoiseColor)
                   ),
@@ -75,16 +84,39 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               SizedBox(height: 10.h),
               selectedTab == 0 ?
               Expanded(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: activityAppointmentsList.length,
-                  itemBuilder: (context,index) {
-                    return InkWell(
-                        onTap: () => Navigation.push(ActivityAppointmentDetailsScreen(appointment: activityAppointmentsList[index])),
-                        child: ActivityAppointmentsWidget(appointment: activityAppointmentsList[index]));
-                    },
+                child: PaginationList<AppointmentDetailsModel>(
+                  key: ValueKey("$selectedStatus-$date"),
+                  scrollDirection: Axis.vertical,
+                  withPagination: true,
+                  onCubitCreated: (cub) {
+                    cubit = cub;
+                  },
+                  repositoryCallBack: (model) {
+                    return AllAppointmentsUseCase(AppointmentRepository()).call(
+                        params: AllAppointmentsParams(model,
+                          ownerType: "activity",
+                          date: date,
+                          status: selectedStatus.name == "accepted" ? 0 :
+                          selectedStatus.name == "completed" ? 1 : -1
+                        ));
+                  },
+                  listBuilder: (list) {
+                    print(list.length);
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: list.length,
+                      itemBuilder: (context,index) {
+                        return ActivityAppointmentsWidget(
+                          appointment: list[index],
+                          onRefresh: () async {
+                            await cubit.getList();
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
-              ) : Center(),
+              ): Center(),
             ],
           ),
         )

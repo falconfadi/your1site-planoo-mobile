@@ -48,7 +48,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return GetUserUseCase(ProfileRepository()).call(params: GetUserParams());
             },
           onSuccess: (model) {},
-          withAnimation: false,
           modelBuilder: (model) => SingleChildScrollView(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(

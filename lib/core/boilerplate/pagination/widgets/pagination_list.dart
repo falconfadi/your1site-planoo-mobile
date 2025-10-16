@@ -7,11 +7,10 @@ import '../../../ui/widgets/no_data_widget.dart';
 import '../cubits/pagination_cubit.dart';
 
 typedef CreatedCallback = void Function(PaginationCubit cubit);
-
 typedef ListBuilder<Model> = Widget Function(List<Model> list);
 
 class PaginationList<Model> extends StatefulWidget {
-  final RepositoryCallBack? repositoryCallBack;
+  final RepositoryCallBack repositoryCallBack;
   final ListBuilder<Model>? listBuilder;
   final CreatedCallback? onCubitCreated;
   final bool? withPagination;
@@ -23,55 +22,56 @@ class PaginationList<Model> extends StatefulWidget {
   final Widget? noDataWidget;
   final Widget? loadingWidget;
 
-  const PaginationList(
-      {super.key,
-        this.noDataWidget,
-        this.errorWidget,
-        this.loadingWidget,
-        this.scrollDirection = Axis.vertical,
-        this.repositoryCallBack,
-        this.listBuilder,
-        this.withPagination = false,
-        this.onCubitCreated,
-        this.initialParam,
-        this.withEmptyWidget = true,
-        this.onRefresh});
+  const PaginationList({super.key,
+    this.noDataWidget,
+    this.errorWidget,
+    this.loadingWidget,
+    this.scrollDirection = Axis.vertical,
+    required this.repositoryCallBack,
+    this.listBuilder,
+    this.withPagination = false,
+    this.onCubitCreated,
+    this.initialParam,
+    this.withEmptyWidget = true,
+    this.onRefresh
+  });
 
   @override
   State<PaginationList<Model>> createState() => _PaginationListState<Model>();
 }
 
 class _PaginationListState<Model> extends State<PaginationList<Model>> {
+
   final RefreshController _refreshController = RefreshController();
-  PaginationCubit<Model>? cubit;
+  late final PaginationCubit<Model> cubit;
 
   @override
   void initState() {
-    cubit = PaginationCubit<Model>(widget.repositoryCallBack!);
-    if (widget.onCubitCreated != null) {
-      widget.onCubitCreated!(cubit!);
-    }
-    cubit?.getList();
     super.initState();
+    cubit = PaginationCubit<Model>(widget.repositoryCallBack);
+    widget.onCubitCreated?.call(cubit);
+    cubit.getList();
+  }
+
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    cubit.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return _buildConsumer();
-  }
-
-  BlocConsumer<PaginationCubit<Model>, PaginationState> _buildConsumer() {
     return BlocConsumer<PaginationCubit<Model>, PaginationState>(
         bloc: cubit,
         listener: (context, state) {
-          if (state is Error) {
-          } else if (state is GetListSuccessfully) {
-            if (widget.onRefresh != null) widget.onRefresh!();
-            _refreshController.refreshCompleted();
-            if (state.noMoreData) {
-              _refreshController.loadNoData();
-            } else {
-              _refreshController.loadComplete();
+          if (state is GetListSuccessfully) {
+            widget.onRefresh?.call();
+            if (_refreshController.isRefresh) _refreshController.refreshCompleted();
+            if (_refreshController.isLoading) {
+              state.noMoreData
+                  ? _refreshController.loadNoData()
+                  : _refreshController.loadComplete();
             }
           }
         },
@@ -85,13 +85,14 @@ class _PaginationListState<Model> extends State<PaginationList<Model>> {
                 GeneralErrorWidget(
                   message: state.message,
                   onTap: () {
-                    cubit?.getList();
+                    cubit.getList();
                   },
                 );
           } else {
-            return Container();
+            return const SizedBox.shrink();
           }
-        });
+        }
+        );
   }
 
   SmartRefresher smartRefresher(List<Model> list) {
@@ -109,10 +110,10 @@ class _PaginationListState<Model> extends State<PaginationList<Model>> {
       header: const MaterialClassicHeader(),
       controller: _refreshController,
       onRefresh: () async {
-        cubit?.getList();
+        cubit.getList();
       },
       onLoading: () async {
-        cubit?.getList(loadMore: true);
+        cubit.getList(loadMore: true);
       },
       footer: customFooter,
       child: child,

@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart' as image;
@@ -7,18 +8,27 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_rating_bar.dart';
 import 'package:centro_partner/core/ui/shared_widgets/icon_text_widget.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
+import 'package:centro_partner/features/appointment/data/appointment_repository/appointment_repository.dart';
+import 'package:centro_partner/features/appointment/data/model/appointment_details_model.dart';
+import 'package:centro_partner/features/appointment/data/usecase/cancel_activity_appointment_usecase.dart';
 import 'package:centro_partner/features/appointment/widget/status_widget.dart';
 import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/project_utils/status_type.dart';
+import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
+import 'package:centro_partner/features/home/ui/activity_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class ActivityAppointmentDetailsScreen extends StatefulWidget {
 
-  final Map<String,dynamic> appointment;
+  ActivityModel activityModel;
+  AppointmentDetailsModel appointment;
+  VoidCallback? onRefresh;
 
-  const ActivityAppointmentDetailsScreen({super.key,required this.appointment});
+  ActivityAppointmentDetailsScreen({super.key,required this.activityModel,required this.appointment,this.onRefresh});
 
   @override
   State<ActivityAppointmentDetailsScreen> createState() => _AppointmentsScreenState();
@@ -36,59 +46,69 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
           child: Column(
             children: [
               SizedBox(height: 10.h),
-              Card(
-                color: AppColors.whiteColor,
-                elevation: 3,
-                shadowColor: AppColors.gray2Color,
-                child: Container(
-                  margin: EdgeInsets.symmetric(vertical: 5.h,horizontal: 5.w),
-                  decoration: BoxDecoration(
-                    color: AppColors.whiteColor,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CachedImage(
-                        width: 1.sw,
-                        height: 180.h,
-                        imageUrl: widget.appointment["photo"],
-                        fit: BoxFit.cover,
-                        borderRadius: 10.r,
-                      ),
-                      SizedBox(height: 10.h),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 5.w),
-                        child: Text("Basketball Practice",
-                            maxLines: 2,overflow: TextOverflow.ellipsis,
-                            style: AppTheme.headlineMedium),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 6.w),
-                        child: Row(
+              InkWell(
+                onTap: () {
+                  Navigation.push(ActivityDetailsScreen(
+                    activityId: widget.activityModel.activity!.iD!,
+                  ));
+                },
+                child: Card(
+                  color: AppColors.whiteColor,
+                  elevation: 3,
+                  shadowColor: AppColors.gray2Color,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 5.w),
+                    margin: EdgeInsets.symmetric(vertical: 5.h,horizontal: 5.w),
+                    decoration: BoxDecoration(
+                      color: AppColors.whiteColor,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CachedImage(
+                          width: 1.sw,
+                          height: 180.h,
+                          imageUrl: widget.activityModel.activity!.mediaList!.first.url!,
+                          fit: BoxFit.cover,
+                          borderRadius: 10.r,
+                        ),
+                        SizedBox(height: 10.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(widget.activityModel.activity!.name!,
+                                  maxLines: 2,overflow: TextOverflow.ellipsis,
+                                  style: AppTheme.headlineMedium),
+                            ),
+                            SizedBox(width: 10.w),
+                            Text(widget.activityModel.activity!.price.toString(),
+                                style: AppTheme.headlineMedium.copyWith(color: AppColors.turquoiseColor)),
+                          ],
+                        ),
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(widget.appointment["category"],
-                                style: AppTheme.headlineSmall.copyWith(
-                                  color: AppColors.primaryColor
-                                )
+                            Flexible(
+                              child: Text(widget.activityModel.activity!.category!.name!,
+                                  maxLines: 2,overflow: TextOverflow.ellipsis,
+                                  style: AppTheme.headlineSmall.copyWith(
+                                    color: AppColors.primaryColor
+                                  )
+                              ),
                             ),
                             SizedBox(width: 5.w),
                             CustomRatingBar(rate: 3.5,size: 18)
                           ],
                         ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 3.w),
-                        child: IconTextWidget(
-                          icon: image.location,
-                          iconSize: 18.w,
-                          iconColor: AppColors.mediumGrayColor,
-                          text: "Damascus, AL mazaa",
-                          textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
+                        Text(widget.activityModel.activity!.description!,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTheme.labelMedium.copyWith(color: AppColors.darkGrayColor),
                         )
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -116,8 +136,8 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                             ),
                             SizedBox(height: 20.h),
                             StatusWidget(
-                              statusText: StatusType().getStatusInfo(widget.appointment["status"] as int)["text"] as String,
-                              statusColor: StatusType().getStatusInfo(widget.appointment["status"] as int)["color"],
+                              statusText: widget.appointment.status!,
+                              statusColor: StatusType().getStatusInfo(widget.appointment.status!)["color"],
                               width: 0.25.sw,
                               height: 32.h,
                             ),
@@ -127,7 +147,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                 child: IconTextWidget(
                                   icon: image.appointment,
                                   iconSize: 20.w,
-                                  text: widget.appointment["date"],
+                                  text: convertDate(date: widget.appointment.date!,format: 'dd/MM/yyyy'),
                                   textStyle: AppTheme.labelLarge.copyWith(
                                     fontSize: 18.sp, color: AppColors.mediumGrayColor),
                                 )
@@ -138,7 +158,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                 child: IconTextWidget(
                                   icon: image.time,
                                   iconSize: 22.w,
-                                  text: "${widget.appointment["from_time"]} - ${widget.appointment["to_time"]}",
+                                  text: DateFormat("HH:mm").format(DateFormat("HH:mm:ss").parse(widget.appointment.time!)),
                                   textStyle: AppTheme.labelLarge.copyWith(
                                       fontSize: 18.sp, color: AppColors.mediumGrayColor),
                                 )
@@ -162,7 +182,7 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                     Expanded(
                                       child: Padding(
                                         padding: EdgeInsets.only(top: 5.h),
-                                        child: Text(widget.appointment["user"],
+                                        child: Text(widget.appointment.customer!.name!,
                                           style: AppTheme.headlineMedium.copyWith(
                                               color: AppColors.mediumGrayColor),
                                         ),
@@ -171,10 +191,10 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                   ],
                                 )
                             ),
-                            SizedBox(height:  widget.appointment["status"] == 0 ? 20.h : 0),
+                            SizedBox(height:  widget.appointment.status == "accepted" ? 20.h : 0),
                             Row(
                                 children: [
-                                  widget.appointment["status"] == 0 ? Expanded(
+                                  widget.appointment.status == "accepted" ? Expanded(
                                     child: CustomButton(
                                       height: 40.h,
                                       backgroundColor: AppColors.redColor,
@@ -191,16 +211,27 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                                               ),
                                             ],
                                           ),
-                                          btnOk: CustomButton(
-                                            height: 40.h,
-                                            width: 1.sw,
-                                            backgroundColor: AppColors.redColor,
-                                            borderRadius: 8.r,
-                                            buttonName: AppLocalization.of(context).translate("ok"),
-                                            textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
-                                            function: () {
-                                              // todo cancel api later
+                                          btnOk: CreateModel(
+                                            withValidation: false,
+                                            onTap: () {},
+                                            onSuccess: (result) {
+                                              Navigation.pop();
+                                              Navigation.pop();
+                                              widget.onRefresh?.call();
                                             },
+                                            useCaseCallBack: (model) {
+                                              return CancelActivityAppointmentUseCase(AppointmentRepository()).call(
+                                                params: CancelActivityAppointmentParams(appointmentId: widget.appointment.iD!)
+                                              );
+                                            },
+                                            child: CustomButton(
+                                              height: 40.h,
+                                              width: 1.sw,
+                                              backgroundColor: AppColors.redColor,
+                                              borderRadius: 8.r,
+                                              buttonName: AppLocalization.of(context).translate("ok"),
+                                              textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
+                                            ),
                                           ),
                                         );
                                       },

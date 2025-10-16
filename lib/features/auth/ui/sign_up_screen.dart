@@ -61,7 +61,6 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                     useCaseCallBack: () {
                       return UserTypesUseCase(AuthRepository()).call(params: UserTypesParams());
                     },
-                    withAnimation: false,
                     modelBuilder: (model) => CustomDropDown(
                       width: 1.sw,
                       height: 60.h,

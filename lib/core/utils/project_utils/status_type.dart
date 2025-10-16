@@ -1,23 +1,19 @@
-
 import 'package:centro_partner/core/constants/app_colors.dart';
 
 class StatusType {
 
-  Map<String, dynamic> getStatusInfo(int status) {
+  Map<String, dynamic> getStatusInfo(String status) {
     switch (status) {
-      case 0:
+      case "accepted":
         return {
-          "text": "accepted",
           "color": AppColors.primaryColor,
         };
-      case 1:
+      case "completed":
         return {
-          "text": "completed",
           "color": AppColors.darkGreenColor,
         };
-      case -1:
+      case "canceled":
         return {
-          "text": "canceled",
           "color": AppColors.redColor,
         };
       default:

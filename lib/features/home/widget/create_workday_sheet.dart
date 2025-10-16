@@ -48,7 +48,6 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
           useCaseCallBack: () {
             return DaysUseCase(HomeRepository()).call(params: DaysParams());
           },
-          withAnimation: false,
           modelBuilder: (model) => CustomDropDown(
             width: 1.sw,
             height: 60.h,

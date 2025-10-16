@@ -86,7 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   useCaseCallBack: () {
                     return AllActivitiesUseCase(HomeRepository()).call(params: AllActivitiesParams());
                   },
-                  withAnimation: false,
                   modelBuilder: (model) => ResponsiveGridList(
                     horizontalGridMargin: 10,
                     verticalGridMargin: 20,

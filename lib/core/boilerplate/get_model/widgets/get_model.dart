@@ -8,27 +8,22 @@ typedef CreatedCallback = void Function(GetModelCubit cubit);
 typedef ModelBuilder<Model> = Widget Function(Model model);
 typedef ModelReceived<Model> = Function(Model model);
 
-//////////////////////GetModel////////////////
 class GetModel<Model> extends StatefulWidget {
   final double? loadingHeight;
   final Widget? loading;
-
   final ModelBuilder<Model>? modelBuilder;
   final ModelReceived<Model>? onSuccess;
-
-  final UseCaseCallBack? useCaseCallBack;
+  final UseCaseCallBack useCaseCallBack;
   final CreatedCallback? onCubitCreated;
-  final bool withAnimation;
 
   const GetModel({
     super.key,
-    this.useCaseCallBack,
-    this.onCubitCreated,
-    this.modelBuilder,
-    this.onSuccess,
     this.loadingHeight,
     this.loading,
-    this.withAnimation = true,
+    this.modelBuilder,
+    this.onSuccess,
+    required this.useCaseCallBack,
+    this.onCubitCreated,
   });
 
   @override
@@ -36,15 +31,14 @@ class GetModel<Model> extends StatefulWidget {
 }
 
 class _GetModelState<Model> extends State<GetModel<Model>> {
-  GetModelCubit<Model>? cubit;
+
+  late final GetModelCubit<Model> cubit;
 
   @override
   void initState() {
-    cubit = GetModelCubit<Model>(widget.useCaseCallBack!);
-    if (widget.onCubitCreated != null) {
-      widget.onCubitCreated!(cubit!);
-    }
-    cubit?.getModel();
+    cubit = GetModelCubit<Model>(widget.useCaseCallBack);
+    widget.onCubitCreated?.call(cubit);
+    cubit.getModel();
     super.initState();
   }
 
@@ -53,40 +47,38 @@ class _GetModelState<Model> extends State<GetModel<Model>> {
     return BlocConsumer<GetModelCubit, GetModelState>(
       bloc: cubit,
       builder: (context, state) {
-        debugPrint(state.toString());
         if (state is Loading) {
           return SizedBox(
-              height: widget.loadingHeight, child: Center(child: widget.loading ?? const LoadingIndicator()));
-        } else {
+              height: widget.loadingHeight,
+              child: Center(child: widget.loading ?? const LoadingIndicator())
+          );
+        }
+        else {
           if (state is GetModelSuccessfully) {
-            return buildModel(state.model);
+            return _buildModel(state.model);
           } else if (state is Error) {
             return GeneralErrorWidget(
               message: state.message,
-              onTap: () {
-                cubit?.getModel();
-              },
+              onTap: cubit.getModel,
             );
           } else {
-            return Container();
+            return const SizedBox.shrink();
           }
         }
       },
       listener: (context, state) {
-        if (state is Error) {
-        } else if (state is GetModelSuccessfully) {
-          if (widget.onSuccess != null) widget.onSuccess!(state.model);
+        if (state is GetModelSuccessfully) {
+          widget.onSuccess?.call(state.model);
         }
       },
     );
   }
 
-  RefreshIndicator buildModel(Model model) {
-    return  RefreshIndicator(
-        child: widget.modelBuilder!(model),
-        onRefresh: () {
-          cubit?.getModel();
-          return Future.delayed(const Duration(seconds: 1));
-        });
+  Widget _buildModel(Model model) {
+    if (widget.modelBuilder == null) return const SizedBox.shrink();
+    return RefreshIndicator(
+      onRefresh: () async => await cubit.getModel(),
+      child: widget.modelBuilder!(model),
+    );
   }
 }
