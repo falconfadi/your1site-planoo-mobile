@@ -157,64 +157,53 @@ abstract class RemoteDataSource {
       if (expirationDate.isBefore(now)) {
         await AppStorage.removeData(key: kAccessToken);
         await AppStorage.removeData(key: kAccessTokenExpirationDate);
-        await AppStorage.removeData(key: kLastTokenRefresh);
 
         Navigation.pushAndRemoveUntil(SignInScreen());
         return const Left(CustomError(errorMessage: 'Token expired'));
-      } else if (difference <= 15) {
-        // Less than 15 minutes left → refresh token if needed
-        debugPrint('Checking if we should refresh token…');
+      }
+
+      if (difference <= 5) {
+        debugPrint('Access token about to expire in $difference min — refreshing…');
 
         try {
-          final lastRefreshStr = await AppStorage.getData(key: kLastTokenRefresh);
-          if (lastRefreshStr != null) {
-            final lastRefresh = DateTime.parse(lastRefreshStr);
-            final sinceLastRefresh = now.difference(lastRefresh).inMinutes;
+          final dio = Dio(BaseOptions(
+            connectTimeout: const Duration(seconds: 5),
+            receiveTimeout: const Duration(seconds: 5),
+          ));
 
-            // If refreshed within last 150 mins (~2 hours), skip refresh
-            if (sinceLastRefresh < 115) {
-              debugPrint('Token recently refreshed ($sinceLastRefresh mins ago). Skipping refresh.');
-              return Right(null);
-            }
-          }
-
-          debugPrint('Refreshing token…');
-          final response = await Dio().post(
+          final response = await dio.post(
             baseUrl + refreshTokenUrl,
             options: Options(
-              headers: {
-                'Authorization': 'Bearer $token',
-              },
+              headers: {'Authorization': 'Bearer $token'},
             ),
           );
 
           if (response.statusCode == 200 && response.data['success'] == true) {
             final newToken = response.data['payload']['token'];
             await AppStorage.saveData(key: kAccessToken, value: newToken);
-            await AppStorage.saveData(key: kLastTokenRefresh, value: DateTime.now().toIso8601String());
-            debugPrint('Token refreshed successfully.');
+            debugPrint('Token successfully refreshed');
+
           } else {
+            await AppStorage.removeData(key: kAccessToken);
+            Navigation.pushAndRemoveUntil(SignInScreen());
             return const Left(CustomError(errorMessage: 'Failed to refresh token'));
           }
         } on DioError catch (e) {
           if (e.response?.statusCode == 401) {
             await AppStorage.removeData(key: kAccessToken);
             await AppStorage.removeData(key: kAccessTokenExpirationDate);
-            await AppStorage.removeData(key: kLastTokenRefresh);
             Navigation.pushAndRemoveUntil(SignInScreen());
           }
+          return const Left(SocketError(message: 'Network or auth error'));
         } on SocketException {
           return const Left(SocketError(message: 'Connection error'));
         } catch (e) {
           return Left(CustomError(errorMessage: e.toString()));
         }
       }
-
-      return Right(null); // Token is valid
+      return Right(null);
     } catch (e) {
       return Left(CustomError(errorMessage: e.toString()));
     }
   }
-
-
 }

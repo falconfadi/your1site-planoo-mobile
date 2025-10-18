@@ -7,7 +7,6 @@ const headerContentType = HttpHeaders.contentTypeHeader;
 
 const kAccessToken = 'access_token';
 const kAccessTokenExpirationDate = 'token_expiration';
-const kLastTokenRefresh = 'last_token_refresh';
 const userID = 'user_id';
 const userType = 'user_type';
 
