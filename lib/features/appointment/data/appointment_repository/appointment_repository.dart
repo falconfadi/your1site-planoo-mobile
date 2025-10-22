@@ -8,7 +8,7 @@ import 'package:centro_partner/features/appointment/data/model/slots_model.dart'
 import 'package:centro_partner/features/appointment/data/usecase/cancel_activity_appointment_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/check_activity_appointment_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/create_activity_appointment_usecase.dart';
-import 'package:centro_partner/features/appointment/ui/all_appointments_usecase.dart';
+import 'package:centro_partner/features/appointment/data/usecase/all_appointments_usecase.dart';
 import '../model/appointment_details_model.dart';
 
 class AppointmentRepository extends CoreRepository {

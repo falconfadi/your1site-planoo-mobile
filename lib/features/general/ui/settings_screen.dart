@@ -4,7 +4,7 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_switch_widget.dart';
-import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
+import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/general/ui/change_password_screen.dart';
 import 'package:centro_partner/features/general/widget/language_sheet.dart';

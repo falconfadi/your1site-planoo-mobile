@@ -1,11 +1,12 @@
 import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/core/ui/shared_widgets/time_picker_widget.dart';
 
 Future<TimeOfDay?> customTimePicker(BuildContext context, {TimeOfDay? timePicker}) async {
   final now = timePicker ?? TimeOfDay.now();
-  final roundedInitial = _roundToNearestHalfHour(now);
+  final roundedInitial = roundToNearestHalfHour(now);
 
   final picked = await timePickerWidget(
     context: context,
@@ -37,7 +38,7 @@ Future<TimeOfDay?> customTimePicker(BuildContext context, {TimeOfDay? timePicker
 
   if (picked == null) return null;
 
-  return _roundToNearestHalfHour(picked);
+  return roundToNearestHalfHour(picked);
 }
 
 Future<TimeOfDay?> selectTime(BuildContext context, TimeOfDay? time) async {
@@ -46,21 +47,4 @@ Future<TimeOfDay?> selectTime(BuildContext context, TimeOfDay? time) async {
     time = picked;
   }
   return time;
-}
-
-
-TimeOfDay _roundToNearestHalfHour(TimeOfDay time) {
-  int roundedMinutes;
-  int hour = time.hour;
-
-  if (time.minute < 15) {
-    roundedMinutes = 0;
-  } else if (time.minute < 45) {
-    roundedMinutes = 30;
-  } else {
-    roundedMinutes = 0;
-    hour = (hour + 1) % 24;
-  }
-
-  return TimeOfDay(hour: hour, minute: roundedMinutes);
 }

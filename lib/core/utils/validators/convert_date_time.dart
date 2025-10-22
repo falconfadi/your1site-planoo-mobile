@@ -22,3 +22,19 @@ TimeOfDay parseTimeOfDay({required String timeString}) {
   final minute = int.parse(parts[1]);
   return TimeOfDay(hour: hour, minute: minute);
 }
+
+TimeOfDay roundToNearestHalfHour(TimeOfDay time) {
+  int roundedMinutes;
+  int hour = time.hour;
+
+  if (time.minute < 15) {
+    roundedMinutes = 0;
+  } else if (time.minute < 45) {
+    roundedMinutes = 30;
+  } else {
+    roundedMinutes = 0;
+    hour = (hour + 1) % 24;
+  }
+
+  return TimeOfDay(hour: hour, minute: roundedMinutes);
+}

@@ -17,7 +17,7 @@ import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/project_utils/status_type.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
-import 'package:centro_partner/features/home/ui/activity_details_screen.dart';
+import 'package:centro_partner/features/home/ui/activity/activity_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
@@ -69,7 +69,8 @@ class _AppointmentsScreenState extends State<ActivityAppointmentDetailsScreen> {
                         CachedImage(
                           width: 1.sw,
                           height: 180.h,
-                          imageUrl: widget.activityModel.activity!.mediaList!.first.url!,
+                          imageUrl: widget.activityModel.activity!.mediaList!.isNotEmpty ?
+                          widget.activityModel.activity!.mediaList!.first.url! : "",
                           fit: BoxFit.cover,
                           borderRadius: 10.r,
                         ),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:centro_partner/core/constants/enum/notification_type.dart';
@@ -120,7 +121,7 @@ class FirebaseApi {
     final notificationType = NotificationType.fromInt(int.parse(message.data['type']));
     switch (notificationType) {
       case NotificationType.verificationCode:
-        final codeValue = message.data['code']['code'].toString();
+        final codeValue = jsonDecode(message.data['code'])['code'].toString();
         verificationCodeNotifier.value = null;
         verificationCodeNotifier.value = codeValue;
         break;

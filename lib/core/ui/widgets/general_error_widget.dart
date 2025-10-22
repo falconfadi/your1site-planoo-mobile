@@ -1,89 +1,100 @@
-import 'package:centro_partner/core/classes/app_localization.dart';
-import 'package:centro_partner/core/errors/bad_request_error.dart';
-import 'package:centro_partner/core/errors/not_found_error.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '/core/ui/widgets/rounded_animated_button.dart';
+import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import '../../errors/error_helper.dart';
+import '../../errors/bad_request_error.dart';
+import '../../errors/not_found_error.dart';
 import '../../errors/unauthorized_error.dart';
+import '../../errors/forbidden_error.dart';
+import '../../errors/internal_server_error.dart';
+import '../../errors/net_error.dart';
+import '../../errors/socket_error.dart';
+import '../../errors/timeout_error.dart';
 
-// ignore: must_be_immutable
-class GeneralErrorWidget extends StatefulWidget {
+class GeneralErrorWidget extends StatelessWidget {
 
+  final dynamic error;
   final VoidCallback? onTap;
-  Widget? body;
-  final error;
   final String? message;
   final String? buttonText;
+  final Widget? body;
 
-  GeneralErrorWidget({
+  const GeneralErrorWidget({
     super.key,
+    this.error,
     this.onTap,
     this.message,
-    this.body,
-    this.error,
     this.buttonText,
+    this.body,
   });
 
-  @override
-  State<GeneralErrorWidget> createState() => _GeneralErrorWidgetState();
-}
+  bool get _showRetryButton {
+    return error is InternalServerError ||
+        error is TimeoutError ||
+        error is NetError ||
+        error is SocketError ||
+        error is BadRequestError;
+  }
 
-class _GeneralErrorWidgetState extends State<GeneralErrorWidget> {
-  final errorHelper = ErrorHelper();
-
-  @override
-  void initState() {
-    if (widget.error is UnauthorizedError) {
-      /// TODO : Handle UnauthorizedError (toWorkOn)
-    } else {
-      widget.body = Center(
-        child: Container(
-          color: Colors.white,
-          //child: Image.asset('assets/images/error.png'),
-        ),
+  Widget _buildErrorBody() {
+    if (error is UnauthorizedError) {
+      return const Center(
+        child: Icon(Icons.lock_outline),
       );
     }
-    super.initState();
+    if (error is NotFoundError) {
+      return const Center(
+        child: Icon(Icons.search_off),
+      );
+    }
+    if (error is ForbiddenError) {
+      return const Center(
+        child: Icon(Icons.block),
+      );
+    }
+    return body ??
+        const Center(
+          child: Icon(Icons.error_outline),
+        );
   }
 
   @override
   Widget build(BuildContext context) {
-    if (widget.error is UnauthorizedError) {
-      /// TODO : Handle UnauthorizedError (toWorkOn)
-    } else {
-      widget.body = Center(
-          //child: Image.asset('assets/images/error.png'),
-          );
-    }
+    final errorHelper = ErrorHelper();
+    final errorMessage = message ?? errorHelper.getErrorMessage(error);
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          widget.body ?? Container(),
+        children: [
+          SizedBox(height: 5.h),
+          _buildErrorBody(),
+          SizedBox(height: 5.h),
           Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Text(
-              widget.message ?? errorHelper.getErrorMessage(widget.error),
-              style: TextStyle(
-                fontSize: 11.sp,
-                fontWeight: FontWeight.w500,
-              ),
+              errorMessage,
+              style: AppTheme.labelSmall.copyWith(fontSize: 11.sp, fontWeight: FontWeight.w500),
+              textAlign: TextAlign.center,
             ),
           ),
-          if (widget.error is NotFoundError || widget.error is BadRequestError ||
-              widget.error is UnauthorizedError)
-            SizedBox(
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: RoundedAnimatedButton(
-                //borderRadius: 15,
-                onPressed: widget.onTap,
-                text: widget.buttonText ?? AppLocalization.of(context).translate("try_again"),
-                color: Colors.black,
-                textStyle: const TextStyle(color: Colors.white),
+          if (_showRetryButton)
+            Container(
+              width: 1.sw * 0.4,
+              padding: EdgeInsets.only(top: 5.h),
+              child: CustomButton(
+                height: 40.h,
+                function: onTap,
+                buttonName: buttonText ?? AppLocalization.of(context).translate("try_again"),
+                backgroundColor: AppColors.lightPurpleColor,
+                borderRadius: 0,
+                textStyle: AppTheme.titleLarge.copyWith(color: AppColors.whiteColor),
               ),
-            )
+            ),
         ],
       ),
     );

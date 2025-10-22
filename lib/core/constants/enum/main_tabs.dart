@@ -1,12 +1,12 @@
 
 enum MainTabs {
   activities,
-  classes,
+  courses,
   events,
   entertainment;
   static MainTabs fromString(String s) => switch (s) {
     "activities" => activities,
-    "classes" => classes,
+    "courses" => courses,
     "events" => events,
     "entertainment" => entertainment,
     _ => entertainment

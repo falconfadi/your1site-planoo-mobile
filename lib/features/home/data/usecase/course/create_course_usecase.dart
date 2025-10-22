@@ -1,16 +1,17 @@
 import 'dart:io';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
-import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
+import 'package:centro_partner/features/home/data/model/course/course_model.dart';
 import '../../../../../core/params/base_params.dart';
 import '../../../../../core/results/result.dart';
 import '../../../../../core/usecase/usecase.dart';
 
-class CreateActivityParams extends BaseParams {
+class CreateCourseParams extends BaseParams {
 
   final String name;
   final int categoryId;
   final String description;
   final int sessionDuration;
+  final int courseDuration;
   final String price;
   final double longitude;
   final double latitude;
@@ -19,12 +20,15 @@ class CreateActivityParams extends BaseParams {
   final List<int> tags;
   final List<String> days;
   final List<File>? files;
+  final String capacity;
+  final String cancellationFee;
 
-  CreateActivityParams({
+  CreateCourseParams({
     required this.name,
     required this.categoryId,
     required this.description,
     required this.sessionDuration,
+    required this.courseDuration,
     required this.price,
     required this.longitude,
     required this.latitude,
@@ -33,6 +37,8 @@ class CreateActivityParams extends BaseParams {
     required this.tags,
     required this.days,
     this.files,
+    required this.capacity,
+    required this.cancellationFee,
   });
 
   Map<String, dynamic> toFormDataMap() {
@@ -41,10 +47,13 @@ class CreateActivityParams extends BaseParams {
       'category_id': categoryId.toString(),
       'description': description,
       'session_duration': sessionDuration.toString(),
+      'course_duration': courseDuration.toString(),
       'price': price,
       'type': 'image',
       'long': longitude.toString(),
       'lat': latitude.toString(),
+      'capacity': capacity,
+      'cancellation_fee': cancellationFee,
     };
 
     for (int i = 0; i < days.length; i++) {
@@ -59,13 +68,13 @@ class CreateActivityParams extends BaseParams {
   }
 }
 
-class CreateActivityUseCase extends UseCase<ActivityModel, CreateActivityParams> {
+class CreateCourseUseCase extends UseCase<CourseModel, CreateCourseParams> {
   final HomeRepository repository;
 
-  CreateActivityUseCase(this.repository);
+  CreateCourseUseCase(this.repository);
 
   @override
-  Future<Result<ActivityModel>> call({required CreateActivityParams params}) {
-    return repository.createActivity(params: params);
+  Future<Result<CourseModel>> call({required CreateCourseParams params}) {
+    return repository.createCourse(params: params);
   }
 }

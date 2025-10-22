@@ -4,8 +4,8 @@ import 'package:centro_partner/core/boilerplate/pagination/widgets/pagination_li
 import 'package:centro_partner/core/errors/test_error.dart';
 import 'package:centro_partner/core/results/result.dart';
 import 'package:centro_partner/core/ui/widgets/general_error_widget.dart';
+import 'package:centro_partner/core/ui/widgets/loading.dart';
 import 'package:centro_partner/core/ui/widgets/no_data_widget.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -41,7 +41,7 @@ void main() {
       ),
     ));
 
-    expect(find.byType(CupertinoActivityIndicator), findsOneWidget);
+    expect(find.byType(LoadingIndicator), findsOneWidget);
   });
 
   testWidgets('Displays list when state is GetListSuccessfully with data', (tester) async {

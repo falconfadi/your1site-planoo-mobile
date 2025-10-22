@@ -1,9 +1,9 @@
 import 'package:centro_partner/core/boilerplate/pagination/models/get_list_request.dart';
 import 'package:centro_partner/features/appointment/data/appointment_repository/appointment_repository.dart';
 import 'package:centro_partner/features/appointment/data/model/appointment_details_model.dart';
-import '../../../../core/params/base_params.dart';
-import '../../../../core/results/result.dart';
-import '../../../../core/usecase/usecase.dart';
+import '../../../../../core/params/base_params.dart';
+import '../../../../../core/results/result.dart';
+import '../../../../../core/usecase/usecase.dart';
 
 class AllAppointmentsParams extends BaseParams {
 

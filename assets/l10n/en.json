@@ -53,7 +53,7 @@
   "name": "Name",
   "add": "Add",
   "activities": "Activities",
-  "classes": "Classes",
+  "courses": "Courses",
   "events": "Events",
   "entertainment": "Entertainment",
   "category": "Category",
@@ -111,5 +111,10 @@
   "load_failed": "Load Failed",
   "release_to_load_more": "Release to load more",
   "no_data_found": "No data found",
-  "customer_phone": "Customer phone"
+  "customer_phone": "Customer phone",
+  "capacity": "Capacity",
+  "cancellation_fee": "Cancellation fee",
+  "course_closed": "The course is closed",
+  "course_duration": "Course duration",
+  "course_duration_required": "Course duration is required"
 }

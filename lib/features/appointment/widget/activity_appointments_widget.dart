@@ -116,7 +116,8 @@ class _ActivityAppointmentsWidgetState extends State<ActivityAppointmentsWidget>
                     child: CachedImage(
                       width: 1.sw,
                       height: 185.h,
-                      imageUrl: model.activity!.mediaList!.first.url!,
+                      imageUrl: model.activity!.mediaList!.isNotEmpty ?
+                      model.activity!.mediaList!.first.url! : "",
                       fit: BoxFit.fill,
                       borderRadius: 10.r,
                       borderWidth: 1,

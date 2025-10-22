@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/errors/custom_error.dart';
-import 'package:centro_partner/core/errors/socket_error.dart';
 import '../constants/end_point.dart';
 import '../errors/base_error.dart';
 import '../http/api_provider.dart';
@@ -17,6 +17,8 @@ import '../responses/api_response.dart';
 import 'model.dart';
 
 abstract class RemoteDataSource {
+
+  static Completer<void>? _refreshCompleter;
 
   static Future<Map<String, String>> _buildHeaders({bool withAuthentication = false}) async {
     final Map<String, String> headers = {
@@ -138,72 +140,72 @@ abstract class RemoteDataSource {
     }
   }
 
-  static Future<Either<BaseError, void>?> checkTokenValidation() async {
+  static Future<void> checkTokenValidation() async {
     final String? token = await AppStorage.getData(key: kAccessToken);
 
     if (token == null) {
-      Navigation.pushAndRemoveUntil(SignInScreen());
-      return const Left(CustomError(errorMessage: 'No token found'));
+      _logout();
+      return;
     }
 
-    try {
-      final decodedToken = JwtDecoder.decode(token);
-      int expirationTimestamp = decodedToken['exp'];
-      DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(expirationTimestamp * 1000);
+    final decodedToken = JwtDecoder.decode(token);
+    DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(decodedToken['exp'] * 1000);
 
-      final now = DateTime.now();
-      final difference = expirationDate.difference(now).inMinutes;
+    final now = DateTime.now();
+    final minutesLeft = expirationDate.difference(now).inMinutes;
 
-      if (expirationDate.isBefore(now)) {
-        await AppStorage.removeData(key: kAccessToken);
-        await AppStorage.removeData(key: kAccessTokenExpirationDate);
+    if (expirationDate.isBefore(now)) {
+      _logout();
+      return;
+    }
 
-        Navigation.pushAndRemoveUntil(SignInScreen());
-        return const Left(CustomError(errorMessage: 'Token expired'));
-      }
-
-      if (difference <= 5) {
-        debugPrint('Access token about to expire in $difference min — refreshing…');
-
+    if (minutesLeft <= 5) {
+      // Token about to expire, refresh
+      if (_refreshCompleter != null) {
+        // Refresh already in progress, wait for it
+        await _refreshCompleter!.future;
+      } else {
+        _refreshCompleter = Completer();
         try {
-          final dio = Dio(BaseOptions(
-            connectTimeout: const Duration(seconds: 5),
-            receiveTimeout: const Duration(seconds: 5),
-          ));
-
-          final response = await dio.post(
-            baseUrl + refreshTokenUrl,
-            options: Options(
-              headers: {'Authorization': 'Bearer $token'},
-            ),
-          );
-
-          if (response.statusCode == 200 && response.data['success'] == true) {
-            final newToken = response.data['payload']['token'];
-            await AppStorage.saveData(key: kAccessToken, value: newToken);
-            debugPrint('Token successfully refreshed');
-
-          } else {
-            await AppStorage.removeData(key: kAccessToken);
-            Navigation.pushAndRemoveUntil(SignInScreen());
-            return const Left(CustomError(errorMessage: 'Failed to refresh token'));
-          }
-        } on DioError catch (e) {
-          if (e.response?.statusCode == 401) {
-            await AppStorage.removeData(key: kAccessToken);
-            await AppStorage.removeData(key: kAccessTokenExpirationDate);
-            Navigation.pushAndRemoveUntil(SignInScreen());
-          }
-          return const Left(SocketError(message: 'Network or auth error'));
-        } on SocketException {
-          return const Left(SocketError(message: 'Connection error'));
-        } catch (e) {
-          return Left(CustomError(errorMessage: e.toString()));
+          final success = await _refreshToken(token);
+          if (!success) _logout();
+        } finally {
+          _refreshCompleter!.complete();
+          _refreshCompleter = null;
         }
       }
-      return Right(null);
-    } catch (e) {
-      return Left(CustomError(errorMessage: e.toString()));
     }
+  }
+
+  static Future<bool> _refreshToken(String token) async {
+    try {
+      final dio = Dio();
+      final response = await dio.post(
+        baseUrl + refreshTokenUrl,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        final newToken = response.data['payload']['token'];
+        await saveLoginTokens(newToken);
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
+  static Future<void> saveLoginTokens(String token) async {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+    DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(decodedToken['exp'] * 1000);
+
+    await AppStorage.saveData(key: kAccessToken, value: token);
+    await AppStorage.saveData(key: kAccessTokenExpirationDate, value: expirationDate.toIso8601String());
+  }
+
+
+  static Future<void> _logout() async {
+    await AppStorage.removeData(key: kAccessToken);
+    await AppStorage.removeData(key: kAccessTokenExpirationDate);
+    Navigation.pushAndRemoveUntil(SignInScreen());
   }
 }

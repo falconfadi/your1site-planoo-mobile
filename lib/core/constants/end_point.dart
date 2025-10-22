@@ -19,6 +19,7 @@ const String categoriesUrl = "$serverUrl/label/categories";
 const String sessionDurationsUrl = "$serverUrl/label/sessionDuration";
 const String daysUrl = "$serverUrl/label/weekDays";
 const String facilitiesUrl = "$serverUrl/label/tags";
+const String courseDurationsUrl = "$serverUrl/label/courseDuration";
 /// auth
 const String registerUrl = "auth/register";
 const String verifyUrl = "auth/verify";
@@ -61,3 +62,10 @@ const String allAppointmentsUrl = "appointment/all";
 const String checkActivityAppointmentUrl = "appointment/check";
 const String createActivityAppointmentUrl = "appointment/create";
 const String cancelActivityAppointmentUrl = "appointment/cancel";
+/// course
+const String createCourseUrl = "course/create";
+const String allCoursesUrl = "course/all";
+const String courseDetailsUrl = "course/find";
+const String deleteCourseUrl = "course/delete";
+const String toggleActivationCourseUrl = "course/toggleActivation";
+const String editCourseUrl = "course/update";

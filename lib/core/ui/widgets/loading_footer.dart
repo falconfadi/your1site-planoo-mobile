@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'package:centro_partner/core/ui/widgets/loading.dart';
+import 'package:flutter/material.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
@@ -13,7 +14,7 @@ var customFooter = CustomFooter(
         body = Text(loc.translate("pull_up_to_load"));
         break;
       case LoadStatus.loading:
-        body = const CupertinoActivityIndicator();
+        body = const LoadingIndicator();
         break;
       case LoadStatus.failed:
         body = Text(loc.translate("load_failed"));

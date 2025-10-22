@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image/image.dart' as img;
 
 class PhotosWidget extends StatefulWidget {
 
@@ -43,7 +44,7 @@ class _PhotosWidgetState extends State<PhotosWidget> {
       child: Column(
         children: [
           CreateModel(
-            withValidation: true,
+            withValidation: false,
             onTap: () {},
             onSuccess: (model) async {
               refreshCubit!.getModel();
@@ -168,17 +169,54 @@ class _PhotosWidgetState extends State<PhotosWidget> {
   Future<void> selectImage() async {
     final imagePicker = ImagePicker();
     if (widget.isEdit == true) {
-      final XFile? picked = await imagePicker.pickImage(source: ImageSource.gallery,imageQuality: 25);
+      final XFile? picked = await imagePicker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 100,
+      );
       if (picked != null) {
-        selectedFile = File(picked.path);
+        File original = File(picked.path);
+        File? compressed = await compressAndResizeImage(original);
+        if (compressed != null) {
+          selectedFile = compressed;
+        }
       }
     } else {
-      final List<XFile> result = await imagePicker.pickMultiImage(imageQuality: 25);
+      final List<XFile> result = await imagePicker.pickMultiImage(imageQuality: 100);
       if (result.isNotEmpty) {
+        List<File> compressedFiles = [];
+        for (final image in result) {
+          File original = File(image.path);
+          File? compressed = compressAndResizeImage(original);
+          if (compressed != null) {
+            compressedFiles.add(compressed);
+          }
+        }
         setState(() {
-          widget.photos.addAll(result.map((e) => File(e.path)));
+          widget.photos.addAll(compressedFiles);
         });
       }
     }
   }
+
+  File compressAndResizeImage(File file) {
+    img.Image? image = img.decodeImage(file.readAsBytesSync());
+    int width;
+    int height;
+
+    if (image!.width > image.height) {
+      width = 800;
+      height = (image.height / image.width * 800).round();
+    } else {
+      height = 800;
+      width = (image.width / image.height * 800).round();
+    }
+
+    img.Image resizedImage = img.copyResize(image, width: width, height: height);
+    List<int> compressedBytes = img.encodeJpg(resizedImage, quality: 85);
+
+    File compressedFile = File(file.path.replaceFirst('.jpg', '_compressed.jpg'));
+    compressedFile.writeAsBytesSync(compressedBytes);
+    return compressedFile;
+  }
+
 }

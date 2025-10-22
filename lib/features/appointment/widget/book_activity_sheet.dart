@@ -214,8 +214,10 @@ class _BookActivitySheetState extends State<BookActivitySheet> with FormStateMin
                             ),
                             SizedBox(height: 30.h),
                             CreateModel(
-                              withValidation: false,
-                              onTap: () {},
+                              withValidation: true,
+                              onTap: () {
+                                return form.validate();
+                              },
                               useCaseCallBack: (data) {
                                 return CreateActivityAppointmentUseCase(AppointmentRepository()).call(
                                     params: CreateActivityAppointmentParams(
@@ -223,7 +225,7 @@ class _BookActivitySheetState extends State<BookActivitySheet> with FormStateMin
                                       dayId: selectedDay!.iD!,
                                       date: convertDate(date: date.toString(),format: "yyyy-MM-dd"),
                                       sessionDuration: widget.activity.sessionDuration!,
-                                      time: model.slot!.slots![selectedSlot].startTime!,
+                                      time: model.slot!.slots!.isEmpty ? "" : model.slot!.slots![selectedSlot].startTime!,
                                       note: form.controllers[0].text,
                                       customerPhone: form.controllers[1].text
                                     ));
@@ -253,7 +255,7 @@ class _BookActivitySheetState extends State<BookActivitySheet> with FormStateMin
             );
           },
           useCaseCallBack: (model) {
-            if (selectedDay != null || date != null) {
+            if (selectedDay != null && date != null) {
               return CheckActivityAppointmentUseCase(AppointmentRepository()).call(
                   params: CheckActivityAppointmentParams(
                     activityId: widget.activity.iD!,

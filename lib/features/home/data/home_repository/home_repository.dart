@@ -6,6 +6,9 @@ import 'package:centro_partner/core/results/result.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
 import 'package:centro_partner/features/home/data/model/activity/all_activities_model.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
+import 'package:centro_partner/features/home/data/model/course/all_courses_model.dart';
+import 'package:centro_partner/features/home/data/model/course/course_model.dart';
+import 'package:centro_partner/features/home/data/model/course_duration_model.dart';
 import 'package:centro_partner/features/home/data/model/days_model.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
 import 'package:centro_partner/features/home/data/model/location/all_medias_model.dart';
@@ -19,6 +22,12 @@ import 'package:centro_partner/features/home/data/usecase/activity/edit_activity
 import 'package:centro_partner/features/home/data/usecase/activity/toggle_activation_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/categories_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/create_activity_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/course/all_courses_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/course/course_details_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/course/create_course_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/course/delete_course_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/course/edit_course_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/course/toggle_activation_course_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/days_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facilities_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facility/create_facility_usecase.dart';
@@ -29,6 +38,7 @@ import 'package:centro_partner/features/home/data/usecase/media/create_media_use
 import 'package:centro_partner/features/home/data/usecase/media/delete_medial_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/session_durations_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/all_workdays_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/workday/course_durations_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/create_workday_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/delete_workday_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/edit_workday_usecase.dart';
@@ -77,12 +87,22 @@ class HomeRepository extends CoreRepository {
     return call(result: result);
   }
 
+  Future<Result<CourseDurationModel>> getCourseDurations({required CourseDurationsParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: false,
+        url: courseDurationsUrl,
+        method: HttpMethod.GET,
+        responseStr: 'CourseDurationResponse',
+        converter: (json) => CourseDurationResponse.fromJson(json));
+    return call(result: result);
+  }
+
   /// activity
   Future<Result<ActivityModel>> createActivity({required CreateActivityParams params}) async {
     final result = await RemoteDataSource.upload<ActivityModel>(
       withAuthentication: true,
       url: createActivityUrl,
-      data: params.toJson(),
+      data: params.toFormDataMap(),
       responseStr: 'ActivityModel',
       converter: (json) => ActivityModel.fromJson(json),
       filesMap: {
@@ -263,4 +283,69 @@ class HomeRepository extends CoreRepository {
     return noModelCall(result: result);
   }
 
+  /// course
+  Future<Result<CourseModel>> createCourse({required CreateCourseParams params}) async {
+    final result = await RemoteDataSource.upload<CourseModel>(
+      withAuthentication: true,
+      url: createCourseUrl,
+      data: params.toFormDataMap(),
+      responseStr: 'CourseModel',
+      converter: (json) => CourseModel.fromJson(json),
+      filesMap: {
+        'media[][file]': params.files!,
+      },
+    );
+    return call(result: result);
+  }
+
+  Future<Result<AllCoursesModel>> getAllCourses({required AllCoursesParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: allCoursesUrl,
+        method: HttpMethod.GET,
+        responseStr: 'AllCoursesResponse',
+        converter: (json) => AllCoursesResponse.fromJson(json));
+    return call(result: result);
+  }
+
+  Future<Result<CourseModel>> getCourseDetails({required CourseDetailsParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: "$courseDetailsUrl?course_id=${params.courseId}",
+        method: HttpMethod.GET,
+        responseStr: 'CourseResponse',
+        converter: (json) => CourseResponse.fromJson(json));
+    return call(result: result);
+  }
+
+  Future<Result<bool>> deleteCourse({required DeleteCourseParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: deleteCourseUrl,
+      data: params.toJson(),
+      method: HttpMethod.DELETE,
+    );
+    return noModelCall(result: result);
+  }
+
+  Future<Result<bool>> toggleActivationCourse({required ToggleActivationCourseParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: toggleActivationCourseUrl,
+      data: params.toJson(),
+      method: HttpMethod.POST,
+    );
+    return noModelCall(result: result);
+  }
+
+  Future<Result<CourseModel>> editCourse({required EditCourseParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: editCourseUrl,
+        data: params.toJson(),
+        method: HttpMethod.PATCH,
+        responseStr: 'CourseResponse',
+        converter: (json) => CourseResponse.fromJson(json));
+    return call(result: result);
+  }
 }

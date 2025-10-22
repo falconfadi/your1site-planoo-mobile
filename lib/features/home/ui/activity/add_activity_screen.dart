@@ -1,13 +1,12 @@
-import 'dart:async';
 import 'dart:io';
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
-import 'package:centro_partner/core/ui/shared_widgets/photos_widget.dart';
-import 'package:centro_partner/core/ui/shared_widgets/select_multi_items_widget.dart';
-import 'package:centro_partner/core/ui/shared_widgets/workdays_widget.dart';
+import 'package:centro_partner/features/home/widget/facilities_widget.dart';
+import 'package:centro_partner/features/home/widget/photos_widget.dart';
+import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
@@ -15,15 +14,11 @@ import 'package:centro_partner/features/home/data/home_repository/home_repositor
 import 'package:centro_partner/features/home/data/model/activity/activity_details_model.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
-import 'package:centro_partner/features/home/data/model/facility_model.dart';
 import 'package:centro_partner/features/home/data/model/location_model.dart';
 import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/edit_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/categories_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/create_activity_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/facilities_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/facility/create_facility_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/facility/delete_facility_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/session_durations_usecase.dart';
 import 'package:centro_partner/features/home/ui/create_location_screen.dart';
 import 'package:flutter/material.dart';
@@ -50,7 +45,7 @@ class AddActivityScreen extends StatefulWidget {
   State<AddActivityScreen> createState() => _AddActivityScreenState();
 }
 
-class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMinxin {
+class _AddActivityScreenState extends State<AddActivityScreen> with FormStateMinxin {
 
   CategoryInfoModel? selectCategory;
   Set<String> selectedDays = {};
@@ -60,7 +55,6 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
   LocationModel? selectedLocation;
   Set<int> selectedFacilitiesId = {};
   List<File> photosList = <File>[];
-  Timer? _debounce;
 
   @override
   void initState() {
@@ -71,6 +65,7 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
       selectedSession = widget.activity!.sessionDuration;
       form.controllers[1].text = widget.activity!.price.toString();
       selectedLocation = widget.activity!.location!;
+      selectedFacilitiesId = widget.activity!.facilitiesList!.map((f) => f.ID!).toSet();
     }
   }
 
@@ -265,57 +260,11 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                     isEdit: widget.isEdit == true ? true : false,
                   ),
                   SizedBox(height: 20.h),
-                  // todo if facilities used in multi features must make it in separate widget
-                  GetModel<FacilityModel>(
-                    useCaseCallBack: () {
-                      return FacilitiesUseCase(HomeRepository())
-                          .call(params: FacilitiesParams());
-                    },
-                    onSuccess: (result) {
-                      if(widget.isEdit == true) {
-                        selectedFacilitiesId = widget.activity!.facilitiesList!.map((f) => f.ID!).toSet();
-                      }
-                    },
-                    modelBuilder: (model) => SelectMultiItemsWidget(
-                      title: AppLocalization.of(context).translate("facilities"),
-                      list: model.facilitiesList!,
-                      selectedIds: selectedFacilitiesId,
-                      labelBuilder: (item) => item.name!,
-                      idBuilder: (item) => item.ID!,
-                      onSelect: (ids) {
-                        setState(() {
-                          selectedFacilitiesId = ids;
-                        });
-                        _debounce?.cancel();
-                        _debounce = Timer(const Duration(milliseconds: 400), () async {
-                          if(widget.isEdit == true) {
-                            await CreateFacilityUseCase(HomeRepository()).call(
-                              params: CreateFacilityParams(
-                                ownerType: "activity",
-                                ownerId: widget.activity!.iD!,
-                                facilities: selectedFacilitiesId.toList(),
-                              ),
-                            );
-                          }
-                        });
-                      },
-                      isDelete: widget.isEdit == true ? true : false,
-                      onDelete: (id) async {
-                        setState(() {
-                          selectedFacilitiesId.remove(id);
-                        });
-                        _debounce?.cancel();
-                        _debounce = Timer(const Duration(milliseconds: 400), () async {
-                          await DeleteFacilityUseCase(HomeRepository()).call(
-                            params: DeleteFacilityParams(
-                              ownerType: "activity",
-                              ownerId: widget.activity!.iD!,
-                              facilities: [id],
-                            ),
-                          );
-                        });
-                      },
-                    ),
+                  FacilitiesWidget(
+                    ownerType: widget.isEdit == true ? "activity" : null,
+                    ownerId: widget.isEdit == true ? widget.activity!.iD! : null,
+                    selectedFacilitiesId: selectedFacilitiesId,
+                    isEdit: widget.isEdit == true ? true : false,
                   ),
                   SizedBox(height: 30.h),
                   Row(
@@ -348,12 +297,12 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("location_required"));
                                 return false;
                               }
-                              if (selectedFacilitiesId.isEmpty) {
-                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("facility_required"));
+                              if (photosList.isEmpty) {
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("media_required"));
                                 return false;
                               }
                               if (selectedFacilitiesId.isEmpty) {
-                                Dialogs.showSnackBar(context: context, message: "tags");
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("facility_required"));
                                 return false;
                               }
                             }
@@ -368,17 +317,17 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                               return CreateActivityUseCase(HomeRepository()).call(
                                   params: CreateActivityParams(
                                     name: form.controllers[0].text,
-                                    categoryId: selectCategory!.ID!,
-                                    days: selectedDays.toList(),
-                                    fromTime: formatTime24(time: fromTime!),
-                                    endTime: formatTime24(time: toTime!),
-                                    sessionDuration: selectedSession!,
+                                    categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
+                                    days:  selectedDays.isEmpty ? [] : selectedDays.toList(),
+                                    fromTime: fromTime == null ? "" : formatTime24(time: fromTime!),
+                                    endTime: toTime == null ? "" : formatTime24(time: toTime!),
+                                    sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                     price: form.controllers[1].text,
                                     description: form.controllers[2].text,
-                                    latitude: selectedLocation!.lat!,
-                                    longitude: selectedLocation!.long!,
-                                    files: photosList,
-                                    tags: selectedFacilitiesId.toList(),
+                                    latitude: selectedLocation == null ? 0.0 : selectedLocation!.lat!,
+                                    longitude: selectedLocation == null ? 0.0 : selectedLocation!.long!,
+                                    files: photosList.isEmpty ? [] : photosList,
+                                    tags: selectedFacilitiesId.isEmpty ? [] : selectedFacilitiesId.toList(),
                                   )
                               );
                             }
@@ -386,8 +335,8 @@ class _AddActivityScreenState extends State<AddActivityScreen>  with FormStateMi
                                 params: EditActivityParams(
                                   activityId: widget.activity!.iD,
                                   name: form.controllers[0].text,
-                                  categoryId: selectCategory!.ID!,
-                                  sessionDuration: selectedSession!,
+                                  categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
+                                  sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                   price: form.controllers[1].text,
                                   description: form.controllers[2].text,
                                 )

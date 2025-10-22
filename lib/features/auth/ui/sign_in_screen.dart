@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
-import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
+import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/form_utils/form_state_mixin.dart';
 import 'package:centro_partner/core/ui/widgets/custom_text_field.dart';

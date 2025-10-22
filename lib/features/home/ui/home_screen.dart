@@ -9,9 +9,13 @@ import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/activity/all_activities_model.dart';
+import 'package:centro_partner/features/home/data/model/course/all_courses_model.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/all_activities_usecase.dart';
-import 'package:centro_partner/features/home/ui/activity_details_screen.dart';
-import 'package:centro_partner/features/home/ui/add_activity_screen.dart';
+import 'package:centro_partner/features/home/data/usecase/course/all_courses_usecase.dart';
+import 'package:centro_partner/features/home/ui/activity/activity_details_screen.dart';
+import 'package:centro_partner/features/home/ui/activity/add_activity_screen.dart';
+import 'package:centro_partner/features/home/ui/course/add_course_screen.dart';
+import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -28,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   int selectedTab = 0;
   GetModelCubit<AllActivitiesModel>? allActivitiesCubit;
+  GetModelCubit<AllCoursesModel>? allCoursesCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ));
                   } else if (selectedTab == 1) {
-                    // print('classes');
+                    Navigation.push(AddCourseScreen(
+                      onRefresh: () async {
+                        await allCoursesCubit?.getModel();
+                      },
+                    ));
                   } else if (selectedTab == 2) {
                     // print("events");
                   } else {
@@ -79,7 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
               Expanded(
-                child: GetModel<AllActivitiesModel>(
+                child: selectedTab == 0 ?
+                GetModel<AllActivitiesModel>(
                   onCubitCreated: (cubit) {
                     allActivitiesCubit = cubit as GetModelCubit<AllActivitiesModel>;
                   },
@@ -92,29 +102,57 @@ class _HomeScreenState extends State<HomeScreen> {
                     minItemWidth: 100,
                     children: model.activitiesList!.map((e) => InkWell(
                       onTap: () {
-                        if (selectedTab == 0) {
-                          Navigation.push(ActivityDetailsScreen(
-                            activityId: e.iD!,
-                            onRefresh: () async {
-                              await allActivitiesCubit?.getModel();
-                            },
-                          ));
-                        }
+                        Navigation.push(ActivityDetailsScreen(
+                          activityId: e.iD!,
+                          onRefresh: () async {
+                            await allActivitiesCubit?.getModel();
+                          },
+                        ));
                       },
                       child: ColoredBox(
                           color: AppColors.lightGrayColor,
                           child: CachedImage(
-                            imageUrl: selectedTab == 0 ? e.mediaList!.isEmpty ? "" : e.mediaList!.first.url! :
-                            selectedTab == 1 ? "https://media.istockphoto.com/id/1317564926/photo/athletic-woman-using-barbell-disk-while-being-in-lunge-position-during-exercise-class-at-the.jpg?s=612x612&w=0&k=20&c=OSmJFbIEfqn5ksbs9b7uWtkJWO598KDf6mG0QjB8rmg=" :
-                            selectedTab == 2 ? "https://theenterpriseworld.com/wp-content/uploads/2024/03/49.-Top-10-Biggest-Sporting-Events-In-The-World-Image-by-Dmytro-Aksonov-.jpg" :
-                            "https://smithhousestrategy.com/wp-content/uploads/2024/02/sports.jpg",
+                            imageUrl: e.mediaList!.isEmpty ? "" : e.mediaList!.first.url!,
                             height: 270.h,
                             fit: BoxFit.cover,
                           )
                       ),
                     )).toList(),
                   ),
-                ),
+                ) :
+                    selectedTab == 1 ?
+                GetModel<AllCoursesModel>(
+                  onCubitCreated: (cubit) {
+                    allCoursesCubit = cubit as GetModelCubit<AllCoursesModel>;
+                  },
+                  useCaseCallBack: () {
+                    return AllCoursesUseCase(HomeRepository()).call(params: AllCoursesParams());
+                  },
+                  modelBuilder: (model) => ResponsiveGridList(
+                    horizontalGridMargin: 10,
+                    verticalGridMargin: 20,
+                    minItemWidth: 100,
+                    children: model.coursesList!.map((e) => InkWell(
+                      onTap: () {
+                        Navigation.push(CourseDetailsScreen(
+                          courseId: e.iD!,
+                          onRefresh: () async {
+                            await allCoursesCubit?.getModel();
+                          },
+                        ));
+                      },
+                      child: ColoredBox(
+                          color: AppColors.lightGrayColor,
+                          child: CachedImage(
+                            imageUrl: e.mediaList!.isEmpty ? "" : e.mediaList!.first.url!,
+                            height: 270.h,
+                            fit: BoxFit.cover,
+                          )
+                      ),
+                    )).toList(),
+                  ),
+                ) :
+                selectedTab == 2 ? Center() : Center(),
               ),
             ],
           ),

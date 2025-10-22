@@ -8,7 +8,7 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
-import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
+import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/features/auth/data/model/login_model.dart';
 import 'package:centro_partner/features/home/widget/view_image_widget.dart';

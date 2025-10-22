@@ -82,8 +82,12 @@ class ApiProvider {
 
       final decodedJson = _normalizeResponse(response.data);
       debugPrint('response : $decodedJson');
-
-      return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
+      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
+        if ((decodedJson['message'] ?? '').isNotEmpty && decodedJson['payload'] != null) {
+          return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
+        }
+      }
+      return Left(CustomError(errorMessage: _extractErrorMessage(decodedJson)));
     } on DioError catch (e) {
       return Left(handleDioError(e));
     } on SocketException {

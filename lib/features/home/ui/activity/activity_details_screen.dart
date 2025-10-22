@@ -7,7 +7,7 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
-import 'package:centro_partner/core/ui/widgets/coustom_sheet.dart';
+import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/project_utils/open_url.dart';
@@ -18,7 +18,7 @@ import 'package:centro_partner/features/home/data/model/activity/activity_model.
 import 'package:centro_partner/features/home/data/usecase/activity/activity_details_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/delete_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/toggle_activation_activity_usecase.dart';
-import 'package:centro_partner/features/home/ui/add_activity_screen.dart';
+import 'package:centro_partner/features/home/ui/activity/add_activity_screen.dart';
 import 'package:centro_partner/features/home/ui/workdays_screen.dart';
 import 'package:centro_partner/features/home/widget/images_slider_widget.dart';
 import 'package:flutter/material.dart';
@@ -156,8 +156,11 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                                       ),
                                     ),
                                     onTap: () => Navigation.push(WorkdaysScreen(
-                                        ownerType: "activity",
-                                        ownerId: model.activity!.iD!,
+                                      ownerType: "activity",
+                                      ownerId: model.activity!.iD!,
+                                      onRefresh: () async {
+                                        refreshCubit?.getModel();
+                                      },
                                     ))
                                 ),
                                 PopupMenuItem(
@@ -349,6 +352,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                       ),
                     ),
                     SizedBox(height: 10.h),
+                    model.activity!.facilitiesList!.isEmpty ? Center() :
                     Card(
                       color: AppColors.whiteColor,
                       elevation: 3,
