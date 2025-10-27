@@ -11,13 +11,15 @@ class IconTextWidget extends StatelessWidget {
   final String text;
   final TextStyle? textStyle;
   final Color? iconColor;
+  final int maxline;
 
   const IconTextWidget({super.key,
     required this.icon,
     this.iconSize,
     required this.text,
     this.textStyle,
-    this.iconColor
+    this.iconColor,
+    this.maxline = 1
   });
 
   @override
@@ -29,7 +31,10 @@ class IconTextWidget extends StatelessWidget {
         Expanded(
           child: Padding(
             padding: EdgeInsets.only(top: 5.sp),
-            child: Text(text,style: textStyle ?? AppTheme.labelLarge),
+            child: Text(text,
+                maxLines: maxline,
+                overflow: maxline <=1 ? TextOverflow.ellipsis : null,
+                style: textStyle ?? AppTheme.labelLarge),
           ),
         )
       ],

@@ -257,12 +257,24 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                     ),
                     SizedBox(height: 5.h),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
-                        // todo later
-                        Text(" 4.5 (200 ${AppLocalization.of(context).translate("reviews")})",
-                            style: AppTheme.labelMedium.copyWith(color: AppColors.mediumGrayColor)),
+                        Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
+                              // todo later
+                              Text(" 4.5 (200 ${AppLocalization.of(context).translate("reviews")})",
+                                  style: AppTheme.labelMedium.copyWith(color: AppColors.mediumGrayColor)),
+                            ],
+                          ),
+                        ),
+                        Text(model.course!.price.toString(),
+                          style: AppTheme.headlineSmall.copyWith(
+                              color: AppColors.primaryColor,
+                              fontSize: 24.sp
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10.h),
@@ -483,72 +495,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 20.h)
+              SizedBox(height: 40.h)
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: Container(
-        width: 1.sw,
-        padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 15.h),
-        decoration: BoxDecoration(
-          color: AppColors.whiteColor,
-          boxShadow: [
-            BoxShadow(
-                color: AppColors.grayColor,
-                spreadRadius: 0,
-                blurRadius: 8,
-            )
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              flex: 3,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(AppLocalization.of(context).translate("price"),
-                    style: AppTheme.bodyMedium,
-                  ),
-                  Text(courseDetailsModel == null ? "" : courseDetailsModel!.price.toString(),
-                    style: AppTheme.headlineSmall.copyWith(
-                      color: AppColors.primaryColor,
-                      fontSize: 24.sp
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(width: 10.w),
-            Expanded(
-              flex: 2,
-              child: CustomButton(
-                backgroundColor: AppColors.primaryColor,
-                borderRadius: 10.r,
-                buttonName: AppLocalization.of(context).translate("book"),
-                function: () {
-                  if(courseDetailsModel!.isFull == true) {
-                    Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("course_closed"));
-                  }
-                  // todo check later
-                  // if(courseDetailsModel != null) {
-                  //   CustomSheet.show(
-                  //       isDismissible: true,
-                  //       header: Text(AppLocalization.of(context).translate("book"),
-                  //         style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
-                  //       ),
-                  //       padding: 30.w,
-                  //       context: context,
-                  //       child: BookActivitySheet(activity: activityDetailsModel!)
-                  //   );
-                  // }
-                },
-              ),
-            ),
-          ],
         ),
       ),
     );

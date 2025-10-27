@@ -23,6 +23,7 @@ class _TabsWidgetState extends State<TabsWidget> {
     return Column(
       children: [
         SizedBox(
+          width: 1.sw,
           height: 35.h,
           child: ListView.builder(
             shrinkWrap: true,

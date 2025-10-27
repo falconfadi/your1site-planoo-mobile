@@ -12,6 +12,7 @@ import 'package:centro_partner/features/appointment/data/appointment_repository/
 import 'package:centro_partner/features/appointment/data/model/appointment_details_model.dart';
 import 'package:centro_partner/features/appointment/data/usecase/all_appointments_usecase.dart';
 import 'package:centro_partner/features/appointment/widget/activity_appointments_widget.dart';
+import 'package:centro_partner/features/appointment/widget/course_appointments_widget.dart';
 import 'package:centro_partner/features/appointment/widget/filter_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -57,7 +58,11 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                           child: FilterSheet()
                       );
                       if (result != null) {
-                        selectedStatus = result.first;
+                        if(result.first == null) {
+                          selectedStatus = StatusEnum.accepted;
+                        } else {
+                          selectedStatus = result.first;
+                        }
                         if(result.last == null) {
                           date = null;
                         } else {
@@ -76,13 +81,15 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                         setState(() {
                           selectedTab = index;
                         });
+                        selectedStatus = StatusEnum.accepted;
+                        date = null;
+                        cubit.getList();
                       },
                     ),
                   ),
                 ],
               ),
               SizedBox(height: 10.h),
-              selectedTab == 0 ?
               Expanded(
                 child: PaginationList<AppointmentDetailsModel>(
                   key: ValueKey("$selectedStatus-$date"),
@@ -94,7 +101,8 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   repositoryCallBack: (model) {
                     return AllAppointmentsUseCase(AppointmentRepository()).call(
                         params: AllAppointmentsParams(model,
-                          ownerType: "activity",
+                          ownerType: selectedTab == 0 ?
+                          "activity" : selectedTab == 1 ? "course" : "",
                           date: date,
                           status: selectedStatus.name == "accepted" ? 0 :
                           selectedStatus.name == "completed" ? 1 : -1
@@ -106,17 +114,22 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       shrinkWrap: true,
                       itemCount: list.length,
                       itemBuilder: (context,index) {
-                        return ActivityAppointmentsWidget(
+                        return selectedTab == 0 ? ActivityAppointmentsWidget(
                           appointment: list[index],
                           onRefresh: () async {
                             await cubit.getList();
                           },
-                        );
+                        ) : selectedTab == 1 ? CourseAppointmentsWidget(
+                          appointment: list[index],
+                          onRefresh: () async {
+                            await cubit.getList();
+                          },
+                        ) : Center();
                       },
                     );
                   },
                 ),
-              ): Center(),
+              )
             ],
           ),
         )

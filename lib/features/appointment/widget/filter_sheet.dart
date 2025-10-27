@@ -76,7 +76,11 @@ class _FilterSheetState extends State<FilterSheet> {
           borderRadius: 10.r,
           buttonName: AppLocalization.of(context).translate("apply"),
           function: () {
-            Navigator.pop(context,{selectedStatus,date == null ? null : convertDate(date: date.toString(),format: "yyyy-MM-dd")});
+            if(selectedStatus == null && date == null) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pop(context,{selectedStatus,date == null ? null : convertDate(date: date.toString(),format: "yyyy-MM-dd")});
+            }
           },
         ),
         SizedBox(height: 30.h),

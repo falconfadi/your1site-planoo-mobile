@@ -60,8 +60,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ));
                   } else if (selectedTab == 2) {
                     // print("events");
-                  } else {
-                    // print("entertainment");
                   }
                 },
                 child: Row(
@@ -151,8 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )).toList(),
                   ),
-                ) :
-                selectedTab == 2 ? Center() : Center(),
+                ) :  Center(),
               ),
             ],
           ),
