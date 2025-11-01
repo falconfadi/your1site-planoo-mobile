@@ -6,8 +6,8 @@ import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
-import 'package:centro_partner/features/auth/data/usecase/login_usecase.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
+import 'package:centro_partner/features/auth/data/usecase/sign_in_usecase.dart';
 import 'package:centro_partner/features/auth/ui/sign_up_screen.dart';
 import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
 import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
@@ -124,7 +124,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                 SizedBox(height: 50.h),
                 CreateModel(
                   withValidation: true,
-                  onSuccess: (LoginModel model) async {
+                  onSuccess: (SignInModel model) async {
                     await saveLoginTokens(model.token!);
                     AppStorage.saveData(key: userID, value: model.user!.id);
                     AppStorage.saveData(key: userType, value: model.user!.accountType);
@@ -140,8 +140,8 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                       Dialogs.showQuestion(context, title: errorMessage);
                     }
                   },
-                  useCaseCallBack: (model) => LoginUseCase(AuthRepository()).call(
-                      params: LoginParams(
+                  useCaseCallBack: (model) => SignInUseCase(AuthRepository()).call(
+                      params: SignInParams(
                         phone: form.controllers[0].text,
                         password: form.controllers[1].text,
                       )),

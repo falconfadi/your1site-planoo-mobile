@@ -1,5 +1,5 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
 import 'package:centro_partner/features/profile/data/usecase/edit_user_usecase.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class EditProfileSheet extends StatefulWidget {
 
   VoidCallback onImageUpdated;
-  LoginModel? model;
+  SignInModel? model;
 
   EditProfileSheet({required this.onImageUpdated, super.key,  this.model});
 

@@ -4,7 +4,7 @@ import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/utils/project_utils/pick_image.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
 import 'package:centro_partner/features/profile/data/usecase/upload_profile_image_usecase.dart';
@@ -15,7 +15,7 @@ import 'package:image_picker/image_picker.dart';
 class PickImageSheet extends StatefulWidget {
 
   VoidCallback onImageUpdated;
-  LoginModel? model;
+  SignInModel? model;
 
   PickImageSheet({required this.onImageUpdated, super.key,  this.model});
 

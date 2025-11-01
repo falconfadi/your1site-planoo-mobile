@@ -3,11 +3,11 @@ import 'package:centro_partner/core/data_source/remote_data_source.dart';
 import 'package:centro_partner/core/http/http_method.dart';
 import 'package:centro_partner/core/repository/core_repository.dart';
 import 'package:centro_partner/core/results/result.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/features/auth/data/model/user_type_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/change_password_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/forget_password_usecase.dart';
-import 'package:centro_partner/features/auth/data/usecase/login_usecase.dart';
+import 'package:centro_partner/features/auth/data/usecase/sign_in_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/resend_code_usecase.dart';
@@ -47,14 +47,14 @@ class AuthRepository extends CoreRepository {
     return noModelCall(result: result);
   }
 
-  Future<Result<LoginModel>> login({required LoginParams params}) async {
+  Future<Result<SignInModel>> login({required SignInParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: false,
         url: loginUrl,
         data: params.toJson(),
         method: HttpMethod.POST,
-        responseStr: 'LoginResponse',
-        converter: (json) => LoginResponse.fromJson(json));
+        responseStr: 'SignInResponse',
+        converter: (json) => SignInResponse.fromJson(json));
     return call(result: result);
   }
 

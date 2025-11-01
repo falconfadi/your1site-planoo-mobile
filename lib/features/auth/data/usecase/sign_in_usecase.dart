@@ -1,15 +1,15 @@
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import '../../../../core/params/base_params.dart';
 import '../../../../core/results/result.dart';
 import '../../../../core/usecase/usecase.dart';
 
-class LoginParams extends BaseParams {
+class SignInParams extends BaseParams {
 
 final String? phone;
 final String? password;
 
-  LoginParams({this.phone, this.password});
+SignInParams({this.phone, this.password});
 
   Map<String, String?> toJson() {
     return {
@@ -19,13 +19,13 @@ final String? password;
   }
 }
 
-class LoginUseCase extends UseCase<LoginModel, LoginParams> {
+class SignInUseCase extends UseCase<SignInModel, SignInParams> {
   final AuthRepository repository;
 
-  LoginUseCase(this.repository);
+  SignInUseCase(this.repository);
 
   @override
-  Future<Result<LoginModel>> call({required LoginParams params}) {
+  Future<Result<SignInModel>> call({required SignInParams params}) {
     return repository.login(params: params);
   }
 }

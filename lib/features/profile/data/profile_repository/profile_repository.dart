@@ -1,5 +1,5 @@
 import 'package:centro_partner/core/repository/core_repository.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 import 'package:centro_partner/features/profile/data/usecase/delete_profile_image_usecase.dart';
 import 'package:centro_partner/features/profile/data/usecase/edit_user_usecase.dart';
@@ -12,13 +12,13 @@ import '../../../../core/results/result.dart';
 
 class ProfileRepository extends CoreRepository {
 
-  Future<Result<LoginModel>> getUser({required GetUserParams params}) async {
+  Future<Result<SignInModel>> getUser({required GetUserParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: true,
         url: getUserUrl,
         method: HttpMethod.GET,
         responseStr: 'LoginResponse',
-        converter: (json) => LoginResponse.fromJson(json));
+        converter: (json) => SignInResponse.fromJson(json));
     return call(result: result);
   }
 
@@ -44,14 +44,14 @@ class ProfileRepository extends CoreRepository {
     return noModelCall(result: result);
   }
 
-  Future<Result<LoginModel>> editUser({required EditUserParams params}) async {
+  Future<Result<SignInModel>> editUser({required EditUserParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: true,
         url: editUserUrl,
         data: params.toJson(),
         method: HttpMethod.POST,
         responseStr: 'LoginResponse',
-        converter: (json) => LoginResponse.fromJson(json));
+        converter: (json) => SignInResponse.fromJson(json));
     return call(result: result);
   }
 

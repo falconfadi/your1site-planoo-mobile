@@ -2,33 +2,33 @@ import 'package:centro_partner/core/data_source/model.dart';
 import 'package:centro_partner/core/responses/api_response.dart';
 import 'package:centro_partner/features/auth/data/model/user_model.dart';
 
-class LoginResponse extends ApiResponse<LoginModel> {
+class SignInResponse extends ApiResponse<SignInModel> {
 
-  LoginResponse({required super.errors, required super.message, required super.data});
+  SignInResponse({required super.errors, required super.message, required super.data});
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    return LoginResponse(
+  factory SignInResponse.fromJson(Map<String, dynamic> json) {
+    return SignInResponse(
       errors: json["payload"]["errors"] != null
-          ? LoginModel.fromJson(json["payload"]["errors"])
+          ? SignInModel.fromJson(json["payload"]["errors"])
           : null,
       message: json["message"],
-      data: LoginModel.fromJson(json["payload"]),
+      data: SignInModel.fromJson(json["payload"]),
     );
   }
 }
 
 // ignore: must_be_immutable
-class LoginModel extends BaseModel{
+class SignInModel extends BaseModel{
 
   UserModel? user;
   String? token;
 
-  LoginModel({
+  SignInModel({
     this.user,
     this.token
   });
 
-  LoginModel.fromJson(Map<String, dynamic> json) {
+  SignInModel.fromJson(Map<String, dynamic> json) {
     user = json['user'] != null ? UserModel.fromJson(json['user']) : null;
     token = json['token'];
   }

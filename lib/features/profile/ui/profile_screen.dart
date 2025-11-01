@@ -10,7 +10,7 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
-import 'package:centro_partner/features/auth/data/model/login_model.dart';
+import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/features/home/widget/view_image_widget.dart';
 import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
 import 'package:centro_partner/features/profile/data/usecase/delete_profile_image_usecase.dart';
@@ -33,16 +33,16 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   File? photo;
-  GetModelCubit<LoginModel>? _userCubit;
+  GetModelCubit<SignInModel>? _userCubit;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: CustomHeader(title: AppLocalization.of(context).translate("profile"), isNavBar: true),
-      body: GetModel<LoginModel>(
+      body: GetModel<SignInModel>(
           onCubitCreated: (cubit) {
-            _userCubit = cubit as GetModelCubit<LoginModel>;
+            _userCubit = cubit as GetModelCubit<SignInModel>;
           },
           useCaseCallBack: () {
             return GetUserUseCase(ProfileRepository()).call(params: GetUserParams());
