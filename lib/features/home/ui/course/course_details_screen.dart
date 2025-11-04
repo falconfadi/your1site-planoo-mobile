@@ -7,6 +7,7 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
+import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/project_utils/open_url.dart';
@@ -474,8 +475,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               crossAxisAlignment: CrossAxisAlignment.center,
                                               children: [
-                                                // todo later
-                                                Flexible(child: Icon(Icons.image_not_supported_outlined,color: AppColors.mediumGrayColor)),
+                                                Flexible(child: CachedImage(imageUrl: model.course!.facilitiesList![index].icon!, fit: BoxFit.cover)),
                                                 SizedBox(height: 10.h),
                                                 Flexible(child: Text(model.course!.facilitiesList![index].name!,style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor))),
                                               ],
@@ -495,7 +495,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 40.h)
+              SizedBox(height: 30.h)
             ],
           ),
         ),

@@ -10,12 +10,16 @@ import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/activity/all_activities_model.dart';
 import 'package:centro_partner/features/home/data/model/course/all_courses_model.dart';
+import 'package:centro_partner/features/home/data/model/event/all_events_model.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/all_activities_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/all_courses_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/all_events_usecase.dart';
 import 'package:centro_partner/features/home/ui/activity/activity_details_screen.dart';
 import 'package:centro_partner/features/home/ui/activity/add_activity_screen.dart';
 import 'package:centro_partner/features/home/ui/course/add_course_screen.dart';
 import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
+import 'package:centro_partner/features/home/ui/event/add_event_screen.dart';
+import 'package:centro_partner/features/home/ui/event/event_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -33,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedTab = 0;
   GetModelCubit<AllActivitiesModel>? allActivitiesCubit;
   GetModelCubit<AllCoursesModel>? allCoursesCubit;
+  GetModelCubit<AllEventsModel>? allEventsCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +64,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                     ));
                   } else if (selectedTab == 2) {
-                    // print("events");
+                    Navigation.push(AddEventScreen(
+                      onRefresh: () async {
+                        await allEventsCubit?.getModel();
+                      },
+                    ));
                   }
                 },
                 child: Row(
@@ -118,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     )).toList(),
                   ),
                 ) :
-                    selectedTab == 1 ?
+                selectedTab == 1 ?
                 GetModel<AllCoursesModel>(
                   onCubitCreated: (cubit) {
                     allCoursesCubit = cubit as GetModelCubit<AllCoursesModel>;
@@ -149,7 +158,38 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     )).toList(),
                   ),
-                ) :  Center(),
+                ) :
+                GetModel<AllEventsModel>(
+                      onCubitCreated: (cubit) {
+                        allEventsCubit = cubit as GetModelCubit<AllEventsModel>;
+                      },
+                      useCaseCallBack: () {
+                        return AllEventsUseCase(HomeRepository()).call(params: AllEventsParams());
+                      },
+                      modelBuilder: (model) => ResponsiveGridList(
+                        horizontalGridMargin: 10,
+                        verticalGridMargin: 20,
+                        minItemWidth: 100,
+                        children: model.eventsList!.map((e) => InkWell(
+                          onTap: () {
+                            Navigation.push(EventDetailsScreen(
+                              eventId: e.iD!,
+                              onRefresh: () async {
+                                await allEventsCubit?.getModel();
+                              },
+                            ));
+                          },
+                          child: ColoredBox(
+                              color: AppColors.lightGrayColor,
+                              child: CachedImage(
+                                imageUrl: e.mediaList!.isEmpty ? "" : e.mediaList!.first.url!,
+                                height: 270.h,
+                                fit: BoxFit.cover,
+                              )
+                          ),
+                        )).toList(),
+                      ),
+                    ),
               ),
             ],
           ),

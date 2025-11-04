@@ -10,6 +10,8 @@ import 'package:centro_partner/features/home/data/model/course/all_courses_model
 import 'package:centro_partner/features/home/data/model/course/course_model.dart';
 import 'package:centro_partner/features/home/data/model/course_duration_model.dart';
 import 'package:centro_partner/features/home/data/model/days_model.dart';
+import 'package:centro_partner/features/home/data/model/event/all_events_model.dart';
+import 'package:centro_partner/features/home/data/model/event/event_model.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
 import 'package:centro_partner/features/home/data/model/location/all_medias_model.dart';
 import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
@@ -29,6 +31,12 @@ import 'package:centro_partner/features/home/data/usecase/course/delete_course_u
 import 'package:centro_partner/features/home/data/usecase/course/edit_course_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/toggle_activation_course_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/days_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/all_events_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/create_event_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/delete_event_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/edit_event_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/event_details_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/event/toggle_activation_event_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facilities_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facility/create_facility_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/facility/delete_facility_usecase.dart';
@@ -346,6 +354,72 @@ class HomeRepository extends CoreRepository {
         method: HttpMethod.PATCH,
         responseStr: 'CourseResponse',
         converter: (json) => CourseResponse.fromJson(json));
+    return call(result: result);
+  }
+
+  /// event
+  Future<Result<EventModel>> createEvent({required CreateEventParams params}) async {
+    final result = await RemoteDataSource.upload<EventModel>(
+      withAuthentication: true,
+      url: createEventUrl,
+      data: params.toFormDataMap(),
+      responseStr: 'EventModel',
+      converter: (json) => EventModel.fromJson(json),
+      filesMap: {
+        'media[][file]': params.files!,
+      },
+    );
+    return call(result: result);
+  }
+
+  Future<Result<AllEventsModel>> getAllEvents({required AllEventsParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: allEventsUrl,
+        method: HttpMethod.GET,
+        responseStr: 'AllEventsResponse',
+        converter: (json) => AllEventsResponse.fromJson(json));
+    return call(result: result);
+  }
+
+  Future<Result<EventModel>> getEventDetails({required EventDetailsParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: "$eventDetailsUrl?event_id=${params.eventId}",
+        method: HttpMethod.GET,
+        responseStr: 'EventResponse',
+        converter: (json) => EventResponse.fromJson(json));
+    return call(result: result);
+  }
+
+  Future<Result<bool>> deleteEvent({required DeleteEventParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: deleteEventUrl,
+      data: params.toJson(),
+      method: HttpMethod.DELETE,
+    );
+    return noModelCall(result: result);
+  }
+
+  Future<Result<bool>> toggleActivationEvent({required ToggleActivationEventParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: toggleActivationEventUrl,
+      data: params.toJson(),
+      method: HttpMethod.POST,
+    );
+    return noModelCall(result: result);
+  }
+
+  Future<Result<EventModel>> editEvent({required EditEventParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: editEventUrl,
+        data: params.toJson(),
+        method: HttpMethod.PATCH,
+        responseStr: 'EventResponse',
+        converter: (json) => EventResponse.fromJson(json));
     return call(result: result);
   }
 }

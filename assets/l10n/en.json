@@ -97,6 +97,7 @@
   "session_duration_required": "Session duration is required",
   "location_required": "Location is required",
   "facility_required": "Facility is required",
+  "media_required": "Media is required",
   "book": "Book",
   "workday": "Workday",
   "pick_location": "Pick location",
@@ -115,5 +116,12 @@
   "cancellation_fee": "Cancellation fee",
   "course_closed": "The course is closed",
   "course_duration": "Course duration",
-  "course_duration_required": "Course duration is required"
+  "course_duration_required": "Course duration is required",
+  "event_duration": "Event duration",
+  "admission_fee": "Admission fee",
+  "withdrawal_fee": "Withdrawal fee",
+  "start_date": "Start date",
+  "start_date_required": "Start date is required",
+  "end_date": "End date",
+  "participants": "Participants"
 }

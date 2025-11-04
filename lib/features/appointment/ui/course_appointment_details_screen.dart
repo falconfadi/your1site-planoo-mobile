@@ -96,7 +96,7 @@ class _CourseAppointmentDetailsScreenState extends State<CourseAppointmentDetail
                               ),
                             ),
                             SizedBox(width: 5.w),
-                            CustomRatingBar(rate: 3.5,size: 18) // todo check later
+                            CustomRatingBar(rate: 3.5,size: 18) // todo
                           ],
                         ),
                         Text(widget.courseModel.course!.description!,
@@ -160,7 +160,7 @@ class _CourseAppointmentDetailsScreenState extends State<CourseAppointmentDetail
                                       fontSize: 18.sp, color: AppColors.mediumGrayColor),
                                 )
                             ),
-                            SizedBox(height: 20.h),
+                            SizedBox(height: 10.h),
                             Row(
                                 children: [
                                   Expanded(child: Center()),

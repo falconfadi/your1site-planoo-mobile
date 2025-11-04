@@ -1,5 +1,6 @@
 import 'package:centro_partner/core/data_source/model.dart';
 import 'package:centro_partner/core/responses/api_response.dart';
+import 'package:centro_partner/features/home/data/model/customer_model.dart';
 
 
 class AppointmentDetailsResponse extends ApiResponse<AppointmentDetailsModel> {
@@ -94,36 +95,6 @@ class HolderModel {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['type'] = type;
-    return data;
-  }
-}
-
-class CustomerModel {
-  int? id;
-  String? name;
-  String? phone;
-  int? status;
-
-  CustomerModel({
-    this.id,
-    this.name,
-    this.phone,
-    this.status,
-  });
-
-  CustomerModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    name = json['name'];
-    phone = json['phone'];
-    status = json['status'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['name'] = name;
-    data['phone'] = phone;
-    data['status'] = status;
     return data;
   }
 }

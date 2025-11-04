@@ -67,8 +67,6 @@ dependencies:
   responsive_grid_list: ^1.4.1
   carousel_slider: ^5.1.1
   url_launcher: ^6.3.2
-  mocktail: ^1.0.4
-  bloc_test: ^10.0.0
   image: ^4.5.4
 
 dev_dependencies:

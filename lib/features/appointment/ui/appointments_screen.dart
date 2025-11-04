@@ -13,6 +13,7 @@ import 'package:centro_partner/features/appointment/data/model/appointment_detai
 import 'package:centro_partner/features/appointment/data/usecase/all_appointments_usecase.dart';
 import 'package:centro_partner/features/appointment/widget/activity_appointments_widget.dart';
 import 'package:centro_partner/features/appointment/widget/course_appointments_widget.dart';
+import 'package:centro_partner/features/appointment/widget/event_appointments_widget.dart';
 import 'package:centro_partner/features/appointment/widget/filter_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -102,14 +103,13 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                     return AllAppointmentsUseCase(AppointmentRepository()).call(
                         params: AllAppointmentsParams(model,
                           ownerType: selectedTab == 0 ?
-                          "activity" : selectedTab == 1 ? "course" : "",
+                          "activity" : selectedTab == 1 ? "course" : "event",
                           date: date,
                           status: selectedStatus.name == "accepted" ? 0 :
                           selectedStatus.name == "completed" ? 1 : -1
                         ));
                   },
                   listBuilder: (list) {
-                    print(list.length);
                     return ListView.builder(
                       shrinkWrap: true,
                       itemCount: list.length,
@@ -124,7 +124,12 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                           onRefresh: () async {
                             await cubit.getList();
                           },
-                        ) : Center();
+                        ) : EventAppointmentsWidget(
+                          appointment: list[index],
+                          onRefresh: () async {
+                            await cubit.getList();
+                          },
+                        );
                       },
                     );
                   },

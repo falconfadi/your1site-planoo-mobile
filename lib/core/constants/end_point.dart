@@ -69,3 +69,10 @@ const String courseDetailsUrl = "course/find";
 const String deleteCourseUrl = "course/delete";
 const String toggleActivationCourseUrl = "course/toggleActivation";
 const String editCourseUrl = "course/update";
+/// event
+const String createEventUrl = "event/create";
+const String allEventsUrl = "event/all";
+const String eventDetailsUrl = "event/find";
+const String deleteEventUrl = "event/delete";
+const String toggleActivationEventUrl = "event/toggleActivation";
+const String editEventUrl = "event/update";

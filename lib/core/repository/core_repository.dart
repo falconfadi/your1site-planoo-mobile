@@ -27,8 +27,6 @@ abstract class CoreRepository {
     if (result.isRight()) {
       return PaginatedResult(
         data: (result as Right).value.data,
-
-        ///TODO if response is list direct remove data and return value
       );
     } else {
       return RemoteResult(
