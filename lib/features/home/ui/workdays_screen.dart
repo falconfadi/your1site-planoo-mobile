@@ -148,14 +148,20 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
                           children: [
                             Expanded(
                               child: InkWell(
-                                onTap: () async {
-                                  TimeOfDay? selected = await selectTime(context, parseTimeOfDay(timeString: getModel.workdaysList![index].start ?? "00:00"));
-                                  if (selected != null) {
-                                    setState(() {
-                                      String newTime = formatTime24(time: selected);
-                                      getModel.workdaysList![index].start = newTime;
-                                    });
-                                  }
+                                onTap: () {
+                                  showCustomTimePicker(
+                                    context: context,
+                                    buttonLabel: "save",
+                                    initialTime: TimeOfDay(
+                                      hour: int.tryParse(getModel.workdaysList![index].start!.split(":")[0]) ?? 0,
+                                      minute: int.tryParse(getModel.workdaysList![index].start!.split(":")[1]) ?? 0,
+                                    ),
+                                    onSaved: (formattedTime) {
+                                      setState(() {
+                                        getModel.workdaysList![index].start = formattedTime;
+                                      });
+                                    },
+                                  );
                                 },
                                 child: CustomContainerInfoWidget(
                                   height: 45.h,
@@ -167,14 +173,20 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
                             SizedBox(width: 20.w),
                             Expanded(
                               child: InkWell(
-                                onTap: () async {
-                                  TimeOfDay? selected = await selectTime(context, parseTimeOfDay(timeString: getModel.workdaysList![index].end ?? "00:00"));
-                                  if (selected != null) {
-                                    setState(() {
-                                      String newTime = formatTime24(time: selected);
-                                      getModel.workdaysList![index].end = newTime;
-                                    });
-                                  }
+                                onTap: () {
+                                  showCustomTimePicker(
+                                    context: context,
+                                    buttonLabel: "save",
+                                    initialTime: TimeOfDay(
+                                      hour: int.tryParse(getModel.workdaysList![index].end!.split(":")[0]) ?? 0,
+                                      minute: int.tryParse(getModel.workdaysList![index].end!.split(":")[1]) ?? 0,
+                                    ),
+                                    onSaved: (formattedTime) {
+                                      setState(() {
+                                        getModel.workdaysList![index].end = formattedTime;
+                                      });
+                                    },
+                                  );
                                 },
                                 child: CustomContainerInfoWidget(
                                   height: 45.h,

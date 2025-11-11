@@ -49,8 +49,8 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
   CategoryInfoModel? selectCategory;
   DateTime? startDate;
   Set<String> selectedDays = {};
-  TimeOfDay? fromTime;
-  TimeOfDay? toTime;
+  String? fromTime;
+  String? toTime;
   LocationModel? selectedLocation;
   Set<int> selectedFacilitiesId = {};
   List<File> photosList = <File>[];
@@ -351,8 +351,8 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                                     name: form.controllers[0].text,
                                     categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                     days: selectedDays.isEmpty ? [] : selectedDays.toList(),
-                                    fromTime: fromTime == null ? "" : formatTime24(time: fromTime!),
-                                    endTime: toTime == null ? "" : formatTime24(time: toTime!),
+                                    fromTime: fromTime ?? "",
+                                    endTime: toTime ?? "",
                                     eventDuration: form.controllers[1].text,
                                     capacity: form.controllers[2].text,
                                     admissionFee: form.controllers[3].text,

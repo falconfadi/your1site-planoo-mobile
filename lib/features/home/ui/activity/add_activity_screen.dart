@@ -9,7 +9,6 @@ import 'package:centro_partner/features/home/widget/photos_widget.dart';
 import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
-import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_details_model.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
@@ -49,8 +48,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with FormStateMin
 
   CategoryInfoModel? selectCategory;
   Set<String> selectedDays = {};
-  TimeOfDay? fromTime;
-  TimeOfDay? toTime;
+  String? fromTime;
+  String? toTime;
   int? selectedSession;
   LocationModel? selectedLocation;
   Set<int> selectedFacilitiesId = {};
@@ -319,8 +318,8 @@ class _AddActivityScreenState extends State<AddActivityScreen> with FormStateMin
                                     name: form.controllers[0].text,
                                     categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                     days:  selectedDays.isEmpty ? [] : selectedDays.toList(),
-                                    fromTime: fromTime == null ? "" : formatTime24(time: fromTime!),
-                                    endTime: toTime == null ? "" : formatTime24(time: toTime!),
+                                    fromTime: fromTime ?? "",
+                                    endTime: toTime ?? "",
                                     sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                     price: form.controllers[1].text,
                                     description: form.controllers[2].text,

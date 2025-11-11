@@ -25,33 +25,35 @@ class _TabsWidgetState extends State<TabsWidget> {
         SizedBox(
           width: 1.sw,
           height: 35.h,
-          child: ListView.builder(
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: MainTabs.values.length,
-            itemBuilder: (context, index) {
-              final tab = MainTabs.values[index];
-              return InkWell(
-                onTap: () => widget.onTabChanged(index),
-                child: Container(
-                  margin: EdgeInsets.only(right: 30.w),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(width: 1, color: widget.selectedTab == index ?
-                      AppColors.blackColor : Colors.transparent),
+          child: Center(
+            child: ListView.builder(
+              shrinkWrap: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: MainTabs.values.length,
+              itemBuilder: (context, index) {
+                final tab = MainTabs.values[index];
+                return InkWell(
+                  onTap: () => widget.onTabChanged(index),
+                  child: Container(
+                    margin: EdgeInsets.only(right: 30.w),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(width: 1, color: widget.selectedTab == index ?
+                        AppColors.blackColor : Colors.transparent),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(AppLocalization.of(context).translate(tab.name),style: AppTheme.labelLarge.copyWith(
+                          fontSize: 18.sp,
+                            color: widget.selectedTab == index ?
+                        AppColors.darkGrayColor : AppColors.mediumGrayColor))
+                      ],
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Text(AppLocalization.of(context).translate(tab.name),style: AppTheme.labelLarge.copyWith(
-                        fontSize: 18.sp,
-                          color: widget.selectedTab == index ?
-                      AppColors.darkGrayColor : AppColors.mediumGrayColor))
-                    ],
-                  ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
         Divider(

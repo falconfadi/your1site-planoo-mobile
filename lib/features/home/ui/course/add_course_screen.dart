@@ -15,7 +15,6 @@ import 'package:centro_partner/features/home/widget/photos_widget.dart';
 import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
-import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
 import 'package:centro_partner/features/home/data/model/location_model.dart';
@@ -51,8 +50,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
 
   CategoryInfoModel? selectCategory;
   Set<String> selectedDays = {};
-  TimeOfDay? fromTime;
-  TimeOfDay? toTime;
+  String? fromTime;
+  String? toTime;
   int? selectedSession;
   int? selectedCourseDuration;
   LocationModel? selectedLocation;
@@ -395,8 +394,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                                     name: form.controllers[0].text,
                                     categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                     days: selectedDays.isEmpty ? [] : selectedDays.toList(),
-                                    fromTime: fromTime == null ? "" : formatTime24(time: fromTime!),
-                                    endTime: toTime == null ? "" : formatTime24(time: toTime!),
+                                    fromTime: fromTime ?? "",
+                                    endTime: toTime ?? "",
                                     sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                     courseDuration: selectedCourseDuration == null ? -1 : selectedCourseDuration!,
                                     price: form.controllers[1].text,

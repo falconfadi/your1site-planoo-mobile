@@ -35,8 +35,8 @@ class CreateWorkdaySheet extends StatefulWidget {
 class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
 
   String? selectedDay;
-  TimeOfDay? fromTime;
-  TimeOfDay? toTime;
+  String? fromTime;
+  String? toTime;
 
   @override
   Widget build(BuildContext context) {
@@ -82,17 +82,20 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
           children: [
             Expanded(
               child: InkWell(
-                onTap: () async {
-                  TimeOfDay? selected = await selectTime(context, fromTime);
-                  if (selected != null) {
-                    setState(() {
-                      fromTime = selected;
-                    });
-                  }
+                onTap: () {
+                  showCustomTimePicker(
+                    context: context,
+                    buttonLabel: "save",
+                    initialTime: fromTime == null ? null : parseTimeOfDay(timeString: fromTime!),
+                    onSaved: (selectedTime) {
+                      setState(() {
+                        fromTime = selectedTime;
+                      });
+                    },
+                  );
                 },
                 child: CustomContainerInfoWidget(
-                  title: fromTime == null ? AppLocalization.of(context).translate("from_time") :
-                  formatTime24(time: fromTime!),
+                  title: fromTime ?? AppLocalization.of(context).translate("from_time"),
                   textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: fromTime == null ?
                   AppColors.mediumGrayColor : AppColors.blackColor),
                 ),
@@ -101,17 +104,20 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
             SizedBox(width: 20.w),
             Expanded(
               child: InkWell(
-                onTap: () async {
-                  TimeOfDay? selected = await selectTime(context, toTime);
-                  if (selected != null) {
-                    setState(() {
-                      toTime = selected;
-                    });
-                  }
+                onTap: () {
+                  showCustomTimePicker(
+                    context: context,
+                    buttonLabel: "save",
+                    initialTime: toTime == null ? null : parseTimeOfDay(timeString: toTime!),
+                    onSaved: (selectedTime) {
+                      setState(() {
+                        toTime = selectedTime;
+                      });
+                    },
+                  );
                 },
                 child: CustomContainerInfoWidget(
-                  title: toTime == null ? AppLocalization.of(context).translate("to_time") :
-                  formatTime24(time: toTime!),
+                  title: toTime ?? AppLocalization.of(context).translate("from_time"),
                   textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: toTime == null ?
                   AppColors.mediumGrayColor : AppColors.blackColor),
                 ),
@@ -134,8 +140,8 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
                     ownerType: widget.ownerType,
                     ownerId: widget.ownerId,
                     day: selectedDay!,
-                    start: formatTime24(time: fromTime!),
-                    end: formatTime24(time: toTime!),
+                    start: fromTime!,
+                    end: toTime!,
                   ));
             }
           },

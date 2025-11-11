@@ -16,17 +16,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class WorkdaysWidget extends StatefulWidget {
 
   final Set<String> selectedDays;
-  TimeOfDay? fromTime;
-  TimeOfDay? toTime;
-  final ValueChanged<TimeOfDay?> onFromTimeChanged;
-  final ValueChanged<TimeOfDay?> onToTimeChanged;
+  String? fromTime;
+  String? toTime;
+  final ValueChanged<String>? onFromTimeChanged;
+  final ValueChanged<String>? onToTimeChanged;
 
   WorkdaysWidget({super.key,
     required this.selectedDays,
     required this.fromTime,
     required this.toTime,
-    required this.onFromTimeChanged,
-    required this.onToTimeChanged,
+    this.onFromTimeChanged,
+    this.onToTimeChanged,
   });
 
   @override
@@ -66,15 +66,19 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
             children: [
               Expanded(
                 child: InkWell(
-                  onTap: () async {
-                    TimeOfDay? selected = await selectTime(context, widget.fromTime);
-                    if (selected != null) {
-                      widget.onFromTimeChanged(selected);
-                    }
+                  onTap: () {
+                    showCustomTimePicker(
+                      context: context,
+                      buttonLabel: "save",
+                      initialTime: widget.fromTime == null ? null : parseTimeOfDay(timeString: widget.fromTime!),
+                      onSaved: (selectedTime) {
+                        setState(() {});
+                        widget.onFromTimeChanged?.call(selectedTime);
+                      },
+                    );
                   },
                   child: CustomContainerInfoWidget(
-                    title: widget.fromTime == null ? AppLocalization.of(context).translate("from_time") :
-                    formatTime24(time: widget.fromTime!),
+                    title: widget.fromTime ?? AppLocalization.of(context).translate("from_time"),
                     textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: widget.fromTime == null ?
                     AppColors.mediumGrayColor : AppColors.blackColor),
                   ),
@@ -83,15 +87,19 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
               SizedBox(width: 20.w),
               Expanded(
                 child: InkWell(
-                  onTap: () async {
-                    TimeOfDay? selected = await selectTime(context, widget.toTime);
-                    if (selected != null) {
-                      widget.onToTimeChanged(selected);
-                    }
+                  onTap: () {
+                    showCustomTimePicker(
+                      context: context,
+                      buttonLabel: "save",
+                      initialTime: widget.toTime == null ? null : parseTimeOfDay(timeString: widget.toTime!),
+                      onSaved: (selectedTime) {
+                        setState(() {});
+                        widget.onToTimeChanged?.call(selectedTime);
+                      },
+                    );
                   },
                   child: CustomContainerInfoWidget(
-                    title: widget.toTime == null ? AppLocalization.of(context).translate("to_time") :
-                    formatTime24(time: widget.toTime!),
+                    title: widget.toTime ?? AppLocalization.of(context).translate("to_time"),
                     textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: widget.toTime == null ?
                     AppColors.mediumGrayColor : AppColors.blackColor),
                   ),
