@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
-import 'package:centro_partner/features/home/data/model/location/all_medias_model.dart';
+import 'package:centro_partner/features/home/data/model/media_model.dart';
 import '../../../../../core/params/base_params.dart';
 import '../../../../../core/results/result.dart';
 import '../../../../../core/usecase/usecase.dart';

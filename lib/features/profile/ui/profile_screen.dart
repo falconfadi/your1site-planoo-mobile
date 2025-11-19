@@ -33,7 +33,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
 
   File? photo;
-  GetModelCubit<SignInModel>? _userCubit;
+  GetModelCubit<SignInModel>? userCubit;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: CustomHeader(title: AppLocalization.of(context).translate("profile"), isNavBar: true),
       body: GetModel<SignInModel>(
           onCubitCreated: (cubit) {
-            _userCubit = cubit as GetModelCubit<SignInModel>;
+            userCubit = cubit as GetModelCubit<SignInModel>;
           },
           useCaseCallBack: () {
             return GetUserUseCase(ProfileRepository()).call(params: GetUserParams());
@@ -86,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onTap: () {},
                                 onSuccess: (model) {
                                   Navigator.pop(context);
-                                  _userCubit?.getModel();
+                                  userCubit?.getModel();
                                 },
                                 useCaseCallBack: (model) => DeleteProfileImageUseCase(ProfileRepository()).call(
                                     params: DeleteProfileImageParams()),
@@ -95,7 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               padding: 30.w,
                               context: context,
                               child: PickImageSheet(onImageUpdated: () async {
-                                _userCubit?.getModel();
+                                userCubit?.getModel();
                               }),
                             );
                           },
@@ -170,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 padding: 30.w,
                                 context: context,
                                 child: EditProfileSheet(model: model,onImageUpdated: () async {
-                                  _userCubit?.getModel();
+                                  userCubit?.getModel();
                                 })
                             );
                           },

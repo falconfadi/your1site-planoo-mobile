@@ -7,7 +7,7 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
-import 'package:centro_partner/features/home/data/model/location/all_medias_model.dart';
+import 'package:centro_partner/features/home/data/model/media_model.dart';
 import 'package:centro_partner/features/home/data/usecase/media/all_medias_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/media/create_media_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/media/delete_medial_usecase.dart';

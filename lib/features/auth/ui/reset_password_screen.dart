@@ -1,5 +1,7 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
+import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/validators/match_validator.dart';
@@ -17,6 +19,7 @@ import 'package:centro_partner/core/utils/validators/base_validator.dart';
 import 'package:centro_partner/core/utils/validators/password_validator.dart';
 import 'package:centro_partner/core/utils/validators/required_validator.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:pinput/pinput.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
 
@@ -29,6 +32,35 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormStateMinxin {
+
+  late TextEditingController codeController;
+
+  static PinTheme defaultPinTheme = PinTheme(
+    width: 50.w,
+    height: 80.h,
+    textStyle: AppTheme.headlineMedium,
+    decoration: BoxDecoration(
+      color: AppColors.whiteColor,
+      border: Border.all(color: AppColors.blackColor),
+      borderRadius: BorderRadius.circular(8.r),
+    ),
+  );
+  static PinTheme focusedPinTheme = defaultPinTheme.copyDecorationWith(
+    color: AppColors.whiteColor,
+    border: Border.all(color: AppColors.blackColor),
+    borderRadius: BorderRadius.circular(8.r),
+  );
+  static PinTheme submittedPinTheme = defaultPinTheme.copyWith(
+    decoration: defaultPinTheme.decoration?.copyWith(
+      color: AppColors.whiteColor,
+    ),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    codeController = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +79,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
               children: [
                 Image.asset(logo,width: 1.sw,height: 90.h),
                 SizedBox(height: 40.h),
+                Pinput(
+                  length: 5,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  controller: codeController,
+                  defaultPinTheme: defaultPinTheme,
+                  focusedPinTheme: focusedPinTheme,
+                  submittedPinTheme: submittedPinTheme,
+                  pinputAutovalidateMode: PinputAutovalidateMode.onSubmit,
+                  showCursor: true,
+                ),
+                SizedBox(height: 30.h),
                 CustomTextField(
                   autoFocus: false,
                   isPassword: true,
@@ -97,6 +140,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
                           phone: widget.phone,
                           password: form.controllers[0].text,
                           confirmationPassword: form.controllers[1].text,
+                          code: codeController.text,
+                          firebaseToken: FirebaseApi.deviceToken.toString()
                         ));
                   },
                   child: CustomButton(

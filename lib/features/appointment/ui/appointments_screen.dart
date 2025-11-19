@@ -11,9 +11,7 @@ import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/features/appointment/data/appointment_repository/appointment_repository.dart';
 import 'package:centro_partner/features/appointment/data/model/appointment_details_model.dart';
 import 'package:centro_partner/features/appointment/data/usecase/all_appointments_usecase.dart';
-import 'package:centro_partner/features/appointment/widget/activity_appointments_widget.dart';
-import 'package:centro_partner/features/appointment/widget/course_appointments_widget.dart';
-import 'package:centro_partner/features/appointment/widget/event_appointments_widget.dart';
+import 'package:centro_partner/features/appointment/widget/appointment_widget.dart';
 import 'package:centro_partner/features/appointment/widget/filter_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -114,17 +112,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       shrinkWrap: true,
                       itemCount: list.length,
                       itemBuilder: (context,index) {
-                        return selectedTab == 0 ? ActivityAppointmentsWidget(
-                          appointment: list[index],
-                          onRefresh: () async {
-                            await cubit.getList();
-                          },
-                        ) : selectedTab == 1 ? CourseAppointmentsWidget(
-                          appointment: list[index],
-                          onRefresh: () async {
-                            await cubit.getList();
-                          },
-                        ) : EventAppointmentsWidget(
+                        return AppointmentWidget(
                           appointment: list[index],
                           onRefresh: () async {
                             await cubit.getList();

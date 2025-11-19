@@ -13,7 +13,8 @@ import 'package:centro_partner/features/home/data/model/days_model.dart';
 import 'package:centro_partner/features/home/data/model/event/all_events_model.dart';
 import 'package:centro_partner/features/home/data/model/event/event_model.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
-import 'package:centro_partner/features/home/data/model/location/all_medias_model.dart';
+import 'package:centro_partner/features/home/data/model/media_model.dart';
+import 'package:centro_partner/features/home/data/model/review_model.dart';
 import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/all_workdays_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/workday_model.dart';
@@ -44,6 +45,7 @@ import 'package:centro_partner/features/home/data/usecase/location/edit_location
 import 'package:centro_partner/features/home/data/usecase/media/all_medias_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/media/create_media_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/media/delete_medial_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/session_durations_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/all_workdays_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/course_durations_usecase.dart';
@@ -241,8 +243,8 @@ class HomeRepository extends CoreRepository {
         withAuthentication: true,
         url: "$getMediaUrl/${params.ownerType}/${params.ownerId}",
         method: HttpMethod.GET,
-        responseStr: 'AllMediasResponse',
-        converter: (json) => AllMediasResponse.fromJson(json));
+        responseStr: 'MediaResponse',
+        converter: (json) => MediaResponse.fromJson(json));
     return call(result: result);
   }
 
@@ -422,4 +424,16 @@ class HomeRepository extends CoreRepository {
         converter: (json) => EventResponse.fromJson(json));
     return call(result: result);
   }
+
+  /// review
+  Future<Result<ReviewModel>> getReviews({required ReviewsParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: "$getReviewsUrl${params.ownerType}/${params.ownerId}",
+        method: HttpMethod.GET,
+        responseStr: 'ReviewResponse',
+        converter: (json) => ReviewResponse.fromJson(json));
+    return call(result: result);
+  }
+
 }

@@ -3,6 +3,7 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/features/appointment/ui/appointments_screen.dart';
 import 'package:centro_partner/features/home/ui/home_screen.dart';
 import 'package:centro_partner/features/general/widget/drawer_widget.dart';
+import 'package:centro_partner/features/notification/ui/notification_screen.dart';
 import 'package:centro_partner/features/profile/ui/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,7 +35,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
   List<Widget> _buildScreens() => [
     HomeScreen(),
     AppointmentsScreen(),
-    Container(color: Colors.green),
+    NotificationScreen(),
     ProfileScreen()
   ];
 
@@ -69,34 +70,34 @@ class _NavBarScreenState extends State<NavBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: Keys.scaffoldKey,
-      drawer: DrawerWidget(),
-      body: PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _buildScreens(),
-      items: _navBarsItems(),
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: false,
-      stateManagement: true,
-      hideNavigationBarWhenKeyboardAppears: true,
-      popBehaviorOnSelectedNavBarItemPress: PopBehavior.once,
-      padding: EdgeInsets.symmetric(vertical: 5.h),
-      backgroundColor: AppColors.whiteColor,
-      decoration: NavBarDecoration(
-        colorBehindNavBar: AppColors.whiteColor,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.blackColor.withOpacity(0.4),
-            blurRadius: 48,
-            offset: const Offset(0, 2),
+        key: Keys.scaffoldKey,
+        drawer: DrawerWidget(),
+        body: PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _buildScreens(),
+          items: _navBarsItems(),
+          handleAndroidBackButtonPress: true,
+          resizeToAvoidBottomInset: false,
+          stateManagement: true,
+          hideNavigationBarWhenKeyboardAppears: true,
+          popBehaviorOnSelectedNavBarItemPress: PopBehavior.once,
+          padding: EdgeInsets.symmetric(vertical: 5.h),
+          backgroundColor: AppColors.whiteColor,
+          decoration: NavBarDecoration(
+            colorBehindNavBar: AppColors.whiteColor,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.blackColor.withOpacity(0.4),
+                blurRadius: 48,
+                offset: const Offset(0, 2),
+              ),
+            ],
           ),
-        ],
-      ),
-      confineToSafeArea: true,
-      navBarHeight: kBottomNavigationBarHeight,
-      navBarStyle: _navBarStyle,
-      )
+          confineToSafeArea: true,
+          navBarHeight: kBottomNavigationBarHeight,
+          navBarStyle: _navBarStyle,
+        )
     );
   }
 }

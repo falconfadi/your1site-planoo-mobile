@@ -9,16 +9,20 @@ import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
+import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/project_utils/open_url.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/course/course_details_model.dart';
 import 'package:centro_partner/features/home/data/model/course/course_model.dart';
+import 'package:centro_partner/features/home/data/model/review_model.dart';
 import 'package:centro_partner/features/home/data/usecase/course/course_details_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/delete_course_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/toggle_activation_course_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/ui/course/add_course_screen.dart';
 import 'package:centro_partner/features/home/ui/workdays_screen.dart';
+import 'package:centro_partner/features/home/widget/customers_sheet.dart';
 import 'package:centro_partner/features/home/widget/images_slider_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -264,9 +268,36 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
-                              // todo later
-                              Text(" 4.5 (200 ${AppLocalization.of(context).translate("reviews")})",
-                                  style: AppTheme.labelMedium.copyWith(color: AppColors.mediumGrayColor)),
+                              Text(" ${model.course!.rate.toString()} ",
+                                  style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor)),
+                              GetModel<ReviewModel>(
+                                useCaseCallBack: () => ReviewsUseCase(HomeRepository()).call(
+                                    params: ReviewsParams(ownerType: "course", ownerId: model.course!.iD!)
+                                ),
+                                onError: (error) {
+                                  if (error.contains("Not found")) {
+                                    return ReviewModel(reviewsList: []);
+                                  }
+                                  return null;
+                                },
+                                modelBuilder: (reviewModel) => InkWell(
+                                  onTap: () {
+                                    if(reviewModel.reviewsList!.isNotEmpty) {
+                                      CustomSheet.show(
+                                          isDismissible: true,
+                                          header: Text(AppLocalization.of(context).translate("reviews"),
+                                            style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                                          ),
+                                          padding: 30.w,
+                                          context: context,
+                                          child: CustomersSheet(forReview: false,customers: [],reviews: reviewModel.reviewsList)
+                                      );
+                                    }
+                                  },
+                                  child: Text("(${reviewModel.reviewsList!.length} ${AppLocalization.of(context).translate("reviews")})",
+                                      style: AppTheme.labelLarge.copyWith(color: reviewModel.reviewsList!.isEmpty ? AppColors.mediumGrayColor : AppColors.primaryColor)),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -371,6 +402,45 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                               ],
                             ),
                           ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: model.course!.customersList!.isEmpty ? 0 : 10.h),
+                    model.course!.customersList!.isEmpty ? Center() :
+                    InkWell(
+                      onTap: () {
+                        CustomSheet.show(
+                            isDismissible: true,
+                            header: Text(AppLocalization.of(context).translate("participants"),
+                              style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                            ),
+                            padding: 30.w,
+                            context: context,
+                            child: CustomersSheet(customers: model.course!.customersList!)
+                        );
+                      },
+                      child: Card(
+                        color: AppColors.whiteColor,
+                        elevation: 3,
+                        shadowColor: AppColors.gray2Color,
+                        child: Container(
+                          margin: EdgeInsets.symmetric(vertical: 10.h,horizontal: 15.w),
+                          decoration: BoxDecoration(
+                            color: AppColors.whiteColor,
+                            borderRadius: BorderRadius.circular(10.r),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: Text(AppLocalization.of(context).translate("participants"),
+                                  style: AppTheme.headlineMedium,
+                                ),
+                              ),
+                              SizedBox(width: 10.h),
+                              Icon(Icons.arrow_circle_right_outlined,color: AppColors.turquoiseColor)
+                            ],
+                          ),
                         ),
                       ),
                     ),

@@ -16,11 +16,14 @@ import 'package:centro_partner/features/appointment/widget/book_activity_sheet.d
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_details_model.dart';
 import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
+import 'package:centro_partner/features/home/data/model/review_model.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/activity_details_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/delete_activity_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/activity/toggle_activation_activity_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/ui/activity/add_activity_screen.dart';
 import 'package:centro_partner/features/home/ui/workdays_screen.dart';
+import 'package:centro_partner/features/home/widget/customers_sheet.dart';
 import 'package:centro_partner/features/home/widget/images_slider_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -251,9 +254,36 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
-                        // todo later
-                        Text(" 4.5 (200 ${AppLocalization.of(context).translate("reviews")})",
-                            style: AppTheme.labelMedium.copyWith(color: AppColors.mediumGrayColor)),
+                        Text(" ${model.activity!.rate.toString()} ",
+                            style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor)),
+                        GetModel<ReviewModel>(
+                          useCaseCallBack: () => ReviewsUseCase(HomeRepository()).call(
+                              params: ReviewsParams(ownerType: "activity", ownerId: model.activity!.iD!)
+                          ),
+                          onError: (error) {
+                            if (error.contains("Not found")) {
+                              return ReviewModel(reviewsList: []);
+                            }
+                            return null;
+                          },
+                          modelBuilder: (reviewModel) => InkWell(
+                            onTap: () {
+                              if(reviewModel.reviewsList!.isNotEmpty) {
+                                CustomSheet.show(
+                                    isDismissible: true,
+                                    header: Text(AppLocalization.of(context).translate("reviews"),
+                                      style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                                    ),
+                                    padding: 30.w,
+                                    context: context,
+                                    child: CustomersSheet(forReview: false,customers: [],reviews: reviewModel.reviewsList)
+                                );
+                              }
+                            },
+                            child: Text("(${reviewModel.reviewsList!.length} ${AppLocalization.of(context).translate("reviews")})",
+                                style: AppTheme.labelLarge.copyWith(color: reviewModel.reviewsList!.isEmpty ? AppColors.mediumGrayColor : AppColors.primaryColor)),
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10.h),

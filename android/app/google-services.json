@@ -7,9 +7,28 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:703371350637:android:84423ee20de22a04376564",
+        "mobilesdk_app_id": "1:703371350637:android:31b14b826d4c4b1e376564",
         "android_client_info": {
-          "package_name": "com.example.centro_partner"
+          "package_name": "com.example.centro"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsHNpqpJ_RoYTyAbyXmcEgnfICQDBxY5g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:703371350637:android:b805b884d391aa85376564",
+        "android_client_info": {
+          "package_name": "com.your1site.planoo_partner"
         }
       },
       "oauth_client": [],

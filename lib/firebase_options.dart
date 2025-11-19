@@ -45,7 +45,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBsHNpqpJ_RoYTyAbyXmcEgnfICQDBxY5g',
-    appId: '1:703371350637:android:84423ee20de22a04376564',
+    appId: '1:703371350637:android:b805b884d391aa85376564',
     messagingSenderId: '703371350637',
     projectId: 'planoo-436fc',
     storageBucket: 'planoo-436fc.firebasestorage.app',
@@ -53,20 +53,20 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCP9vADg2M6ReWXs7YKivzPiFyU7hXlkxY',
-    appId: '1:703371350637:ios:a5af51858f2c351a376564',
+    appId: '1:703371350637:ios:ca8e01b330575017376564',
     messagingSenderId: '703371350637',
     projectId: 'planoo-436fc',
     storageBucket: 'planoo-436fc.firebasestorage.app',
-    iosBundleId: 'com.example.centroPartner',
+    iosBundleId: 'com.your1site.planooPartner',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyCP9vADg2M6ReWXs7YKivzPiFyU7hXlkxY',
-    appId: '1:703371350637:ios:1e20cf05fb61d7dc376564',
+    appId: '1:703371350637:ios:ca8e01b330575017376564',
     messagingSenderId: '703371350637',
     projectId: 'planoo-436fc',
     storageBucket: 'planoo-436fc.firebasestorage.app',
-    iosBundleId: 'com.example.centro',
+    iosBundleId: 'com.your1site.planooPartner',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
@@ -78,4 +78,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'planoo-436fc.firebasestorage.app',
     measurementId: 'G-2MC9P0ZKNK',
   );
+
 }

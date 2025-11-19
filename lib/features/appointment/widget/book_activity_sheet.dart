@@ -222,6 +222,7 @@ class _BookActivitySheetState extends State<BookActivitySheet> with FormStateMin
                                 return CreateActivityAppointmentUseCase(AppointmentRepository()).call(
                                     params: CreateActivityAppointmentParams(
                                       activityId: widget.activity.iD!,
+                                      code: model.slot!.code.toString(),
                                       dayId: selectedDay!.iD!,
                                       date: convertDate(date: date.toString(),format: "yyyy-MM-dd"),
                                       sessionDuration: widget.activity.sessionDuration!,

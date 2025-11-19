@@ -1,8 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:centro_partner/core/constants/enum/notification_type.dart';
+import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/features/appointment/ui/appointment_details_screen.dart';
+import 'package:centro_partner/features/notification/ui/notification_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -13,7 +15,6 @@ class FirebaseApi {
 
   final _firebaseMessaging = FirebaseMessaging.instance;
   static String? deviceToken;
-  static final ValueNotifier<String?> verificationCodeNotifier = ValueNotifier(null);
 
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
@@ -121,11 +122,11 @@ class FirebaseApi {
     final notificationType = NotificationType.fromInt(int.parse(message.data['type']));
     switch (notificationType) {
       case NotificationType.verificationCode:
-        final codeValue = jsonDecode(message.data['code'])['code'].toString();
-        verificationCodeNotifier.value = null;
-        verificationCodeNotifier.value = codeValue;
+        Navigation.push(NotificationScreen());
         break;
-
+      case NotificationType.appointment:
+        Navigation.push(AppointmentDetailsScreen(page: "notification",appointmentId: message.data['appointment']));
+        break;
       default:
         break;
     }

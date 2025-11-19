@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -23,18 +24,17 @@ TimeOfDay parseTimeOfDay({required String timeString}) {
   return TimeOfDay(hour: hour, minute: minute);
 }
 
-TimeOfDay roundToNearestHalfHour(TimeOfDay time) {
-  int roundedMinutes;
-  int hour = time.hour;
-
-  if (time.minute < 15) {
-    roundedMinutes = 0;
-  } else if (time.minute < 45) {
-    roundedMinutes = 30;
+String timeAgo({required String dateTimeStr, required BuildContext context}) {
+  final dateTime = DateTime.parse(dateTimeStr).toLocal();
+  final now = DateTime.now();
+  final difference = now.difference(dateTime);
+  if (difference.inSeconds < 60) {
+    return '${difference.inSeconds}${AppLocalization.of(context).translate("second")}';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes}${AppLocalization.of(context).translate("min")}';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours}${AppLocalization.of(context).translate("hour")}';
   } else {
-    roundedMinutes = 0;
-    hour = (hour + 1) % 24;
+    return '${difference.inDays}${AppLocalization.of(context).translate("day2")}';
   }
-
-  return TimeOfDay(hour: hour, minute: roundedMinutes);
 }

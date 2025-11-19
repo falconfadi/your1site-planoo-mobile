@@ -1,12 +1,10 @@
 import 'dart:async';
-import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
 import 'package:centro_partner/features/auth/data/usecase/resend_code_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/verify_code_usecase.dart';
-import 'package:centro_partner/features/auth/ui/reset_password_screen.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
 import 'package:flutter/material.dart';
@@ -62,15 +60,6 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
   void initState() {
     super.initState();
     codeController = TextEditingController();
-
-    FirebaseApi.verificationCodeNotifier.addListener(() {
-      final code = FirebaseApi.verificationCodeNotifier.value;
-      if (code != null && code.isNotEmpty) {
-        setState(() {
-          codeController.text = code;
-        });
-      }
-    });
 
     if(!widget.fromSingUp) {
       _seconds=0;
@@ -157,12 +146,8 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 withValidation: false,
                 onTap: () {},
                 onSuccess: (data) {
-                  if(!widget.fromSingUp) {
-                    Navigation.push(ResetPasswordScreen(phone: widget.phoneNumber));
-                  } else {
-                    Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("account_verified"));
-                    Navigation.pushAndRemoveUntil(SignInScreen());
-                  }
+                  Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("account_verified"));
+                  Navigation.pushAndRemoveUntil(SignInScreen());
                 },
                 useCaseCallBack: (model) {
                   return VerifyCodeUseCase(AuthRepository()).call(

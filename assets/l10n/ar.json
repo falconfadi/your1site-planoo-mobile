@@ -123,5 +123,11 @@
   "start_date": "Start date",
   "start_date_required": "Start date is required",
   "end_date": "End date",
-  "participants": "Participants"
+  "participants": "Participants",
+  "second": "sec",
+  "min": "min",
+  "hour": "h",
+  "day2": "d",
+  "clear_all": "Clear all",
+  "view": "View"
 }

@@ -1,35 +1,44 @@
+import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 
 class CustomerModel {
   int? id;
   String? name;
-  String? phone;
   int? status;
-  DetailsModel? details;
+  String? isVerified;
+  bool? isNotifiable;
+  int? isActive;
+  ImageModel? profileImage;
 
   CustomerModel({
     this.id,
     this.name,
-    this.phone,
     this.status,
-    this.details
+    this.isVerified,
+    this.isNotifiable,
+    this.isActive,
+    this.profileImage,
   });
 
   CustomerModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    phone = json['phone'];
     status = json['status'];
-    details = json['details'] != null ? DetailsModel.fromJson(json['details']) : null;
+    isVerified = json['is_verified'];
+    isNotifiable = json['is_notifiable'];
+    isActive = json['is_active'];
+    profileImage = json['profile_image'] != null ? ImageModel.fromJson(json['profile_image']) : null;
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = id;
     data['name'] = name;
-    data['phone'] = phone;
     data['status'] = status;
-    if (details != null) {
-      data['details'] = details!.toJson();
+    data['is_verified'] = isVerified;
+    data['is_notifiable'] = isNotifiable;
+    data['is_active'] = isActive;
+    if (profileImage != null) {
+      data['profile_image'] = profileImage!.toJson();
     }
     return data;
   }

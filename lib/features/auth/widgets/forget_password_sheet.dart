@@ -1,8 +1,9 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
 import 'package:centro_partner/features/auth/data/usecase/forget_password_usecase.dart';
-import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
+import 'package:centro_partner/features/auth/ui/reset_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
@@ -52,7 +53,7 @@ class _ForgetPasswordSheetState extends State<ForgetPasswordSheet>  with FormSta
             SizedBox(height: 50.h),
             CreateModel(
                 onSuccess: (model) async {
-                  Navigation.popThenPush(VerificationCodeScreen(phoneNumber: form.controllers[0].text,fromSingUp: false));
+                  Navigation.popThenPush(ResetPasswordScreen(phone: form.controllers[0].text));
                 },
                 withValidation: true,
                 onTap: () {
@@ -62,6 +63,7 @@ class _ForgetPasswordSheetState extends State<ForgetPasswordSheet>  with FormSta
                   return ForgetPasswordUseCase(AuthRepository()).call(
                       params: ForgetPasswordParams(
                         phone: form.controllers[0].text,
+                        firebaseToken: FirebaseApi.deviceToken.toString()
                       ));
                 },
                 child: CustomButton(

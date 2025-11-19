@@ -12,6 +12,7 @@ class ActivityDetailsModel {
   bool? isActive;
   int? price;
   int? sessionDuration;
+  int? rate;
   List<WorkdayDetailsModel>? workdaysList;
   List<FacilityInfoModel>? facilitiesList;
   LocationModel? location;
@@ -25,6 +26,7 @@ class ActivityDetailsModel {
     this.isActive,
     this.price,
     this.sessionDuration,
+    this.rate,
     this.workdaysList,
     this.facilitiesList,
     this.location,
@@ -39,6 +41,7 @@ class ActivityDetailsModel {
     isActive = json['is_active'];
     price = json['price'];
     sessionDuration = json['session_duration'];
+    rate = json['rate'];
     if (json['days'] != null) {
       workdaysList = <WorkdayDetailsModel>[];
       json['days'].forEach((v) {
@@ -71,6 +74,7 @@ class ActivityDetailsModel {
     data['is_active'] = isActive;
     data['price'] = price;
     data['session_duration'] = sessionDuration;
+    data['rate'] = rate;
     if (facilitiesList != null) {
       data['tags'] = facilitiesList!.map((v) => v.toJson()).toList();
     }

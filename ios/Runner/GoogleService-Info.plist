@@ -9,7 +9,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.centroPartner</string>
+	<string>com.your1site.planooPartner</string>
 	<key>PROJECT_ID</key>
 	<string>planoo-436fc</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +25,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:703371350637:ios:a5af51858f2c351a376564</string>
+	<string>1:703371350637:ios:ca8e01b330575017376564</string>
 </dict>
 </plist>

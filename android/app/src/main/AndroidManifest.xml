@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:allowBackup="false"
-        android:label="centro_partner"
+        android:label="Planoo Partner"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data

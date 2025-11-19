@@ -18,6 +18,7 @@ class EventDetailsModel {
   int? withdrawalFee;
   String? startDate;
   String? endDate;
+  int? rate;
   String? status;
   List<WorkdayDetailsModel>? workdaysList;
   List<FacilityInfoModel>? facilitiesList;
@@ -38,6 +39,7 @@ class EventDetailsModel {
     this.withdrawalFee,
     this.startDate,
     this.endDate,
+    this.rate,
     this.status,
     this.workdaysList,
     this.facilitiesList,
@@ -59,6 +61,7 @@ class EventDetailsModel {
     withdrawalFee = json['withdrawal_fee'];
     startDate = json['start_date'];
     endDate = json['end_date'];
+    rate = json['rate'];
     status = json['status'];
     if (json['days'] != null) {
       workdaysList = <WorkdayDetailsModel>[];
@@ -103,6 +106,7 @@ class EventDetailsModel {
     data['withdrawal_fee'] = withdrawalFee;
     data['start_date'] = startDate;
     data['end_date'] = endDate;
+    data['rate'] = rate;
     data['status'] = status;
     if (facilitiesList != null) {
       data['tags'] = facilitiesList!.map((v) => v.toJson()).toList();

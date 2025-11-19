@@ -15,6 +15,7 @@ class GetModel<Model> extends StatefulWidget {
   final ModelReceived<Model>? onSuccess;
   final UseCaseCallBack useCaseCallBack;
   final CreatedCallback? onCubitCreated;
+  final Model? Function(String errorMessage)? onError;
 
   const GetModel({
     super.key,
@@ -24,6 +25,7 @@ class GetModel<Model> extends StatefulWidget {
     this.onSuccess,
     required this.useCaseCallBack,
     this.onCubitCreated,
+    this.onError,
   });
 
   @override
@@ -57,6 +59,12 @@ class _GetModelState<Model> extends State<GetModel<Model>> {
           if (state is GetModelSuccessfully) {
             return _buildModel(state.model);
           } else if (state is Error) {
+            if (widget.onError != null) {
+              final fallbackModel = widget.onError!(state.message);
+              if (fallbackModel != null) {
+                return _buildModel(fallbackModel);
+              }
+            }
             return GeneralErrorWidget(
               message: state.message,
               onTap: cubit.getModel,

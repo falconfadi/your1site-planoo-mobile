@@ -16,9 +16,11 @@ import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/event/event_details_model.dart';
 import 'package:centro_partner/features/home/data/model/event/event_model.dart';
+import 'package:centro_partner/features/home/data/model/review_model.dart';
 import 'package:centro_partner/features/home/data/usecase/event/delete_event_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/event/event_details_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/event/toggle_activation_event_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/ui/event/add_event_screen.dart';
 import 'package:centro_partner/features/home/ui/workdays_screen.dart';
 import 'package:centro_partner/features/home/widget/customers_sheet.dart';
@@ -267,9 +269,36 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
-                              // todo later
-                              Text(" 4.5 (200 ${AppLocalization.of(context).translate("reviews")})",
-                                  style: AppTheme.labelMedium.copyWith(color: AppColors.mediumGrayColor)),
+                              Text(" ${model.event!.rate.toString()} ",
+                                  style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor)),
+                              GetModel<ReviewModel>(
+                                useCaseCallBack: () => ReviewsUseCase(HomeRepository()).call(
+                                    params: ReviewsParams(ownerType: "event", ownerId: model.event!.iD!)
+                                ),
+                                onError: (error) {
+                                  if (error.contains("Not found")) {
+                                    return ReviewModel(reviewsList: []);
+                                  }
+                                  return null;
+                                },
+                                modelBuilder: (reviewModel) => InkWell(
+                                  onTap: () {
+                                    if(reviewModel.reviewsList!.isNotEmpty) {
+                                      CustomSheet.show(
+                                          isDismissible: true,
+                                          header: Text(AppLocalization.of(context).translate("reviews"),
+                                            style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                                          ),
+                                          padding: 30.w,
+                                          context: context,
+                                          child: CustomersSheet(forReview: false,customers: [],reviews: reviewModel.reviewsList)
+                                      );
+                                    }
+                                  },
+                                  child: Text("(${reviewModel.reviewsList!.length} ${AppLocalization.of(context).translate("reviews")})",
+                                      style: AppTheme.labelLarge.copyWith(color: reviewModel.reviewsList!.isEmpty ? AppColors.mediumGrayColor : AppColors.primaryColor)),
+                                ),
+                              ),
                             ],
                           ),
                         ),

@@ -38,17 +38,20 @@ class SlotsModel extends BaseModel {
 
 class SlotModel extends BaseModel {
 
+  int? code;
   String? day;
   String? date;
   List<SlotDetailsModel>? slots;
 
   SlotModel({
+    this.code,
     this.day,
     this.date,
     this.slots
   });
 
   SlotModel.fromJson(Map<String, dynamic> json) {
+    code = json['code'];
     day = json['day'];
     date = json['date'];
     if (json['slots'] != null) {
@@ -61,6 +64,7 @@ class SlotModel extends BaseModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['code'] = code;
     data['day'] = day;
     data['date'] = date;
     if (slots != null) {

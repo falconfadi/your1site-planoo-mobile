@@ -10,16 +10,16 @@ const kAccessTokenExpirationDate = 'token_expiration';
 const userID = 'user_id';
 const userType = 'user_type';
 
-const String serverUrl = "https://planoo.net/api";
+const String serverUrl = "https://planoo.net/";
 const String baseUrl = "https://planoo.net/api/partner/v1/";
 
 /// labels
-const String userTypesUrl = "$serverUrl/label/usersTypes";
-const String categoriesUrl = "$serverUrl/label/categories";
-const String sessionDurationsUrl = "$serverUrl/label/sessionDuration";
-const String daysUrl = "$serverUrl/label/weekDays";
-const String facilitiesUrl = "$serverUrl/label/tags";
-const String courseDurationsUrl = "$serverUrl/label/courseDuration";
+const String userTypesUrl = "${serverUrl}api/label/usersTypes";
+const String categoriesUrl = "${serverUrl}api/label/categories";
+const String sessionDurationsUrl = "${serverUrl}api/label/sessionDuration";
+const String daysUrl = "${serverUrl}api/label/weekDays";
+const String facilitiesUrl = "${serverUrl}api/label/tags";
+const String courseDurationsUrl = "${serverUrl}api/label/courseDuration";
 /// auth
 const String registerUrl = "auth/register";
 const String verifyUrl = "auth/verify";
@@ -59,6 +59,7 @@ const String createFacilityUrl = "tag/create";
 const String deleteFacilityUrl = "tag/delete";
 /// appointment
 const String allAppointmentsUrl = "appointment/all";
+const String getAppointmentDetailsUrl = "appointment/find";
 const String checkActivityAppointmentUrl = "appointment/check";
 const String createActivityAppointmentUrl = "appointment/create";
 const String cancelActivityAppointmentUrl = "appointment/cancel";
@@ -76,3 +77,10 @@ const String eventDetailsUrl = "event/find";
 const String deleteEventUrl = "event/delete";
 const String toggleActivationEventUrl = "event/toggleActivation";
 const String editEventUrl = "event/update";
+/// notification
+const String getNotificationsUrl = "notification/all";
+const String viewNotificationUrl = "notification/view";
+const String deleteNotificationUrl = "notification/delete";
+const String clearNotificationsUrl = "notification/clear";
+/// review
+const String getReviewsUrl = "review/all/";

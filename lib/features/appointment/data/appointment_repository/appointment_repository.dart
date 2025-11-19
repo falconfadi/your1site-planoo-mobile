@@ -5,6 +5,7 @@ import 'package:centro_partner/core/repository/core_repository.dart';
 import 'package:centro_partner/core/results/result.dart';
 import 'package:centro_partner/features/appointment/data/model/all_appointments_model.dart';
 import 'package:centro_partner/features/appointment/data/model/slots_model.dart';
+import 'package:centro_partner/features/appointment/data/usecase/appointment_details_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/cancel_activity_appointment_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/check_activity_appointment_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/create_activity_appointment_usecase.dart';
@@ -23,6 +24,16 @@ class AppointmentRepository extends CoreRepository {
         responseStr: 'AllAppointmentsResponse',
         converter: (json) => AllAppointmentsResponse.fromJson(json));
     return paginatedCall(result: result);
+  }
+
+  Future<Result<AppointmentDetailsModel>> getAppointmentDetails({required AppointmentDetailsParams params}) async {
+    final result = await RemoteDataSource.request(
+        withAuthentication: true,
+        url: "$getAppointmentDetailsUrl?appointment_id=${params.appointmentId}",
+        method: HttpMethod.GET,
+        responseStr: 'AppointmentDetailsResponse',
+        converter: (json) => AppointmentDetailsResponse.fromJson(json));
+    return call(result: result);
   }
 
   Future<Result<SlotsModel>> checkActivityAppointment({required CheckActivityAppointmentParams params}) async {

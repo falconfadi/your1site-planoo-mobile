@@ -2,11 +2,11 @@ import 'package:centro_partner/core/data_source/model.dart';
 import 'package:centro_partner/core/responses/api_response.dart';
 import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 
-class AllMediasResponse extends ApiResponse<AllMediasModel> {
-  AllMediasResponse({required super.errors, required super.message, required super.data});
+class MediaResponse extends ApiResponse<AllMediasModel> {
+  MediaResponse({required super.errors, required super.message, required super.data});
 
-  factory AllMediasResponse.fromJson(Map<String, dynamic> json) {
-    return AllMediasResponse(
+  factory MediaResponse.fromJson(Map<String, dynamic> json) {
+    return MediaResponse(
       errors: json["payload"]["errors"] != null
           ? AllMediasModel.fromJson(json["payload"]["errors"])
           : null,
