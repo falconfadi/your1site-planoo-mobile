@@ -125,7 +125,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                                       style: AppTheme.headlineMedium),
                                 ),
                                 SizedBox(width: 10.w),
-                                Text(model.holder!.price.toString(),
+                                Text("${model.holder!.price} ${AppLocalization.of(context).translate("syr")}",
                                     style: AppTheme.headlineMedium.copyWith(color: AppColors.turquoiseColor)),
                               ],
                             ),
@@ -206,6 +206,7 @@ class _AppointmentDetailsScreenState extends State<AppointmentDetailsScreen> {
                                     )
                                 ),
                                 SizedBox(height: model.notes == null ? 0 : 10.h),
+                                model.notes == null ? Center() :
                                 Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 5.w),
                                     child: Row(

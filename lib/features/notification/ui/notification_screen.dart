@@ -4,6 +4,8 @@ import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/appointment/ui/appointment_details_screen.dart';
+import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
+import 'package:centro_partner/features/home/ui/event/event_details_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
@@ -110,10 +112,22 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                           case NotificationType.verificationCode:
                             viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
                             break;
+                          case NotificationType.normal:
+                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
+                            break;
                           case NotificationType.appointment:
                             viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
-                            // Navigation.push(ActivityAppointmentDetailsScreen(activityModel: activityModel, appointment: appointment)) // todo
-                          // todo add more cases
+                            Navigation.push(AppointmentDetailsScreen(appointmentId: newModel.notificationsList![index].payload!.appointment!));
+                            break;
+                          case NotificationType.course:
+                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
+                            Navigation.push(CourseDetailsScreen(courseId: newModel.notificationsList![index].payload!.course!));
+                            break;
+                          case NotificationType.event:
+                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
+                            Navigation.push(EventDetailsScreen(eventId: newModel.notificationsList![index].payload!.event!));
+                            break;
+                          // todo add (activity - session - chat) cases later
                           default:
                             break;
                         }
@@ -154,6 +168,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                                             withValidation: false,
                                             onTap: () async {},
                                             onSuccess: (data) {
+                                              Navigator.pop(context);
                                               getCubit!.getModel();
                                             },
                                             useCaseCallBack: (data) {
@@ -180,8 +195,12 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                               SizedBox(height: 10.h),
                               Text(newModel.notificationsList![index].body!, style: AppTheme.bodyLarge),
                               SizedBox(height: 5.h),
+                              Text(newModel.notificationsList![index].type!,
+                                style: AppTheme.headlineSmall.copyWith(color: AppColors.turquoiseColor),
+                              ),
+                              SizedBox(height: 5.h),
                               Text(timeAgo(dateTimeStr: newModel.notificationsList![index].createdAt!, context: context),
-                                style: AppTheme.headlineMedium.copyWith(fontSize: 14),
+                                style: AppTheme.headlineMedium.copyWith(fontSize: 14.sp),
                               ),
                             ],
                           ),
@@ -191,6 +210,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                   );
                 },
               ),
+              SizedBox(height: 30.h),
             ],
           ),
         ),

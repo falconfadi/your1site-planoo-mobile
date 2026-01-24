@@ -129,5 +129,7 @@
   "hour": "h",
   "day2": "d",
   "clear_all": "Clear all",
-  "view": "View"
+  "view": "View",
+  "course": "Course",
+  "syr": "SYR"
 }

@@ -256,32 +256,34 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                         SvgPicture.asset(star,color: AppColors.yellowColor,width: 15.w),
                         Text(" ${model.activity!.rate.toString()} ",
                             style: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor)),
-                        GetModel<ReviewModel>(
-                          useCaseCallBack: () => ReviewsUseCase(HomeRepository()).call(
-                              params: ReviewsParams(ownerType: "activity", ownerId: model.activity!.iD!)
-                          ),
-                          onError: (error) {
-                            if (error.contains("Not found")) {
-                              return ReviewModel(reviewsList: []);
-                            }
-                            return null;
-                          },
-                          modelBuilder: (reviewModel) => InkWell(
-                            onTap: () {
-                              if(reviewModel.reviewsList!.isNotEmpty) {
-                                CustomSheet.show(
-                                    isDismissible: true,
-                                    header: Text(AppLocalization.of(context).translate("reviews"),
-                                      style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
-                                    ),
-                                    padding: 30.w,
-                                    context: context,
-                                    child: CustomersSheet(forReview: false,customers: [],reviews: reviewModel.reviewsList)
-                                );
+                        Expanded(
+                          child: GetModel<ReviewModel>(
+                            useCaseCallBack: () => ReviewsUseCase(HomeRepository()).call(
+                                params: ReviewsParams(ownerType: "activity", ownerId: model.activity!.iD!)
+                            ),
+                            onError: (error) {
+                              if (error.contains("Not found")) {
+                                return ReviewModel(reviewsList: []);
                               }
+                              return null;
                             },
-                            child: Text("(${reviewModel.reviewsList!.length} ${AppLocalization.of(context).translate("reviews")})",
-                                style: AppTheme.labelLarge.copyWith(color: reviewModel.reviewsList!.isEmpty ? AppColors.mediumGrayColor : AppColors.primaryColor)),
+                            modelBuilder: (reviewModel) => InkWell(
+                              onTap: () {
+                                if(reviewModel.reviewsList!.isNotEmpty) {
+                                  CustomSheet.show(
+                                      isDismissible: true,
+                                      header: Text(AppLocalization.of(context).translate("reviews"),
+                                        style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
+                                      ),
+                                      padding: 30.w,
+                                      context: context,
+                                      child: CustomersSheet(forReview: false,customers: [],reviews: reviewModel.reviewsList)
+                                  );
+                                }
+                              },
+                              child: Text("(${reviewModel.reviewsList!.length} ${AppLocalization.of(context).translate("reviews")})",
+                                  style: AppTheme.labelLarge.copyWith(color: reviewModel.reviewsList!.isEmpty ? AppColors.mediumGrayColor : AppColors.primaryColor)),
+                            ),
                           ),
                         ),
                       ],
@@ -475,7 +477,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                   Text(AppLocalization.of(context).translate("price"),
                     style: AppTheme.bodyMedium,
                   ),
-                  Text(activityDetailsModel == null ? "" : activityDetailsModel!.price.toString(),
+                  Text(activityDetailsModel == null ? "" : "${activityDetailsModel!.price} ${AppLocalization.of(context).translate("syr")}",
                     style: AppTheme.headlineSmall.copyWith(
                       color: AppColors.primaryColor,
                       fontSize: 24.sp

@@ -17,15 +17,15 @@ class NotificationsResponse extends ApiResponse<NotificationsModel> {
 
 class NotificationsModel extends BaseModel {
 
-  List<notificationInfoModel>? notificationsList;
+  List<NotificationInfoModel>? notificationsList;
 
   NotificationsModel({this.notificationsList});
 
   NotificationsModel.fromJson(Map<String, dynamic> json) {
     if (json['notifications'] != null) {
-      notificationsList = <notificationInfoModel>[];
+      notificationsList = <NotificationInfoModel>[];
       json['notifications'].forEach((v) {
-        notificationsList!.add(new notificationInfoModel.fromJson(v));
+        notificationsList!.add(new NotificationInfoModel.fromJson(v));
       });
     }
   }
@@ -39,7 +39,7 @@ class NotificationsModel extends BaseModel {
   }
 }
 
-class notificationInfoModel extends BaseModel {
+class NotificationInfoModel extends BaseModel {
   int? notificationId;
   String? title;
   String? body;
@@ -48,7 +48,7 @@ class notificationInfoModel extends BaseModel {
   Payload? payload;
   String? createdAt;
 
-  notificationInfoModel({
+  NotificationInfoModel({
     this.notificationId,
     this.title,
     this.body,
@@ -58,7 +58,7 @@ class notificationInfoModel extends BaseModel {
     this.createdAt,
   });
 
-  notificationInfoModel.fromJson(Map<String, dynamic> json) {
+  NotificationInfoModel.fromJson(Map<String, dynamic> json) {
     notificationId = json['id'];
     title = json['title'];
     body = json['body'];
@@ -87,24 +87,36 @@ class notificationInfoModel extends BaseModel {
 class Payload {
   int? type;
   int? code;
+  int? appointment;
+  int? course;
+  int? event;
   Result? result;
 
   Payload({
     this.type,
     this.code,
+    this.appointment,
+    this.course,
+    this.event,
     this.result,
   });
 
   Payload.fromJson(Map<String, dynamic> json) {
     type = json['type'];
     code = json['code'];
+    appointment = json['appointment'];
+    course = json['course'];
+    event = json['event'];
     result = json['result'] != null ? Result.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['type'] = this.type;
-    data['code'] = code;
+    data['code'] = this.code;
+    data['appointment'] = this.appointment;
+    data['course'] = this.course;
+    data['event'] = this.event;
     if (result != null) {
       data['result'] = result!.toJson();
     }

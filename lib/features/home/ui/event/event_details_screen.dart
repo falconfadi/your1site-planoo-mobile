@@ -12,6 +12,7 @@ import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/project_utils/open_url.dart';
+import 'package:centro_partner/core/utils/project_utils/string_utils.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/event/event_details_model.dart';
@@ -295,14 +296,14 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       );
                                     }
                                   },
-                                  child: Text("(${reviewModel.reviewsList!.length} ${AppLocalization.of(context).translate("reviews")})",
+                                  child: Text("(${truncateNumber(reviewModel.reviewsList!.length,maxLength: 5)} ${AppLocalization.of(context).translate("reviews")})",
                                       style: AppTheme.labelLarge.copyWith(color: reviewModel.reviewsList!.isEmpty ? AppColors.mediumGrayColor : AppColors.primaryColor)),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        Text(model.event!.admissionFee.toString(),
+                        Text("${model.event!.admissionFee} ${AppLocalization.of(context).translate("syr")}",
                           style: AppTheme.headlineSmall.copyWith(
                               color: AppColors.primaryColor,
                               fontSize: 24.sp
@@ -337,7 +338,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       text: AppLocalization.of(context).translate("withdrawal_fee"),
                                       style: AppTheme.headlineMedium,
                                       children: [
-                                        TextSpan(text: " ${model.event!.withdrawalFee} ",
+                                        TextSpan(text: " ${model.event!.withdrawalFee} ${AppLocalization.of(context).translate("syr")}",
                                             style: AppTheme.headlineSmall.copyWith(color: AppColors.redColor)),
                                       ],
                                     ),
