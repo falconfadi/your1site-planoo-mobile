@@ -1,6 +1,5 @@
 import 'package:centro_partner/core/repository/core_repository.dart';
 import 'package:centro_partner/features/notification/data/model/notifications_model.dart' hide Result;
-import 'package:centro_partner/features/notification/data/usecase/clear_all_notifications_usecase.dart';
 import 'package:centro_partner/features/notification/data/usecase/delete_notification_usecase.dart';
 import 'package:centro_partner/features/notification/data/usecase/notifications_usecase.dart';
 import 'package:centro_partner/features/notification/data/usecase/view_notification_usecase.dart';
@@ -40,14 +39,4 @@ class NotificationRepository extends CoreRepository {
     );
     return noModelCall(result: result);
   }
-
-  Future<Result<bool>> clearAllNotifications({required ClearAllNotificationsParams params}) async {
-    final result = await RemoteDataSource.noModelRequest(
-      withAuthentication: true,
-      url: clearNotificationsUrl,
-      method: HttpMethod.POST,
-    );
-    return noModelCall(result: result);
-  }
-
 }

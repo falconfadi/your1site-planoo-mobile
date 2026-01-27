@@ -19,7 +19,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class AppointmentsScreen extends StatefulWidget {
 
-  const AppointmentsScreen({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const AppointmentsScreen({super.key,this.scaffoldKey});
 
   @override
   State<AppointmentsScreen> createState() => _AppointmentsScreenState();
@@ -36,7 +38,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: CustomHeader(title: AppLocalization.of(context).translate("appointments"), isNavBar: true),
+        appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: AppLocalization.of(context).translate("appointments"), isNavBar: true),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(

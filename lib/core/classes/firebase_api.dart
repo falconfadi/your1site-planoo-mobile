@@ -2,94 +2,28 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:centro_partner/core/constants/enum/notification_type.dart';
-import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/navigation/navigation.dart';
 import 'package:centro_partner/features/appointment/ui/appointment_details_screen.dart';
+import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
+import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
+import 'package:centro_partner/features/home/ui/event/event_details_screen.dart';
 import 'package:centro_partner/features/notification/ui/notification_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+// todo add more code for ios later
 class FirebaseApi {
 
-  final _firebaseMessaging = FirebaseMessaging.instance;
   static String? deviceToken;
+  static RemoteMessage? _initialMessage;
+  static bool _appReady = false;
 
+  final _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   void requestNotificationPermission() async {
-    _firebaseMessaging.requestPermission(
-        alert: true,
-        badge: true,
-        sound: true
-    );
-  }
-
-  void initLocalNotifications(RemoteMessage message) async {
-    var androidInitializeSettings = const AndroidInitializationSettings('@drawable/notification_icon');
-    var iOSInitializeSettings = const DarwinInitializationSettings();
-    var initializationsSettings = InitializationSettings(android: androidInitializeSettings, iOS: iOSInitializeSettings);
-    await _flutterLocalNotificationsPlugin.initialize(initializationsSettings,onDidReceiveNotificationResponse: (payload){
-      handleMessage(message);
-    });
-  }
-
-  void firebaseInit() {
-    FirebaseMessaging.onMessage.listen((message) {
-      if(kDebugMode){
-      }
-      if(Platform.isAndroid){
-        initLocalNotifications(message);
-        showNotifications(message);
-      } else {
-        showNotifications(message);
-      }
-    });
-  }
-
-  Future<void> showNotifications(RemoteMessage message) async {
-    AndroidNotificationChannel channel =
-    AndroidNotificationChannel(
-      Random.secure().nextInt(100000).toString(),
-      'High Importance Notifications',
-      importance: Importance.max,
-
-    );
-    AndroidNotificationDetails androidNotificationDetails =
-    AndroidNotificationDetails(
-        channel.id.toString(),
-        channel.name.toString(),
-        channelDescription: "Your channel descriptions",
-        importance: Importance.high,
-        priority: Priority.high,
-        ticker: "ticker"
-    );
-
-    await _flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    const DarwinNotificationDetails darwinNotificationDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true
-    );
-
-    NotificationDetails notificationDetails = NotificationDetails(
-      android: androidNotificationDetails,
-      iOS: darwinNotificationDetails
-    );
-
-
-    Future.delayed(Duration.zero,() {
-      _flutterLocalNotificationsPlugin.show(
-        0,
-        message.notification!.title,
-        message.notification!.body,
-        notificationDetails,
-      );
-    });
+    _firebaseMessaging.requestPermission(alert: true, badge: true, sound: true);
   }
 
   Future<void> getDeviceToken() async {
@@ -105,30 +39,109 @@ class FirebaseApi {
     });
   }
 
-  Future<void> setupInteractMessage(BuildContext context) async {
-    /// when app terminated
-    RemoteMessage? initialMessage = await FirebaseMessaging.instance.getInitialMessage();
-    if(initialMessage != null) {
-      handleMessage(initialMessage);
-    }
-    /// when app in inBackground
-    FirebaseMessaging.onMessageOpenedApp.listen((event) {
-      handleMessage(event);
+  void init() {
+    /// Foreground
+    FirebaseMessaging.onMessage.listen((message) {
+      _showLocalNotification(message);
+    });
+
+    /// Background
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      _navigateFromMessage(message);
+    });
+
+    /// Terminated
+    _firebaseMessaging.getInitialMessage().then((message) {
+      if (message != null) {
+        _initialMessage = message;
+        _tryNavigate();
+      }
     });
   }
 
-  void handleMessage(RemoteMessage message) async {
-    print(message.data);
-    final notificationType = NotificationType.fromInt(int.parse(message.data['type']));
-    switch (notificationType) {
-      case NotificationType.verificationCode:
-        Navigation.push(NotificationScreen());
-        break;
-      case NotificationType.appointment:
-        Navigation.push(AppointmentDetailsScreen(page: "notification",appointmentId: message.data['appointment']));
-        break;
-      default:
-        break;
+  Future<void> _showLocalNotification(RemoteMessage message) async {
+    if (Platform.isAndroid) {
+      const android = AndroidInitializationSettings('@drawable/notification_icon');
+      const init = InitializationSettings(android: android);
+      await _flutterLocalNotificationsPlugin.initialize(init, onDidReceiveNotificationResponse: (_) {
+        _navigateFromMessage(message);
+      });
+    }
+
+    AndroidNotificationChannel channel = AndroidNotificationChannel(
+      Random.secure().nextInt(100000).toString(),
+      'High Importance',
+      importance: Importance.max,
+    );
+
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      message.notification?.title,
+      message.notification?.body,
+      const NotificationDetails(
+        android: AndroidNotificationDetails(
+          'high',
+          'High',
+          importance: Importance.high,
+          priority: Priority.high,
+        ),
+      ),
+    );
+  }
+
+  void appIsReady() {
+    _appReady = true;
+    _tryNavigate();
+  }
+
+  void _tryNavigate() {
+    if (_initialMessage != null && _appReady) {
+      _navigateFromMessage(_initialMessage!);
+      _initialMessage = null;
     }
   }
+
+  void _navigateFromMessage(RemoteMessage message) {
+    final data = message.data;
+    final notificationType = NotificationType.fromInt(int.parse(data['type']));
+    Widget target;
+
+    switch (notificationType) {
+      case NotificationType.normal:
+      case NotificationType.verificationCode:  /// example response: {code: 15979, type: 1}
+        target = NotificationScreen();
+        break;
+      case NotificationType.appointment: /// example response: {appointment: 4, type: 5}
+        target = AppointmentDetailsScreen(
+          appointmentId: int.parse(data['appointment']),
+        );
+        break;
+      case NotificationType.course: /// example response: {course: 55, type: 3}
+        target = CourseDetailsScreen(
+          courseId: int.parse(data['course']),
+        );
+      case NotificationType.event: /// example response: {event: 14, type: 4}
+        target = EventDetailsScreen(
+          eventId: int.parse(data['event']),
+        );
+        break;
+      // todo more cases later for activity - chat - session
+      default:
+        return;
+    }
+
+    if (Navigation.hasNavigationStack) {
+      Navigation.push(target);
+      return;
+    }
+    Navigation.pushReplacement(NavBarScreen(pageIndex: 0));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigation.push(target);
+    });
+  }
 }
+

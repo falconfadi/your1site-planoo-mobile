@@ -45,6 +45,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   Locale? _locale;
+  final firebaseApi = FirebaseApi();
 
   void setLocale(Locale locale) {
     setState(() {
@@ -58,12 +59,11 @@ class _MyAppState extends State<MyApp> {
     // AppStorage.removeData(key: kAccessToken);
     // AppStorage.removeData(key: userID);
     // AppStorage.removeData(key: userType);
-    FirebaseApi().requestNotificationPermission();
-    FirebaseApi().firebaseInit();
-    FirebaseApi().setupInteractMessage(context);
-    FirebaseApi().isTokenRefresh();
-    FirebaseApi().getDeviceToken();
-    /// load application language:
+    firebaseApi.requestNotificationPermission();
+    firebaseApi.init();
+    firebaseApi.getDeviceToken();
+    firebaseApi.isTokenRefresh();
+
     AppStorage.loadLanguage().then((languageCode) {
       setState(() {
         if(AppStorage.getData(key: headerLanguageKey) == null) {

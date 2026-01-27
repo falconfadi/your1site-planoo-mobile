@@ -1,4 +1,3 @@
-import 'package:centro_partner/core/classes/Keys.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
@@ -13,8 +12,9 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
   final bool isNavBar;
   final bool? withLogo;
   final Widget? leading;
+  final GlobalKey<ScaffoldState>? scaffoldKey;
 
-  const CustomHeader({super.key, this.title, required this.isNavBar,this.withLogo = false,this.leading});
+  const CustomHeader({super.key, this.title, required this.isNavBar,this.withLogo = false,this.leading,this.scaffoldKey});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
           Padding(
             padding: EdgeInsets.only(left: 15.w),
             child: InkWell(
-              onTap: () => Keys.scaffoldKey.currentState!.openDrawer(),
+              onTap: () => scaffoldKey!.currentState!.openDrawer(),
               child: SvgPicture.asset(menu),
             )
           ),

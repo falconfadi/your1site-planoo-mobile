@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
@@ -31,6 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         Navigation.pushReplacement(SignInScreen());
       }
+      FirebaseApi().appIsReady();
     });
   }
 

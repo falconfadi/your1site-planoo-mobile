@@ -1,4 +1,3 @@
-import 'package:centro_partner/core/classes/Keys.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/features/appointment/ui/appointments_screen.dart';
 import 'package:centro_partner/features/home/ui/home_screen.dart';
@@ -23,6 +22,7 @@ class NavBarScreen extends StatefulWidget {
 
 class _NavBarScreenState extends State<NavBarScreen> {
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late PersistentTabController _controller;
   final NavBarStyle _navBarStyle = NavBarStyle.style12;
 
@@ -33,10 +33,10 @@ class _NavBarScreenState extends State<NavBarScreen> {
   }
 
   List<Widget> _buildScreens() => [
-    HomeScreen(),
-    AppointmentsScreen(),
-    NotificationScreen(),
-    ProfileScreen()
+    HomeScreen(scaffoldKey: _scaffoldKey),
+    AppointmentsScreen(scaffoldKey: _scaffoldKey),
+    NotificationScreen(scaffoldKey: _scaffoldKey),
+    ProfileScreen(scaffoldKey: _scaffoldKey)
   ];
 
 
@@ -70,7 +70,7 @@ class _NavBarScreenState extends State<NavBarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: Keys.scaffoldKey,
+        key: _scaffoldKey,
         drawer: DrawerWidget(),
         body: PersistentTabView(
           context,

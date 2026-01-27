@@ -1,6 +1,5 @@
 import 'package:centro_partner/core/boilerplate/get_model/cubits/get_model_cubit.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
-import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/appointment/ui/appointment_details_screen.dart';
@@ -17,14 +16,15 @@ import 'package:centro_partner/core/constants/enum/notification_type.dart';
 import 'package:centro_partner/core/ui/widgets/loading.dart';
 import 'package:centro_partner/features/notification/data/model/notifications_model.dart';
 import 'package:centro_partner/features/notification/data/notification_repository/notification_repository.dart';
-import 'package:centro_partner/features/notification/data/usecase/clear_all_notifications_usecase.dart';
 import 'package:centro_partner/features/notification/data/usecase/delete_notification_usecase.dart';
 import 'package:centro_partner/features/notification/data/usecase/notifications_usecase.dart';
 import 'package:centro_partner/features/notification/data/usecase/view_notification_usecase.dart';
 
 class NotificationScreen extends StatefulWidget {
 
-  const NotificationScreen({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const NotificationScreen({super.key,this.scaffoldKey});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -49,7 +49,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: CustomHeader(title: AppLocalization.of(context).translate("notifications"),isNavBar: true),
+      appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: AppLocalization.of(context).translate("notifications"),isNavBar: true),
       body: GetModel<NotificationsModel>(
         loading: SizedBox(
           height: 1.sh * 0.5,
@@ -65,37 +65,6 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              SizedBox(height: 30.h),
-              newModel.notificationsList!.isEmpty ? const Center() :
-              CreateModel(
-                withValidation: false,
-                onTap: () async {},
-                onSuccess: (data) {
-                  getCubit!.getModel();
-                },
-                useCaseCallBack: (data) {
-                  return ClearAllNotificationsUseCase(NotificationRepository()).call(params: ClearAllNotificationsParams());
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Expanded(flex: 3,child: SizedBox.shrink()),
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w),
-                        child: CustomButton(
-                          width: 0.25.w,
-                            height: 35.h,
-                            backgroundColor: AppColors.turquoiseColor,
-                            borderRadius: 10.r,
-                          buttonName: AppLocalization.of(context).translate("clear_all"),
-                        ),
-                      ),
-                    ),
-                  ],
-                )
-              ),
               SizedBox(height: 10.h),
               ListView.builder(
                 padding: EdgeInsets.zero,
@@ -107,24 +76,22 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                     padding: EdgeInsets.symmetric(vertical: 10.w),
                     child: InkWell(
                       onTap: () async {
-                        final notificationType = NotificationType.fromInt(newModel.notificationsList![index].payload!.type!);
+                        final notification = newModel.notificationsList![index];
+                        final notificationType = NotificationType.fromInt(notification.payload!.type!);
+
+                        viewNotification(notification.isViewed!, notification.notificationId!);
+
                         switch (notificationType) {
                           case NotificationType.verificationCode:
-                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
-                            break;
                           case NotificationType.normal:
-                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
                             break;
                           case NotificationType.appointment:
-                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
-                            Navigation.push(AppointmentDetailsScreen(appointmentId: newModel.notificationsList![index].payload!.appointment!));
+                            Navigation.push(AppointmentDetailsScreen(appointmentId: notification.payload!.appointment!));
                             break;
                           case NotificationType.course:
-                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
                             Navigation.push(CourseDetailsScreen(courseId: newModel.notificationsList![index].payload!.course!));
                             break;
                           case NotificationType.event:
-                            viewNotification(newModel.notificationsList![index].isViewed!, newModel.notificationsList![index].notificationId!);
                             Navigation.push(EventDetailsScreen(eventId: newModel.notificationsList![index].payload!.event!));
                             break;
                           // todo add (activity - session - chat) cases later

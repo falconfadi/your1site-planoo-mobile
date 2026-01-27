@@ -24,7 +24,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class ProfileScreen extends StatefulWidget {
 
-  const ProfileScreen({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const ProfileScreen({super.key,this.scaffoldKey});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -39,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-      appBar: CustomHeader(title: AppLocalization.of(context).translate("profile"), isNavBar: true),
+      appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: AppLocalization.of(context).translate("profile"), isNavBar: true),
       body: GetModel<SignInModel>(
           onCubitCreated: (cubit) {
             userCubit = cubit as GetModelCubit<SignInModel>;

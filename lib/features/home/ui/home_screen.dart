@@ -26,7 +26,9 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 class HomeScreen extends StatefulWidget {
 
-  const HomeScreen({super.key});
+  final GlobalKey<ScaffoldState>? scaffoldKey;
+
+  const HomeScreen({super.key,this.scaffoldKey});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
-        appBar: CustomHeader(title: "",withLogo: true,isNavBar: true),
+        appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: "",withLogo: true,isNavBar: true),
         body: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
           child: Column(
