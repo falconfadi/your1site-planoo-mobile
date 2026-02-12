@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -40,7 +41,9 @@ class SettingsWidget extends StatelessWidget {
                 style: AppTheme.bodyLarge.copyWith(fontSize: 18.sp)
             ),
           ),
-          trailing ?? Icon(Icons.keyboard_arrow_right_outlined)
+          trailing ?? Icon(AppStorage.languageCode == "ar" ?
+          Icons.keyboard_arrow_left_outlined :
+          Icons.keyboard_arrow_right_outlined)
         ],
       ),
     );

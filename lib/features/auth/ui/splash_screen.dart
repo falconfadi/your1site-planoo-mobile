@@ -26,7 +26,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 2), () async {
-      // todo later check account type
       if(AppStorage.getData(key: kAccessToken) != null) {
         Navigation.pushReplacement(NavBarScreen(pageIndex: 0));
       } else {
@@ -57,24 +56,27 @@ class _SplashScreenState extends State<SplashScreen> {
           Positioned(
             top: 1.sh * 0.05,
             left: 1.sw * 0.15,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Image.asset(logo,height: 100.h,width: 1.sw),
-                RichText(
-                  text: TextSpan(
-                    text: AppLocalization.of(context).translate("plan_your"),
-                    style: AppTheme.labelLarge.copyWith(fontSize: 24.sp,color: AppColors.primaryColor),
-                    children: [
-                      TextSpan(text: " "),
-                      TextSpan(
-                        text: AppLocalization.of(context).translate("life"),
-                        style: AppTheme.bodyLarge.copyWith(fontSize: 26.sp,color: AppColors.primaryColor),
-                      ),
-                    ],
+            child: SizedBox(
+              width: 1.sw,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Image.asset(logo,height: 100.h,width: 0.6.sw),
+                  RichText(
+                    text: TextSpan(
+                      text: AppLocalization.of(context).translate("plan_your"),
+                      style: AppTheme.labelLarge.copyWith(fontSize: 24.sp,color: AppColors.primaryColor),
+                      children: [
+                        TextSpan(text: " "),
+                        TextSpan(
+                          text: AppLocalization.of(context).translate("life"),
+                          style: AppTheme.bodyLarge.copyWith(fontSize: 26.sp,color: AppColors.primaryColor),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

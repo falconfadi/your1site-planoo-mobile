@@ -11,7 +11,7 @@ import 'package:centro_partner/features/home/data/model/media_model.dart';
 import 'package:centro_partner/features/home/data/usecase/media/all_medias_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/media/create_media_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/media/delete_medial_usecase.dart';
-import 'package:centro_partner/features/home/widget/view_image_widget.dart';
+import 'package:centro_partner/core/ui/shared_widgets/view_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';

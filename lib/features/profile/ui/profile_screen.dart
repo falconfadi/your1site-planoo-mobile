@@ -11,7 +11,7 @@ import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dar
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
-import 'package:centro_partner/features/home/widget/view_image_widget.dart';
+import 'package:centro_partner/core/ui/shared_widgets/view_image_widget.dart';
 import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
 import 'package:centro_partner/features/profile/data/usecase/delete_profile_image_usecase.dart';
 import 'package:centro_partner/features/profile/data/usecase/get_user_usecase.dart';
@@ -156,7 +156,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 15.h),
                 Row(
                     children: [
-                      Expanded(flex: 1,child: Center()),
                       Expanded(
                         child: CustomButton(
                           height: 40.h,

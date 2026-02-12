@@ -16,7 +16,6 @@ const key = 'assets/icons/key.svg';
 const language = 'assets/icons/language.svg';
 const location = 'assets/icons/location.svg';
 const logout = 'assets/icons/logout.svg';
-const menu = 'assets/icons/menu.svg';
 const notifications = 'assets/icons/notifications.svg';
 const star = 'assets/icons/star.svg';
 const settings = 'assets/icons/settings.svg';

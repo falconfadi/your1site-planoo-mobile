@@ -4,7 +4,6 @@ import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
 
@@ -30,10 +29,10 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
       leading: isNavBar ? Row(
         children: [
           Padding(
-            padding: EdgeInsets.only(left: 15.w),
+            padding: EdgeInsets.symmetric(horizontal: 10.w),
             child: InkWell(
               onTap: () => scaffoldKey!.currentState!.openDrawer(),
-              child: SvgPicture.asset(menu),
+              child: Icon(Icons.menu,size: 35.sp,color: AppColors.darkGrayColor.withOpacity(0.7)),
             )
           ),
           withLogo == true ? Image.asset(logo,width: 150.w) : Center(),

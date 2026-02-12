@@ -69,7 +69,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                   autoFocus: false,
                   autoValidateMode: AutovalidateMode.onUserInteraction,
                   keyboardType: TextInputType.phone,
-                  prefixIcon: Icons.phone,
+                  prefixIcon: Icons.phone_android_outlined,
                   validator: (value) {
                     return BaseValidator.validateValue(
                       context,
@@ -115,7 +115,8 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                             child: ForgetPasswordSheet()
                         );
                       },
-                      child: Text("${AppLocalization.of(context).translate("forget_password")}?",
+                      child: Text(AppLocalization.of(context).translate("forget_password") +
+                          AppLocalization.of(context).translate("?"),
                           style: AppTheme.bodyLarge.copyWith(color: AppColors.primaryColor)
                       ),
                     ),
@@ -153,7 +154,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                 ),
                 SizedBox(height: 80.h),
                 FooterWidget(
-                    text: "${AppLocalization.of(context).translate("do_not_have_account")}?",
+                    text: AppLocalization.of(context).translate("do_not_have_account") + AppLocalization.of(context).translate("?"),
                     link: AppLocalization.of(context).translate("sign_up"),
                     linkTap: () => Navigation.pushReplacement(SignUpScreen())),
                 SizedBox(height: 50.h),

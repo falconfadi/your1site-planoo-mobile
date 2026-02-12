@@ -37,7 +37,7 @@ class _ForgetPasswordSheetState extends State<ForgetPasswordSheet>  with FormSta
             SizedBox(height: 10.h),
             CustomTextField(
               autoValidateMode: AutovalidateMode.onUserInteraction,
-              prefixIcon: Icons.phone,
+              prefixIcon: Icons.phone_android_outlined,
               keyboardType: TextInputType.number,
               validator: (value) {
                 return BaseValidator.validateValue(

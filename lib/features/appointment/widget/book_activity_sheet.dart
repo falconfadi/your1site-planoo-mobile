@@ -197,7 +197,7 @@ class _BookActivitySheetState extends State<BookActivitySheet> with FormStateMin
                                         autoFocus: false,
                                         autoValidateMode: AutovalidateMode.onUserInteraction,
                                         keyboardType: TextInputType.phone,
-                                        prefixIcon: Icons.phone,
+                                        prefixIcon: Icons.phone_android_outlined,
                                         validator: (value) {
                                           return BaseValidator.validateValue(
                                             context,

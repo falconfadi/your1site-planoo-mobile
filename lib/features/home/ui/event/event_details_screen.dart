@@ -182,7 +182,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                         title: "",content: Column(
                                           children: [
                                             ListTile(
-                                              title: Text("${AppLocalization.of(context).translate("are_you_sure")}?",textAlign: TextAlign.center,
+                                              title: Text(AppLocalization.of(context).translate("are_you_sure") +
+                                                  AppLocalization.of(context).translate("?"),
+                                                textAlign: TextAlign.center,
                                                 style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
                                               ),
                                             ),
