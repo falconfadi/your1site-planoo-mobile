@@ -1,5 +1,6 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
@@ -145,6 +146,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                       params: SignInParams(
                         phone: form.controllers[0].text,
                         password: form.controllers[1].text,
+                          firebaseToken: FirebaseApi.deviceToken.toString()
                       )),
                   child: CustomButton(
                     backgroundColor: AppColors.primaryColor,

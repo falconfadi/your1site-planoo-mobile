@@ -5,8 +5,15 @@ import '../../../../core/usecase/usecase.dart';
 
 class LogoutParams extends BaseParams {
 
-  LogoutParams();
+  bool? clearToken;
 
+  LogoutParams({this.clearToken});
+
+  Map<String, bool?> toJson() {
+    return {
+      "clear_token": clearToken,
+    };
+  }
 }
 
 class LogoutUseCase extends UseCase<bool, LogoutParams> {

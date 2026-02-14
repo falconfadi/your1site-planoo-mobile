@@ -6,6 +6,7 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
+import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
@@ -20,7 +21,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DrawerWidget extends StatelessWidget {
 
-  const DrawerWidget({super.key});
+  DrawerWidget({super.key});
+
+  bool clearToken = false;
 
   @override
   Widget build(BuildContext context) {
@@ -49,19 +52,49 @@ class DrawerWidget extends StatelessWidget {
             title: AppLocalization.of(context).translate("log_out"),
             iconPath: logout,
             onTap: () {
+              clearToken = false;
               Dialogs.showQuestion(
                 context,
                 title: "",
-                content: Column(
-                  children: [
-                    ListTile(
-                      title: Text(AppLocalization.of(context).translate("are_you_sure") +
-                          AppLocalization.of(context).translate("?"),
-                        textAlign: TextAlign.center,
-                        style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
-                      ),
-                    ),
-                  ],
+                content: StatefulBuilder(
+                    builder: (context, setStateDialog) {
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(AppLocalization.of(context).translate("are_you_sure") +
+                              AppLocalization.of(context).translate("?"),
+                            textAlign: TextAlign.center,
+                            style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
+                          ),
+                          subtitle: Padding(
+                              padding: EdgeInsets.only(top: 10.h),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Checkbox(
+                                    value: clearToken,
+                                    activeColor: AppColors.redColor,
+                                    visualDensity: VisualDensity.compact,
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    onChanged: (value) {
+                                      setStateDialog(() {
+                                        clearToken = !clearToken;
+                                      });
+                                    },
+                                  ),
+                                  Expanded(
+                                      child: ExpandableTextWidget(
+                                        text: AppLocalization.of(context).translate("logout_clear_token_warning"),
+                                        style: AppTheme.bodyMedium,
+                                      )
+                                  )
+                                ],
+                              ),
+                            )
+                        ),
+                      ],
+                    );
+                  }
                 ),
                 btnOk: CreateModel(
                   withValidation: false,
@@ -74,7 +107,9 @@ class DrawerWidget extends StatelessWidget {
                   },
                   useCaseCallBack: (model) {
                     return LogoutUseCase(AuthRepository()).call(
-                        params: LogoutParams());
+                        params: LogoutParams(
+                          clearToken: clearToken
+                        ));
                   },
                   child: CustomButton(
                     height: 40.h,
