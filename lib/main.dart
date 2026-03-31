@@ -27,6 +27,7 @@ Future<void> main() async {
 @pragma("vm:entry-point")
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  print("🔵 Background message received: ${message.messageId}");
 }
 
 class MyApp extends StatefulWidget {
@@ -59,10 +60,8 @@ class _MyAppState extends State<MyApp> {
     // AppStorage.removeData(key: kAccessToken);
     // AppStorage.removeData(key: userID);
     // AppStorage.removeData(key: userType);
-    firebaseApi.requestNotificationPermission();
     firebaseApi.init();
-    firebaseApi.getDeviceToken();
-    firebaseApi.isTokenRefresh();
+    firebaseApi.listenToTokenRefresh();
 
     AppStorage.loadLanguage().then((languageCode) {
       setState(() {
