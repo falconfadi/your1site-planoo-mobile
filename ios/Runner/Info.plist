@@ -32,6 +32,10 @@
 	<string>This app needs access to your location even in background</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>We use your location to show your position on the map</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+    <string>This app requires location access in the background</string>
+    <key>NSUserNotificationUsageDescription</key>
+    <string>We send notifications about bookings and updates</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
