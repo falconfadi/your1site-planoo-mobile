@@ -180,6 +180,9 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                       onToTimeChanged: (time) {
                         setState(() => toTime = time);
                       },
+                      onDaysChanged: (days) {
+                        setState(() => selectedDays = days);
+                      },
                     ),
                   SizedBox(height: 20.h),
                   CustomTextField(
@@ -243,7 +246,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                     },
                     focusNode: form.nodes[4],
                     textEditingController: form.controllers[4],
-                    labelText: AppLocalization.of(context).translate("withdrawal_fee"),
+                    labelText: AppLocalization.of(context).translate("cancellation_fee"),
                   ),
                   SizedBox(height: 20.h),
                   InkWell(

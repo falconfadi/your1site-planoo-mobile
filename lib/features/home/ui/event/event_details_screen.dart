@@ -241,7 +241,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         SizedBox(width: 10.w),
                         InkWell(
                           onTap: () {
-                            String courseUrl = 'https://www.google.com/maps/search/?api=1&query=${model.event!.location!.long!},${model.event!.location!.lat!}';
+                            String courseUrl = 'https://www.google.com/maps/search/?api=1&query=${model.event!.location!.lat!},${model.event!.location!.long!}';
                             OpenUrl.launchUrls(Uri.parse(courseUrl));
                           },
                           child: Text(AppLocalization.of(context).translate("show_map"),
@@ -337,7 +337,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                 Expanded(
                                   child: RichText(
                                     text: TextSpan(
-                                      text: AppLocalization.of(context).translate("withdrawal_fee"),
+                                      text: AppLocalization.of(context).translate("cancellation_fee"),
                                       style: AppTheme.headlineMedium,
                                       children: [
                                         TextSpan(text: " ${model.event!.withdrawalFee} ${AppLocalization.of(context).translate("syr")}",

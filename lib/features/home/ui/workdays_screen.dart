@@ -156,11 +156,31 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
                                       hour: int.tryParse(getModel.workdaysList![index].start!.split(":")[0]) ?? 0,
                                       minute: int.tryParse(getModel.workdaysList![index].start!.split(":")[1]) ?? 0,
                                     ),
-                                    onSaved: (formattedTime) {
+                                    minTime: index > 0 ? TimeOfDay(
+                                      hour: int.tryParse(getModel.workdaysList![index - 1].start!.split(":")[0]) ?? 0,
+                                      minute: int.tryParse(getModel.workdaysList![index - 1].start!.split(":")[1]) ?? 0,
+                                    ) : null,
+                                    onSaved: (TimeOfDay time) {
+                                      final newStart =
+                                          "${time.hour.toString().padLeft(2, '0')}:"
+                                          "${time.minute.toString().padLeft(2, '0')}";
+
+                                      final currentEnd = getModel.workdaysList![index].end;
+                                      if (currentEnd != null) {
+                                        final startMinutes = time.hour * 60 + time.minute;
+
+                                        final endTime = parseTimeOfDay(timeString: currentEnd);
+                                        final endMinutes = endTime.hour * 60 + endTime.minute;
+
+                                        if (startMinutes > endMinutes) {
+                                          getModel.workdaysList![index].end = newStart;
+                                        }
+                                      }
+
                                       setState(() {
-                                        getModel.workdaysList![index].start = formattedTime;
+                                        getModel.workdaysList![index].start = newStart;
                                       });
-                                    },
+                                    }
                                   );
                                 },
                                 child: CustomContainerInfoWidget(
@@ -181,11 +201,19 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
                                       hour: int.tryParse(getModel.workdaysList![index].end!.split(":")[0]) ?? 0,
                                       minute: int.tryParse(getModel.workdaysList![index].end!.split(":")[1]) ?? 0,
                                     ),
-                                    onSaved: (formattedTime) {
+                                    minTime: TimeOfDay(
+                                      hour: int.tryParse(getModel.workdaysList![index].start!.split(":")[0]) ?? 0,
+                                      minute: int.tryParse(getModel.workdaysList![index].start!.split(":")[1]) ?? 0,
+                                    ),
+                                    onSaved: (TimeOfDay time) {
+                                      final formatted =
+                                          "${time.hour.toString().padLeft(2, '0')}:"
+                                          "${time.minute.toString().padLeft(2, '0')}";
+
                                       setState(() {
-                                        getModel.workdaysList![index].end = formattedTime;
+                                        getModel.workdaysList![index].end = formatted;
                                       });
-                                    },
+                                    }
                                   );
                                 },
                                 child: CustomContainerInfoWidget(

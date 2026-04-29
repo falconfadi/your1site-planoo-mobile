@@ -240,7 +240,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                         SizedBox(width: 10.w),
                         InkWell(
                           onTap: () {
-                            String courseUrl = 'https://www.google.com/maps/search/?api=1&query=${model.course!.location!.long!},${model.course!.location!.lat!}';
+                            String courseUrl = 'https://www.google.com/maps/search/?api=1&query=${model.course!.location!.lat!},${model.course!.location!.long!}';
                             OpenUrl.launchUrls(Uri.parse(courseUrl));
                           },
                           child: Text(AppLocalization.of(context).translate("show_map"),

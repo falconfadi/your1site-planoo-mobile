@@ -134,5 +134,6 @@
   "syr": "SYR",
   "?": "?",
   "about_planoo": "PLANOO is a smart digital platform designed to simplify how people discover, book, and manage activities and services.\nWe connect users with trusted partners through an easy-to-use system that saves time, improves organization, and delivers a smooth booking experience for everyone.",
-  "logout_clear_token_warning": "This option is only used when switching to another device.\nAfter deleting the authentication code, you will no longer receive notifications on that device.\nThis option is risky, so please use it with caution."
+  "logout_clear_token_warning": "This option is only used when switching to another device.\nAfter deleting the authentication code, you will no longer receive notifications on that device.\nThis option is risky, so please use it with caution.",
+  "your_appointments": "Your appointments"
 }

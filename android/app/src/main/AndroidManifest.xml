@@ -19,6 +19,9 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/notification_icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/notification_color" />
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCK5k9cVEE5aQZ4yfQ_qN1yWX9j9-e6_SA" />
         <activity

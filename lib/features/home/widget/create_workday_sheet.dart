@@ -85,13 +85,31 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
                 onTap: () {
                   showCustomTimePicker(
                     context: context,
-                    buttonLabel: "save",
+                    minTime: null,
                     initialTime: fromTime == null ? null : parseTimeOfDay(timeString: fromTime!),
-                    onSaved: (selectedTime) {
+                    onSaved: (time) {
+                      final newFrom =
+                          "${time.hour.toString().padLeft(2, '0')}:"
+                          "${time.minute.toString().padLeft(2, '0')}";
+
+                      if (toTime != null) {
+                        final startMinutes = time.hour * 60 + time.minute;
+
+                        final end = parseTimeOfDay(timeString: toTime!);
+                        final endMinutes = end.hour * 60 + end.minute;
+
+                        if (startMinutes > endMinutes) {
+                          setState(() {
+                            toTime = newFrom;
+                          });
+                        }
+                      }
+
                       setState(() {
-                        fromTime = selectedTime;
+                        fromTime = newFrom;
                       });
                     },
+                    buttonLabel: "save",
                   );
                 },
                 child: CustomContainerInfoWidget(
@@ -106,12 +124,13 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
               child: InkWell(
                 onTap: () {
                   showCustomTimePicker(
+                    minTime: parseTimeOfDay(timeString: fromTime!),
                     context: context,
                     buttonLabel: "save",
                     initialTime: toTime == null ? null : parseTimeOfDay(timeString: toTime!),
-                    onSaved: (selectedTime) {
+                    onSaved: (time) {
                       setState(() {
-                        toTime = selectedTime;
+                        toTime = "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
                       });
                     },
                   );

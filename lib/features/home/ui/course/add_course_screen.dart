@@ -167,6 +167,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                       onToTimeChanged: (time) {
                         setState(() => toTime = time);
                       },
+                      onDaysChanged: (days) {
+                        setState(() => selectedDays = days);
+                      },
                     ),
                   SizedBox(height: 20.h),
                   GetModel<CourseDurationModel>(

@@ -20,6 +20,7 @@ class WorkdaysWidget extends StatefulWidget {
   String? toTime;
   final ValueChanged<String>? onFromTimeChanged;
   final ValueChanged<String>? onToTimeChanged;
+  final ValueChanged<Set<String>>? onDaysChanged;
 
   WorkdaysWidget({super.key,
     required this.selectedDays,
@@ -27,6 +28,7 @@ class WorkdaysWidget extends StatefulWidget {
     required this.toTime,
     this.onFromTimeChanged,
     this.onToTimeChanged,
+    this.onDaysChanged
   });
 
   @override
@@ -53,9 +55,10 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
               labelBuilder: (item) => item,
               idBuilder: (item) => item,
               onSelect: (ids) {
-                setState(() {
-                  widget.selectedDays.addAll(ids);
-                });
+                // setState(() {
+                //   widget.selectedDays.addAll(ids);
+                // });
+                widget.onDaysChanged!(ids.toSet());
               },
             )
           ),
@@ -69,11 +72,41 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                   onTap: () {
                     showCustomTimePicker(
                       context: context,
-                      buttonLabel: "save",
+                      minTime: null,
                       initialTime: widget.fromTime == null ? null : parseTimeOfDay(timeString: widget.fromTime!),
-                      onSaved: (selectedTime) {
-                        setState(() {});
-                        widget.onFromTimeChanged?.call(selectedTime);
+                      buttonLabel: "save",
+                      onSaved: (time) {
+                        final newFrom =
+                            "${time.hour.toString().padLeft(2, '0')}:"
+                            "${time.minute.toString().padLeft(2, '0')}";
+
+                        widget.onFromTimeChanged!(newFrom);
+
+                        if (widget.toTime != null) {
+                          final startMinutes = time.hour * 60 + time.minute;
+
+                          // final end = parseTimeOfDay(timeString: widget.toTime!);
+                          // final endMinutes = end.hour * 60 + end.minute;
+
+                          final end = parseTimeOfDay(
+                              timeString: widget.toTime!)
+                              .hour *
+                              60 +
+                              parseTimeOfDay(
+                                  timeString: widget.toTime!)
+                                  .minute;
+
+                          if (startMinutes > end) {
+                            // setState(() {
+                            //   widget.toTime = newFrom;
+                            // });
+                            widget.onToTimeChanged!(newFrom);
+                          }
+                        }
+
+                        // setState(() {
+                        //   widget.fromTime = newFrom;
+                        // });
                       },
                     );
                   },
@@ -90,11 +123,19 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                   onTap: () {
                     showCustomTimePicker(
                       context: context,
-                      buttonLabel: "save",
+                      minTime: widget.fromTime == null
+                          ? null : parseTimeOfDay(timeString: widget.fromTime!),
                       initialTime: widget.toTime == null ? null : parseTimeOfDay(timeString: widget.toTime!),
-                      onSaved: (selectedTime) {
-                        setState(() {});
-                        widget.onToTimeChanged?.call(selectedTime);
+                      buttonLabel: "save",
+                      onSaved: (time) {
+                        final newTo =
+                            "${time.hour.toString().padLeft(2, '0')}:"
+                            "${time.minute.toString().padLeft(2, '0')}";
+
+                        widget.onToTimeChanged!(newTo);
+                        // setState(() {
+                        //   widget.toTime = "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
+                        // });
                       },
                     );
                   },

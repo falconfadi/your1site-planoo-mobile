@@ -161,6 +161,9 @@ class _AddActivityScreenState extends State<AddActivityScreen> with FormStateMin
                       onToTimeChanged: (time) {
                         setState(() => toTime = time);
                       },
+                      onDaysChanged: (days) {
+                        setState(() => selectedDays = days);
+                      },
                     ),
                   SizedBox(height: 20.h),
                   GetModel<SessionDurationModel>(

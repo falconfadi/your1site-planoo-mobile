@@ -63,6 +63,7 @@ const String getAppointmentDetailsUrl = "appointment/find";
 const String checkActivityAppointmentUrl = "appointment/check";
 const String createActivityAppointmentUrl = "appointment/create";
 const String cancelActivityAppointmentUrl = "appointment/cancel";
+const String acceptedAppointmentsUrl = "appointment/accepted";
 /// course
 const String createCourseUrl = "course/create";
 const String allCoursesUrl = "course/all";

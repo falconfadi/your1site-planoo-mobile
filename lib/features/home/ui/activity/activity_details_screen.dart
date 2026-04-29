@@ -240,7 +240,7 @@ class _ActivityDetailsScreenState extends State<ActivityDetailsScreen> {
                         SizedBox(width: 10.w),
                         InkWell(
                           onTap: () {
-                            String activityUrl = 'https://www.google.com/maps/search/?api=1&query=${model.activity!.location!.long!},${model.activity!.location!.lat!}';
+                            String activityUrl = 'https://www.google.com/maps/search/?api=1&query=${model.activity!.location!.lat!},${model.activity!.location!.long!}';
                             OpenUrl.launchUrls(Uri.parse(activityUrl));
                           },
                           child: Text(AppLocalization.of(context).translate("show_map"),
