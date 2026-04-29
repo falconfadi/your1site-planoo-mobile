@@ -1,6 +1,7 @@
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/utils/project_utils/open_url.dart';
 import 'package:flutter/material.dart';
@@ -161,21 +162,7 @@ PLANOO <strong> ﻻ تقوم بتقديم أي خدمات بنفسها</strong>�
 
 <hr style="border-top:1px solid #ddd; margin:12px 0;">
 
-<h2>16. التواصل</h2>
-
-<p style="margin-bottom:5px;">
-  <span>📧</span>&nbsp;&nbsp;
-  <a href="mailto:info@planoo.net" style="color:black; text-decoration:none;">
-    info@planoo.net
-  </a>
-</p>
-
-<p>
-  <span>🌐</span>&nbsp;&nbsp;
-  <a href="https://www.planoo.net" style="color:black; text-decoration:none;">
-    www.planoo.net
-  </a>
-</p>
+<h2 style="margin:5px;">16. التواصل</h2>
 
 </div>
 
@@ -329,22 +316,8 @@ affiliates from any claims, damages, losses, or legal actions arising from: </p>
 
 <hr style="border: 0.5px solid black; border-top:1px solid #ddd; margin:12px 0;">
 
-<h2>16. Contact</h2>
-<p style="margin-bottom:5px;">
-  <span>📧</span>&nbsp;&nbsp;
-  <a href="mailto:info@planoo.net" style="color:black; text-decoration:none;">
-    info@planoo.net
-  </a>
-</p>
+<h2 style="margin:5px;">16. Contact</h2>
 
-<p>
-  <span>🌐</span>&nbsp;&nbsp;
-  <a href="https://www.planoo.net" style="color:black; text-decoration:none;">
-    www.planoo.net
-  </a>
-</p>
-
-<br><br>
 """;
 
   @override
@@ -354,41 +327,82 @@ affiliates from any claims, damages, losses, or legal actions arising from: </p>
       appBar: CustomHeader(title: AppLocalization.of(context).translate("terms_and_conditions"),isNavBar: false),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 10.w,vertical: 20.h),
-        child: Html(
-          data: AppStorage.languageCode == "ar"
-              ? termsArabic
-              : termsEnglish,
-          onLinkTap: (url, attributes, element) {
-            OpenUrl.launchUrls(Uri.parse(url!));
-          },
-          style: {
-            "h1": Style(
-              fontFamily: "Tajawal",
-              fontSize: FontSize(20),
-              fontWeight: FontWeight.bold,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Html(
+              data: AppStorage.languageCode == "ar"
+                  ? termsArabic
+                  : termsEnglish,
+              onLinkTap: (url, attributes, element) {
+                OpenUrl.launchUrls(Uri.parse(url!));
+              },
+              style: {
+                "h1": Style(
+                  fontFamily: "Tajawal",
+                  fontSize: FontSize(20),
+                  fontWeight: FontWeight.bold,
+                ),
+                "h2": Style(
+                  fontFamily: "Tajawal",
+                  fontSize: FontSize(18),
+                  fontWeight: FontWeight.w600,
+                ),
+                "p": Style(
+                  fontFamily: "Tajawal",
+                  fontSize: FontSize(15),
+                  lineHeight: LineHeight(1.2),
+                ),
+                "body": Style(
+                  fontFamily: "Tajawal",
+                  fontSize: FontSize(14),
+                  lineHeight: LineHeight(1.6),
+                  color: AppColors.blackColor,
+                ),
+                "ul": Style(
+                  fontFamily: "Tajawal",
+                  listStyleType: ListStyleType.disc,
+                  padding: HtmlPaddings.symmetric(horizontal: 15)
+                ),
+              },
             ),
-            "h2": Style(
-              fontFamily: "Tajawal",
-              fontSize: FontSize(18),
-              fontWeight: FontWeight.w600,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: InkWell(
+                onTap: () => OpenUrl.launchUrls(Uri.parse("mailto:info@planoo.net")),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.email_outlined, color: AppColors.turquoiseColor, size: 24.sp),
+                    SizedBox(width: 10.w),
+                    Padding(
+                      padding: EdgeInsets.only(top: 3),
+                      child: Text("info@planoo.net",style: AppTheme.bodyLarge),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            "p": Style(
-              fontFamily: "Tajawal",
-              fontSize: FontSize(15),
-              lineHeight: LineHeight(1.2),
+            SizedBox(height: 15.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              child: InkWell(
+                onTap: () => OpenUrl.launchUrls(Uri.parse("https://www.planoo.net")),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(Icons.language, color: AppColors.turquoiseColor, size: 24.sp),
+                    SizedBox(width: 10.w),
+                    Padding(
+                      padding: EdgeInsets.only(top: 3),
+                      child: Text("www.planoo.net",style: AppTheme.bodyLarge),
+                    ),
+                  ],
+                ),
+              ),
             ),
-            "body": Style(
-              fontFamily: "Tajawal",
-              fontSize: FontSize(14),
-              lineHeight: LineHeight(1.6),
-              color: AppColors.blackColor,
-            ),
-            "ul": Style(
-              fontFamily: "Tajawal",
-              listStyleType: ListStyleType.disc,
-              padding: HtmlPaddings.symmetric(horizontal: 15)
-            ),
-          },
+            SizedBox(height: 50.h),
+          ],
         ),
       ),
     );
