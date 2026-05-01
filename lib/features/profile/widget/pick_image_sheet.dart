@@ -12,6 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/ui/dialogs/dialogs.dart';
+
 class PickImageSheet extends StatefulWidget {
 
   VoidCallback onImageUpdated;
@@ -61,6 +63,10 @@ class _PickImageSheetState extends State<PickImageSheet> {
       },
       useCaseCallBack: (data) async {
         image = await PickImage.selectImage(imageSource: source);
+
+        if (image == null) {
+          return Future.value();
+        }
 
         return UploadProfileImageUseCase(ProfileRepository()).call(
           params: UploadProfileImageParams(file: image!),
