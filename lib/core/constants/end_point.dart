@@ -35,6 +35,7 @@ const String getUserUrl = "user/get";
 const String uploadProfileImageUrl = "user/uploadProfileImage";
 const String deleteProfileImageUrl = "user/deleteProfileImage";
 const String editUserUrl = "user/update";
+const String deleteUserUrl = "user/delete";
 /// activity
 const String createActivityUrl = "activity/create";
 const String allActivitiesUrl = "activity/all";
