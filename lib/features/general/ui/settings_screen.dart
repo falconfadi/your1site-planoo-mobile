@@ -61,68 +61,55 @@ class SettingsScreen extends StatelessWidget {
               title: "change_password",
             ),
             SizedBox(height: 30.h),
-            CreateModel(
-              withValidation: false,
-              onTap: () {},
-              onSuccess: (data) {
-                AppStorage.removeData(key: kAccessToken);
-                AppStorage.removeData(key: userID);
-                Navigation.pushAndRemoveUntil(SignInScreen());
-              },
-              useCaseCallBack: (model) {
-                return DeleteUserUseCase(ProfileRepository()).call(
-                    params: DeleteUserParams());
-              },
-              child: CustomButton(
-                width: 1.sw,
-                backgroundColor: AppColors.primaryColor,
-                borderRadius: 8.r,
-                buttonName: AppLocalization.of(context).translate("delete_account"),
-                textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
-                function: () {
-                  Dialogs.showQuestion(
-                    context,
-                    title: "",
-                    content: StatefulBuilder(
-                        builder: (context, setStateDialog) {
-                          return Column(
-                            children: [
-                              ListTile(
-                                  title: Text(AppLocalization.of(context).translate("are_you_sure") +
-                                      AppLocalization.of(context).translate("?"),
-                                    textAlign: TextAlign.center,
-                                    style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
-                                  ),
+            CustomButton(
+              width: 1.sw,
+              backgroundColor: AppColors.primaryColor,
+              borderRadius: 8.r,
+              buttonName: AppLocalization.of(context).translate("delete_account"),
+              textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
+              function: () {
+                Dialogs.showQuestion(
+                  context,
+                  title: "",
+                  content: StatefulBuilder(
+                      builder: (context, setStateDialog) {
+                        return Column(
+                          children: [
+                            ListTile(
+                              title: Text(AppLocalization.of(context).translate("are_you_sure") +
+                                  AppLocalization.of(context).translate("?"),
+                                textAlign: TextAlign.center,
+                                style: AppTheme.headlineSmall.copyWith(color: AppColors.mediumGrayColor),
                               ),
-                            ],
-                          );
-                        }
+                            ),
+                          ],
+                        );
+                      }
+                  ),
+                  btnOk: CreateModel(
+                    withValidation: false,
+                    onTap: () {},
+                    onSuccess: (data) {
+                      AppStorage.removeData(key: kAccessToken);
+                      AppStorage.removeData(key: userID);
+                      AppStorage.removeData(key: userType);
+                      Navigation.pushAndRemoveUntil(SignInScreen());
+                    },
+                    useCaseCallBack: (model) {
+                      return DeleteUserUseCase(ProfileRepository()).call(
+                          params: DeleteUserParams());
+                    },
+                    child: CustomButton(
+                      height: 40.h,
+                      width: 1.sw,
+                      backgroundColor: AppColors.redColor,
+                      borderRadius: 8.r,
+                      buttonName: AppLocalization.of(context).translate("ok"),
+                      textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
                     ),
-                    btnOk: CreateModel(
-                      withValidation: false,
-                      onTap: () {},
-                      onSuccess: (data) {
-                        AppStorage.removeData(key: kAccessToken);
-                        AppStorage.removeData(key: userID);
-                        AppStorage.removeData(key: userType);
-                        Navigation.pushAndRemoveUntil(SignInScreen());
-                      },
-                      useCaseCallBack: (model) {
-                        return DeleteUserUseCase(ProfileRepository()).call(
-                            params: DeleteUserParams());
-                      },
-                      child: CustomButton(
-                        height: 40.h,
-                        width: 1.sw,
-                        backgroundColor: AppColors.redColor,
-                        borderRadius: 8.r,
-                        buttonName: AppLocalization.of(context).translate("ok"),
-                        textStyle: AppTheme.headlineSmall.copyWith(color: AppColors.whiteColor),
-                      ),
-                    ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
             SizedBox(height: 30.h),
           ],
