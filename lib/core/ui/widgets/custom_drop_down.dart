@@ -1,9 +1,10 @@
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 
-class CustomDropDown extends StatelessWidget  {
+class CustomDropDown extends StatelessWidget {
 
   final double width;
   final double height;
@@ -24,6 +25,7 @@ class CustomDropDown extends StatelessWidget  {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return  Container(
         width: width,
         height: height,
@@ -33,7 +35,7 @@ class CustomDropDown extends StatelessWidget  {
             border: Border.all(color: AppColors.blackColor,width: 0.5)
         ),
         child: Padding(
-          padding: EdgeInsets.only(left: 15.w,right: 10.w,top: 5.h),
+          padding: EdgeInsets.only(left: 15.w,right: 10.w,top: isTablet ? 15.h : 5.h),
           child: Theme(
             data: Theme.of(context).copyWith(
               focusColor: AppColors.extraLightGrayColor,
@@ -42,7 +44,7 @@ class CustomDropDown extends StatelessWidget  {
                 dropdownColor: AppColors.whiteColor,
                 isExpanded: true,
                 hint: Text(text, style: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor)),
-                icon: const Icon(Icons.keyboard_arrow_down_outlined,size: 22),
+                icon: Icon(Icons.keyboard_arrow_down_outlined,size: isTablet ? 20.sp : 22),
                 iconEnabledColor: AppColors.grayColor,
                 value: value,
                 items: items,
@@ -53,5 +55,4 @@ class CustomDropDown extends StatelessWidget  {
         )
     );
   }
-
 }

@@ -2,8 +2,9 @@ import 'package:centro_partner/core/boilerplate/get_model/cubits/get_model_cubit
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
-import 'package:centro_partner/features/appointment/ui/appointment_details_screen.dart';
+import 'package:centro_partner/features/appointment/ui/court_appointment_details_screen.dart';
 import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
 import 'package:centro_partner/features/home/ui/event/event_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,9 @@ import 'package:centro_partner/features/notification/data/usecase/view_notificat
 class NotificationScreen extends StatefulWidget {
 
   final GlobalKey<ScaffoldState>? scaffoldKey;
+  final VoidCallback? onNotificationsUpdated;
 
-  const NotificationScreen({super.key,this.scaffoldKey});
+  const NotificationScreen({super.key,this.scaffoldKey,this.onNotificationsUpdated});
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -42,12 +44,14 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
       );
       if(result.hasDataOnly) {
         getCubit!.getModel();
+        widget.onNotificationsUpdated?.call();
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: AppLocalization.of(context).translate("notifications"),isNavBar: true),
@@ -87,7 +91,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                           case NotificationType.normal:
                             break;
                           case NotificationType.appointment:
-                            Navigation.push(AppointmentDetailsScreen(appointmentId: notification.payload!.appointment!));
+                            Navigation.push(CourtAppointmentDetailsScreen(appointmentId: notification.payload!.appointment!));
                             break;
                           case NotificationType.course:
                             Navigation.push(CourseDetailsScreen(courseId: newModel.notificationsList![index].payload!.course!));
@@ -95,7 +99,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                           case NotificationType.event:
                             Navigation.push(EventDetailsScreen(eventId: newModel.notificationsList![index].payload!.event!));
                             break;
-                          // todo add (activity - session - chat) cases later
+                          // todo add (session - chat) cases later
                           default:
                             break;
                         }
@@ -123,6 +127,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                                     height: 30.h,
                                     child: PopupMenuButton(
                                       padding: EdgeInsets.zero,
+                                      iconSize: isTablet ? 20.sp : null,
                                       color: AppColors.whiteColor,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.all(Radius.circular(8.r)),
@@ -132,6 +137,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                                       itemBuilder: (BuildContext context) => [
                                         PopupMenuItem(
                                           value: "Delete",
+                                          height: isTablet ? 80 : kMinInteractiveDimension,
                                           child: CreateModel(
                                             withValidation: false,
                                             onTap: () async {},
@@ -154,7 +160,7 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                                           onTap: () {},
                                         ),
                                       ],
-                                      offset: Offset(AppStorage.languageCode == "ar" ? -15 : 15,30),
+                                      offset: Offset(AppStorage.languageCode == "ar" ? -15 : 15,isTablet ? 50 : 30),
                                       onSelected: (value) {},
                                     ),
                                   )

@@ -17,14 +17,39 @@ import 'package:centro_partner/features/general/widget/language_sheet.dart';
 import 'package:centro_partner/features/general/widget/settings_widget.dart';
 import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
 import 'package:centro_partner/features/profile/data/usecase/delete_user_usecase.dart';
+import 'package:centro_partner/features/profile/data/usecase/get_user_usecase.dart';
+import 'package:centro_partner/features/profile/data/usecase/toggle_user_notification_usecase.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
 
-  final bool notifications = true;
+  SettingsScreen({super.key});
 
-  const SettingsScreen({super.key});
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+
+  bool notification = false;
+
+  @override
+  void initState() {
+    super.initState();
+    getUser();
+  }
+
+  Future getUser() async {
+    final result = await GetUserUseCase(ProfileRepository()).call(
+        params: GetUserParams()
+    );
+    if(result.hasDataOnly) {
+      setState(() {
+        notification = result.data!.user!.isNotifiable!;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +64,23 @@ class SettingsScreen extends StatelessWidget {
               onTap: null,
               icon: "",
               title: "notifications",
-              trailing: CustomSwitchWidget(activate: notifications),
+              trailing: CreateModel(
+                withValidation: false,
+                onTap: () => true,
+                onSuccess: (model) async {
+                  getUser();
+                },
+                useCaseCallBack: (model) {
+                  return ToggleUserNotificationUseCase(ProfileRepository()).call(
+                    params: ToggleUserNotificationParams(),
+                  );
+                },
+                child: AbsorbPointer(
+                  child: CustomSwitchWidget(
+                    activate: notification,
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 25.h),
             SettingsWidget(

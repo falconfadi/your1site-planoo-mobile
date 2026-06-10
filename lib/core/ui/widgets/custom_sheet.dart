@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:centro_partner/core/classes/Keys.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import '/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,6 +55,7 @@ class CustomSheet<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
       child: Container(
@@ -72,10 +74,10 @@ class CustomSheet<T> extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 40.h),
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      InkWell(onTap: () => Navigator.pop(context) ,child: const Icon(Icons.arrow_back_outlined,color: AppColors.blackColor,size: 25)),
+                      InkWell(onTap: () => Navigator.pop(context) ,child: Icon(Icons.arrow_back_outlined,color: AppColors.blackColor,size: isTablet ? 20.sp : 25)),
                       header,
                       action ?? SizedBox(width: 25.w,height: 25.h)
                     ],

@@ -20,6 +20,7 @@ class EventDetailsModel {
   String? endDate;
   int? rate;
   String? status;
+  int? attendees;
   List<WorkdayDetailsModel>? workdaysList;
   List<FacilityInfoModel>? facilitiesList;
   LocationModel? location;
@@ -41,6 +42,7 @@ class EventDetailsModel {
     this.endDate,
     this.rate,
     this.status,
+    this.attendees,
     this.workdaysList,
     this.facilitiesList,
     this.location,
@@ -63,6 +65,7 @@ class EventDetailsModel {
     endDate = json['end_date'];
     rate = json['rate'];
     status = json['status'];
+    attendees = json['attendees'];
     if (json['days'] != null) {
       workdaysList = <WorkdayDetailsModel>[];
       json['days'].forEach((v) {
@@ -108,6 +111,7 @@ class EventDetailsModel {
     data['end_date'] = endDate;
     data['rate'] = rate;
     data['status'] = status;
+    data['attendees'] = attendees;
     if (facilitiesList != null) {
       data['tags'] = facilitiesList!.map((v) => v.toJson()).toList();
     }

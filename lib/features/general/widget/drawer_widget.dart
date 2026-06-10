@@ -9,6 +9,7 @@ import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
 import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
@@ -27,6 +28,7 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Drawer(
       width: 0.7.sw,
       child: ListView(
@@ -71,17 +73,21 @@ class DrawerWidget extends StatelessWidget {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Checkbox(
-                                    value: clearToken,
-                                    activeColor: AppColors.redColor,
-                                    visualDensity: VisualDensity.compact,
-                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    onChanged: (value) {
-                                      setStateDialog(() {
-                                        clearToken = !clearToken;
-                                      });
-                                    },
+                                  Transform.scale(
+                                    scale: isTablet ? 1.8 : 1,
+                                    child: Checkbox(
+                                      value: clearToken,
+                                      activeColor: AppColors.redColor,
+                                      visualDensity: VisualDensity.compact,
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      onChanged: (value) {
+                                        setStateDialog(() {
+                                          clearToken = !clearToken;
+                                        });
+                                      },
+                                    ),
                                   ),
+                                  SizedBox(width: isTablet ? 5.w : 0),
                                   Expanded(
                                       child: ExpandableTextWidget(
                                         text: AppLocalization.of(context).translate("logout_clear_token_warning"),

@@ -8,9 +8,9 @@ import 'package:centro_partner/features/appointment/data/model/all_appointments_
 import 'package:centro_partner/features/appointment/data/model/slots_model.dart';
 import 'package:centro_partner/features/appointment/data/usecase/accepted_appointments_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/appointment_details_usecase.dart';
-import 'package:centro_partner/features/appointment/data/usecase/cancel_activity_appointment_usecase.dart';
-import 'package:centro_partner/features/appointment/data/usecase/check_activity_appointment_usecase.dart';
-import 'package:centro_partner/features/appointment/data/usecase/create_activity_appointment_usecase.dart';
+import 'package:centro_partner/features/appointment/data/usecase/cancel_court_appointment_usecase.dart';
+import 'package:centro_partner/features/appointment/data/usecase/check_court_appointment_usecase.dart';
+import 'package:centro_partner/features/appointment/data/usecase/create_court_appointment_usecase.dart';
 import 'package:centro_partner/features/appointment/data/usecase/all_appointments_usecase.dart';
 import '../model/appointment_details_model.dart';
 
@@ -38,10 +38,10 @@ class AppointmentRepository extends CoreRepository {
     return call(result: result);
   }
 
-  Future<Result<SlotsModel>> checkActivityAppointment({required CheckActivityAppointmentParams params}) async {
+  Future<Result<SlotsModel>> checkCourtAppointment({required CheckCourtAppointmentParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: true,
-        url: checkActivityAppointmentUrl,
+        url: checkCourtAppointmentUrl,
         data: params.toJson(),
         method: HttpMethod.POST,
         responseStr: 'SlotsResponse',
@@ -49,20 +49,20 @@ class AppointmentRepository extends CoreRepository {
     return call(result: result);
   }
 
-  Future<Result<bool>> createActivityAppointment({required CreateActivityAppointmentParams params}) async {
+  Future<Result<bool>> createCourtAppointment({required CreateCourtAppointmentParams params}) async {
     final result = await RemoteDataSource.noModelRequest(
         withAuthentication: true,
-        url: createActivityAppointmentUrl,
+        url: createCourtAppointmentUrl,
         data: params.toJson(),
         method: HttpMethod.POST,
     );
     return noModelCall(result: result);
   }
 
-  Future<Result<bool>> cancelActivityAppointment({required CancelActivityAppointmentParams params}) async {
+  Future<Result<bool>> cancelCourtAppointment({required CancelCourtAppointmentParams params}) async {
     final result = await RemoteDataSource.noModelRequest(
       withAuthentication: true,
-      url: cancelActivityAppointmentUrl,
+      url: cancelCourtAppointmentUrl,
       data: params.toJson(),
       method: HttpMethod.POST,
     );

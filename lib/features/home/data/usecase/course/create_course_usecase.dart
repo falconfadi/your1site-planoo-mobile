@@ -10,11 +10,11 @@ class CreateCourseParams extends BaseParams {
   final String name;
   final int categoryId;
   final String description;
-  final int sessionDuration;
   final int courseDuration;
   final String price;
   final double longitude;
   final double latitude;
+  final String startDate;
   final String fromTime;
   final String endTime;
   final List<int> tags;
@@ -27,11 +27,11 @@ class CreateCourseParams extends BaseParams {
     required this.name,
     required this.categoryId,
     required this.description,
-    required this.sessionDuration,
     required this.courseDuration,
     required this.price,
     required this.longitude,
     required this.latitude,
+    required this.startDate,
     required this.fromTime,
     required this.endTime,
     required this.tags,
@@ -46,12 +46,12 @@ class CreateCourseParams extends BaseParams {
       'name': name,
       'category_id': categoryId.toString(),
       'description': description,
-      'session_duration': sessionDuration.toString(),
       'course_duration': courseDuration.toString(),
       'price': price,
       'type': 'image',
       'long': longitude.toString(),
       'lat': latitude.toString(),
+      'start_date': startDate,
       'capacity': capacity,
       'cancellation_fee': cancellationFee,
     };

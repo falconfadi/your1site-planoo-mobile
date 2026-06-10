@@ -1,7 +1,9 @@
+import 'package:centro_partner/core/classes/Keys.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -17,36 +19,46 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return AppBar(
-      title: Text(title!, style: AppTheme.bodyLarge.copyWith(fontSize: 22.sp)),
+      title: Padding(
+        padding: EdgeInsets.only(top: 8),
+        child: Text(title!, style: AppTheme.bodyLarge.copyWith(fontSize: 22.sp)),
+      ),
       centerTitle: true,
       elevation: 1,
       toolbarHeight: 200.h,
       surfaceTintColor: Colors.transparent,
       shadowColor: AppColors.blackColor.withOpacity(0.5),
       backgroundColor: AppColors.whiteColor,
-      leadingWidth: withLogo == true ? 1.sw : null,
+      leadingWidth: withLogo == true ? 1.sw : isTablet ? 40.w : null, // todo stop here
       leading: isNavBar ? Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w),
-            child: InkWell(
-              onTap: () => scaffoldKey!.currentState!.openDrawer(),
-              child: Icon(Icons.menu,size: 35.sp,color: AppColors.darkGrayColor.withOpacity(0.7)),
-            )
+          IconButton(
+            icon: Icon(Icons.menu,size: isTablet ? 30.sp : 35.sp),
+            onPressed: () => scaffoldKey?.currentState?.openDrawer(),
           ),
-          withLogo == true ? Image.asset(logo,width: 150.w) : Center(),
+          if (withLogo == true)
+            SizedBox(
+              width: isTablet ? 100.w : 150.w,
+              child: Image.asset(logo, fit: BoxFit.contain),
+            ),
         ],
       ) : leading ?? IconButton(
-        icon: Icon(Icons.arrow_back),
-        color: AppColors.blackColor,
-        onPressed: () {
-          Navigation.pop();
-        },
-      ),
+          icon: Icon(Icons.arrow_back,size: isTablet ? 20.sp : null),
+          color: AppColors.blackColor,
+          onPressed: () {
+            Navigation.pop();
+          },
+        ),
     );
   }
 
   @override
-  Size get preferredSize => Size(1.sw, 50);
+  Size get preferredSize => Size(
+    1.sw,
+    Responsive.isTablet(
+      Keys.navigatorKey.currentContext!) ? 100 : 50,
+  );
 }

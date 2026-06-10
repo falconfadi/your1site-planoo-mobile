@@ -59,7 +59,6 @@ dependencies:
   firebase_messaging: ^16.0.2
   flutter_local_notifications: ^19.4.2
   syncfusion_flutter_calendar: ^31.1.21
-  video_player: ^2.10.0
   responsive_grid: ^2.4.4
   geolocator: ^14.0.2
   google_maps_flutter: ^2.13.1
@@ -71,6 +70,7 @@ dependencies:
   time_picker_spinner: ^1.0.2
   table_calendar: ^3.2.0
   flutter_html: ^3.0.0
+  lottie: ^3.3.3
 
 dev_dependencies:
   flutter_test:
@@ -97,6 +97,7 @@ flutter:
     - assets/fonts/
     - assets/icons/
     - assets/images/
+    - assets/videos/
     - assets/l10n/
 
 

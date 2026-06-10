@@ -9,6 +9,7 @@ const kAccessToken = 'access_token';
 const kAccessTokenExpirationDate = 'token_expiration';
 const userID = 'user_id';
 const userType = 'user_type';
+const String rememberMeKey = "remember_me";
 
 const String serverUrl = "https://planoo.net/";
 const String baseUrl = "https://planoo.net/api/partner/v1/";
@@ -36,13 +37,14 @@ const String uploadProfileImageUrl = "user/uploadProfileImage";
 const String deleteProfileImageUrl = "user/deleteProfileImage";
 const String editUserUrl = "user/update";
 const String deleteUserUrl = "user/delete";
-/// activity
-const String createActivityUrl = "activity/create";
-const String allActivitiesUrl = "activity/all";
-const String activityDetailsUrl = "activity/find";
-const String deleteActivityUrl = "activity/delete";
-const String toggleActivationActivityUrl = "activity/toggleActivation";
-const String editActivityUrl = "activity/update";
+const String toggleUserNotificationUrl = "user/toggleNotification";
+/// court
+const String createCourtUrl = "activity/create";
+const String allCourtsUrl = "activity/all";
+const String courtDetailsUrl = "activity/find";
+const String deleteCourtUrl = "activity/delete";
+const String toggleActivationCourtUrl = "activity/toggleActivation";
+const String editCourtUrl = "activity/update";
 /// day
 const String createWorkdayUrl = "day/create";
 const String allWorkdaysUrl = "day/all";
@@ -61,9 +63,9 @@ const String deleteFacilityUrl = "tag/delete";
 /// appointment
 const String allAppointmentsUrl = "appointment/all";
 const String getAppointmentDetailsUrl = "appointment/find";
-const String checkActivityAppointmentUrl = "appointment/check";
-const String createActivityAppointmentUrl = "appointment/create";
-const String cancelActivityAppointmentUrl = "appointment/cancel";
+const String checkCourtAppointmentUrl = "appointment/check";
+const String createCourtAppointmentUrl = "appointment/create";
+const String cancelCourtAppointmentUrl = "appointment/cancel";
 const String acceptedAppointmentsUrl = "appointment/accepted";
 /// course
 const String createCourseUrl = "course/create";
@@ -84,5 +86,6 @@ const String getNotificationsUrl = "notification/all";
 const String viewNotificationUrl = "notification/view";
 const String deleteNotificationUrl = "notification/delete";
 const String clearNotificationsUrl = "notification/clear";
+const String checkNewNotificationsUrl = "notification/checkNew";
 /// review
 const String getReviewsUrl = "review/all/";

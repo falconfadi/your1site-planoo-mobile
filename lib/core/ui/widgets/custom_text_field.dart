@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
@@ -103,6 +104,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -146,7 +148,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               hint: widget.label,
               hintText: widget.labelText,
               hintStyle: widget.labelStyle ?? AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp),
-              errorStyle: AppTheme.bodyLarge.copyWith(color: AppColors.redColor),
+              errorStyle: AppTheme.bodyLarge.copyWith(color: AppColors.redColor,fontSize: 16.sp),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10.r),
                 borderSide: BorderSide(width: 0.5,color: widget.borderColor ?? AppColors.mediumGrayColor),
@@ -167,14 +169,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 borderRadius: BorderRadius.circular(10.r),
                 borderSide: const BorderSide(width: 1,color: AppColors.redColor),
               ),
-              prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon!,
-                  color: widget.prefixIconColor ?? AppColors.grayColor, size: 20) : null,
+              contentPadding: EdgeInsets.only(
+                  left: 15,
+                  right: 15,
+                  top: isTablet ? 20 : 15,
+                  bottom: 8
+              ),
               isCollapsed: true,
-              contentPadding: EdgeInsets.only(left: 15.w,right: 15.w,top: 15.w,bottom: 8.w),
+              prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon!,
+                  color: widget.prefixIconColor ?? AppColors.grayColor, size: isTablet ? 40 : 20) : null,
               suffixIcon: widget.suffixIcon != null ? IconButton(icon: SvgPicture.asset(widget.suffixIcon!,
-                  color: AppColors.lightGrayColor, width: 25),
+                  color: AppColors.lightGrayColor, width: isTablet ? 40 : 25),
                   onPressed: widget.onSuffixTap) : widget.isPassword == true ? IconButton(icon: SvgPicture.asset(showPassword == false ? unVisiblePassword : visiblePassword,
-                color: AppColors.blackColor, width: 25),
+                color: AppColors.blackColor, width: isTablet ? 40 : 25),
               onPressed: () {setState(() => showPassword = !showPassword);}) : null ,
             ),
           ),

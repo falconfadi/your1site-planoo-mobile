@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/classes/firebase_api.dart';
@@ -5,8 +7,11 @@ import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/project_utils/open_url.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
+import 'package:centro_partner/features/auth/data/model/remember_me_model.dart';
 import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/sign_in_usecase.dart';
 import 'package:centro_partner/features/auth/ui/sign_up_screen.dart';
@@ -39,9 +44,34 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
 
+  bool rememberMe = false;
+
+  @override
+  void initState() {
+    super.initState();
+    loadRememberMe();
+  }
+
+  void loadRememberMe() {
+
+    String? data = AppStorage.getData(key: rememberMeKey);
+
+    if (data != null) {
+      final rememberModel = RememberMeModel.fromJson(jsonDecode(data));
+      rememberMe = rememberModel.rememberMe;
+      if (rememberMe) {
+        form.controllers[0].text = rememberModel.phone;
+        form.controllers[1].text = rememberModel.password;
+      }
+    }
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
   Future<void> saveLoginTokens(String token) async {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-    int expirationTimestamp = decodedToken['exp']; // in seconds since epoch
+    int expirationTimestamp = decodedToken['exp'];
     DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(expirationTimestamp * 1000);
 
     await AppStorage.saveData(key: kAccessToken, value: token);
@@ -50,6 +80,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
       backgroundColor: AppColors.scaffoldColor,
       body: SafeArea(
@@ -62,7 +93,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(height: 30.h),
-                Image.asset(logo,width: 1.sw,height: 90.h),
+                Image.asset(logo,width: 1.sw,height: 100.h),
                 Text(AppLocalization.of(context).translate("sign_in").toUpperCase(),
                     style: AppTheme.headlineSmall.copyWith(fontSize: 26.sp)),
                 SizedBox(height: 40.h),
@@ -104,6 +135,34 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: isTablet ? 5.sp : 2.sp),
+                              child: Transform.scale(
+                                scale: isTablet ? 1.8 : 1,
+                                child: Checkbox(
+                                  value: rememberMe,
+                                  activeColor: AppColors.primaryColor,
+                                  visualDensity: VisualDensity.compact,
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      rememberMe = value ?? false;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: isTablet ? 5.w : 0),
+                            Text(AppLocalization.of(context).translate("remember_me"),
+                              style: AppTheme.bodyMedium.copyWith(fontSize: isTablet ? 15.sp : null),
+                            ),
+                          ],
+                        )
+                    ),
                     InkWell(
                       onTap: () {
                         CustomSheet.show(
@@ -127,6 +186,19 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                 CreateModel(
                   withValidation: true,
                   onSuccess: (SignInModel model) async {
+                    if (rememberMe) {
+                      await AppStorage.saveData(
+                        key: rememberMeKey,
+                        value: jsonEncode(RememberMeModel(
+                          phone: form.controllers[0].text,
+                          password: form.controllers[1].text,
+                          rememberMe: rememberMe,
+                        ).toJson(),
+                        ),
+                      );
+                    } else {
+                      await AppStorage.removeData(key: rememberMeKey);
+                    }
                     await saveLoginTokens(model.token!);
                     AppStorage.saveData(key: userID, value: model.user!.id);
                     AppStorage.saveData(key: userType, value: model.user!.accountType);
@@ -159,6 +231,40 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                     text: AppLocalization.of(context).translate("do_not_have_account") + AppLocalization.of(context).translate("?"),
                     link: AppLocalization.of(context).translate("sign_up"),
                     linkTap: () => Navigation.pushReplacement(SignUpScreen())),
+                SizedBox(height: 60.h),
+                RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                        children: <InlineSpan>[
+                          TextSpan(
+                            text: "${AppLocalization.of(context).translate("download_planoo_app")} ",
+                            style: AppTheme.titleLarge,
+                          ),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: isTablet ? 8.h : 10.h),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if(Platform.isIOS) {
+                                    OpenUrl.launchUrls(Uri.parse("https://apps.apple.com/nl/app/planoo/id6767510401"));
+                                  } else if (Platform.isAndroid) {
+                                    OpenUrl.launchUrls(Uri.parse("https://play.google.com/store/apps/details?id=com.your1site.planoo&utm_source=emea_Med"));
+                                  }
+                                },
+                                child: Text(
+                                  "Planoo",
+                                  style: AppTheme.headlineMedium.copyWith(
+                                    color: AppColors.turquoiseColor,
+                                    height: 1,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ]
+                    )
+                ),
                 SizedBox(height: 50.h),
               ],
             ),

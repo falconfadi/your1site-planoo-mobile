@@ -39,7 +39,7 @@ class Dialogs {
         },
       ) : null,
       btnOk: btnOk,
-      padding: EdgeInsets.symmetric(vertical: content != null ? 0 : 50.h),
+      padding: EdgeInsets.symmetric(vertical: content != null ? 0 : 30.h),
       body: Column(
         children: [
           content ?? Column(
@@ -47,18 +47,11 @@ class Dialogs {
               Center(
                 child: SvgPicture.asset(error),
               ),
-              SizedBox(height: 10.h),
-              ListTile(
-                title: Text(
-                  AppLocalization.of(context).translate("operation_error"),
-                  textAlign: TextAlign.center,
+              SizedBox(height: 20.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Text(title!,textAlign: TextAlign.center,
                   style: AppTheme.titleLarge.copyWith(fontSize: 22.sp),
-                ),
-                subtitle: Padding(
-                  padding: EdgeInsets.only(top: 10.h),
-                  child: Text(title!,textAlign: TextAlign.center,
-                    style: AppTheme.bodyLarge.copyWith(color: AppColors.mediumGrayColor,fontSize: 18.sp),
-                  ),
                 ),
               ),
               SizedBox(height: 10.h),

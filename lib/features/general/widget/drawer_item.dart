@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -17,9 +18,10 @@ class DrawerItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return ListTile(
       onTap: onTap,
-      leading: SvgPicture.asset(iconPath),
+      leading: SvgPicture.asset(iconPath,width: isTablet ? 20.w : null),
       title: Padding(
         padding: EdgeInsets.only(top: 5.h),
         child: Text(

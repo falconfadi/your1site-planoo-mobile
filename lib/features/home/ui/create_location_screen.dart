@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/location_model.dart';
 import 'package:centro_partner/features/home/data/usecase/location/edit_location_usecase.dart';
@@ -32,7 +33,6 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
   LocationData? locationData;
   CameraPosition? _cameraPosition;
   LatLng? initialPosition;
-  bool isLoading = false;
   Position _pickPosition = Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1, altitudeAccuracy: 0.0,headingAccuracy: 0.0);
   Location location = Location();
 
@@ -44,6 +44,12 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
         widget.location!.lat!.toDouble(),
         widget.location!.long!.toDouble(),
       );
+
+      _cameraPosition = CameraPosition(
+        target: initialPosition!,
+        zoom: 16,
+      );
+
       _pickPosition = Position(
         latitude: initialPosition!.latitude,
         longitude: initialPosition!.longitude,
@@ -56,8 +62,10 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
         altitudeAccuracy: 0.0,
         headingAccuracy: 0.0,
       );
+
       _searchLoading = false;
       setState(() {});
+
     } else {
       getCurrentLocation();
     }
@@ -65,6 +73,8 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
 
   Future<void> getCurrentLocation() async {
     _searchLoading = true;
+    setState(() {});
+
     bool serviceEnabled;
     PermissionStatus permissionGranted;
 
@@ -72,6 +82,8 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
     if (!serviceEnabled) {
       serviceEnabled = await location.requestService();
       if (!serviceEnabled) {
+        _searchLoading = false;
+        setState(() {});
         return;
       }
     }
@@ -80,6 +92,8 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
+        _searchLoading = false;
+        setState(() {});
         return;
       }
     }
@@ -91,6 +105,25 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
         locationData!.longitude!.toDouble(),
       );
     }
+
+    _cameraPosition = CameraPosition(
+      target: initialPosition!,
+      zoom: 16,
+    );
+
+    _pickPosition = Position(
+      latitude: locationData!.latitude!,
+      longitude: locationData!.longitude!,
+      timestamp: DateTime.now(),
+      accuracy: 1,
+      altitude: 1,
+      heading: 1,
+      speed: 1,
+      speedAccuracy: 1,
+      altitudeAccuracy: 0.0,
+      headingAccuracy: 0.0,
+    );
+
     _searchLoading = false;
     setState(() {});
   }
@@ -98,86 +131,95 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
   void updatePosition(CameraPosition position, bool fromAddress) {
     try {
       _pickPosition = Position(
-        altitudeAccuracy: 0,headingAccuracy: 0,
-        latitude: position.target.latitude, longitude: position.target.longitude, timestamp: DateTime.now(),
-        heading: 1, accuracy: 1, altitude: 1, speedAccuracy: 1, speed: 1,
+        latitude: position.target.latitude,
+        longitude: position.target.longitude,
+        timestamp: DateTime.now(),
+        accuracy: 1,
+        altitude: 1,
+        heading: 1,
+        speedAccuracy: 1,
+        speed: 1,
+        altitudeAccuracy: 0.0,
+        headingAccuracy: 0.0,
       );
       setState(() {});
     } catch (e) {}
   }
 
+  LocationModel _buildResultLocation() {
+    return LocationModel(
+      iD: widget.location?.iD,
+      lat: _pickPosition.latitude,
+      long: _pickPosition.longitude,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
       body: SafeArea(
-          child: Center(
-              child: SizedBox(
-                width: 1.sw,
-                child: !_searchLoading ? Stack(
-                    children: [
-                      GoogleMap(
-                        initialCameraPosition: CameraPosition(
-                          target: initialPosition ?? const LatLng(0, 0),
-                          zoom: 16,
-                        ),
-                        minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
-                        myLocationButtonEnabled: false,
-                        onMapCreated: (GoogleMapController mapController) {
-                          mapController = mapController;
-                        },
-                        zoomControlsEnabled: false,
-                        onCameraMove: (CameraPosition cameraPosition) {
-                          _cameraPosition = cameraPosition;
-                        },
-                        onCameraIdle: () {
-                          updatePosition(_cameraPosition!, false);
+          child: _searchLoading ?  const Center(
+            child: LoadingIndicator(),
+          ) : Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: initialPosition ?? const LatLng(0, 0),
+                    zoom: 16,
+                  ),
+                  minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
+                  myLocationButtonEnabled: false,
+                  zoomControlsEnabled: false,
+                  onMapCreated: (GoogleMapController mapController) {
+                    mapController = mapController;
+                  },
+                  onCameraMove: (CameraPosition cameraPosition) {
+                    _cameraPosition = cameraPosition;
+                  },
+                  onCameraIdle: () {
+                    if (_cameraPosition != null) {
+                      updatePosition(_cameraPosition!, false);
+                    }
+                  },
+                ),
+                Center(child: Icon(Icons.location_on,size: isTablet ? 80 : 50,color: Colors.red)),
+                Positioned(
+                    bottom: 20.h,
+                    left: 20.w,
+                    right: 20.w,
+                    child: CreateModel(
+                      withValidation: false,
+                      onTap: () {},
+                      onSuccess: (data) {
+                        Navigation.pop(
+                          value: _buildResultLocation(),
+                        );
+                      },
+                      useCaseCallBack: (model) {
+                        return EditLocationUseCase(HomeRepository()).call(
+                            params: EditLocationParams(
+                              ownerType: widget.ownerType!,
+                              ownerId: widget.ownerId!,
+                              locationId: widget.location!.iD!,
+                              lat: _pickPosition.latitude,
+                              long: _pickPosition.longitude,
+                            ));
+                      },
+                      child: CustomButton(
+                        backgroundColor: AppColors.primaryColor,
+                        borderRadius: 10.r,
+                        buttonName: AppLocalization.of(context).translate(widget.isEdit == true ? "edit": "pick_location"),
+                        function: widget.isEdit == true ? null : () {
+                          Navigation.pop(
+                            value: _buildResultLocation(),
+                          );
                         },
                       ),
-                      const Center(child: Icon(Icons.location_on,size: 50,color: Colors.red)),
-                      Positioned(
-                        bottom: 20.h,
-                        left: 20.w,
-                        right: 20.w,
-                        child: CreateModel(
-                          withValidation: false,
-                          onTap: () {},
-                          onSuccess: (data) {
-                            Navigation.pop(value: LocationModel(
-                              lat: _pickPosition.latitude == 0.0 ? locationData?.latitude ?? widget.location!.lat! : _pickPosition.latitude,
-                              long: _pickPosition.longitude == 0.0 ? locationData?.longitude ?? widget.location!.long! : _pickPosition.longitude,
-                              ),
-                            );
-                          },
-                          useCaseCallBack: (model) {
-                            return EditLocationUseCase(HomeRepository()).call(
-                                params: EditLocationParams(
-                                  ownerType: widget.ownerType!,
-                                  ownerId: widget.ownerId!,
-                                  locationId: widget.location!.iD!,
-                                  lat: widget.location!.lat!,
-                                  long: widget.location!.long!,
-                                ));
-                          },
-                          child: CustomButton(
-                            backgroundColor: AppColors.primaryColor,
-                            borderRadius: 10.r,
-                            buttonName: AppLocalization.of(context).translate(widget.isEdit == true ? "edit": "pick_location"),
-                            function: widget.isEdit == true ? null : () {
-                              Navigation.pop(value: LocationModel(
-                                lat: _pickPosition.latitude == 0.0 ? locationData!.latitude! : _pickPosition.latitude,
-                                long: _pickPosition.longitude == 0.0 ? locationData!.longitude! : _pickPosition.longitude,
-                              ));
-                            },
-                          ),
-                        )
-                      ),
-                    ]) :
-                const Center(
-                  child: LoadingIndicator(),
-                )
-              )
-          )
-      ),
+                    )
+                ),
+              ])
+      )
     );
   }
 }

@@ -55,9 +55,6 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
               labelBuilder: (item) => item,
               idBuilder: (item) => item,
               onSelect: (ids) {
-                // setState(() {
-                //   widget.selectedDays.addAll(ids);
-                // });
                 widget.onDaysChanged!(ids.toSet());
               },
             )
@@ -84,10 +81,6 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
 
                         if (widget.toTime != null) {
                           final startMinutes = time.hour * 60 + time.minute;
-
-                          // final end = parseTimeOfDay(timeString: widget.toTime!);
-                          // final endMinutes = end.hour * 60 + end.minute;
-
                           final end = parseTimeOfDay(
                               timeString: widget.toTime!)
                               .hour *
@@ -97,16 +90,9 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                                   .minute;
 
                           if (startMinutes > end) {
-                            // setState(() {
-                            //   widget.toTime = newFrom;
-                            // });
                             widget.onToTimeChanged!(newFrom);
                           }
                         }
-
-                        // setState(() {
-                        //   widget.fromTime = newFrom;
-                        // });
                       },
                     );
                   },
@@ -133,9 +119,6 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
                             "${time.minute.toString().padLeft(2, '0')}";
 
                         widget.onToTimeChanged!(newTo);
-                        // setState(() {
-                        //   widget.toTime = "${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}";
-                        // });
                       },
                     );
                   },

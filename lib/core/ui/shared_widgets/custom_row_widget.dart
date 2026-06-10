@@ -7,11 +7,15 @@ class CustomRowWidget extends StatelessWidget {
 
   final String title;
   final String subTitle;
+  final TextStyle? titleTextStyle;
+  final TextStyle? subTitleTextStyle;
   final CrossAxisAlignment? crossAxisAlignment;
 
   const CustomRowWidget({super.key,
     required this.title,
     required this.subTitle,
+    this.titleTextStyle,
+    this.subTitleTextStyle,
     this.crossAxisAlignment
   });
 
@@ -20,8 +24,8 @@ class CustomRowWidget extends StatelessWidget {
     return Row(
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.center,
       children: [
-        Text("$title: ",style: AppTheme.bodyLarge.copyWith(color: AppColors.turquoiseColor)),
-        Expanded(child: Text(subTitle,style: AppTheme.labelLarge.copyWith(fontSize: 18.sp))),
+        Text("$title: ",style: titleTextStyle ?? AppTheme.bodyLarge.copyWith(color: AppColors.turquoiseColor)),
+        Expanded(child: Text(subTitle,style: subTitleTextStyle ?? AppTheme.labelLarge.copyWith(fontSize: 18.sp))),
       ],
     );
   }

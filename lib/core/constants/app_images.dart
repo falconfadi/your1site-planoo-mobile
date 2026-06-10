@@ -1,8 +1,11 @@
 
-/// images png //
+/// images //
 const logo = 'assets/images/logo.png';
 const miniLogo = 'assets/images/mini_logo.png';
-const splash = 'assets/images/splash.jpeg';
+const syriatelCash = 'assets/images/syriatel_cash.png';
+
+/// videos ///
+const splash = 'assets/videos/splash.json';
 
 /// icons svg ///
 const about = 'assets/icons/about.svg';
@@ -24,3 +27,5 @@ const time = 'assets/icons/time.svg';
 const unVisiblePassword = 'assets/icons/un_visible_password.svg';
 const user = 'assets/icons/user.svg';
 const visiblePassword = 'assets/icons/visible_password.svg';
+const capacity = 'assets/icons/capacity.svg';
+const shamCash = 'assets/icons/sham_cash.svg';

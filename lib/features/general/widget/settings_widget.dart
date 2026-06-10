@@ -1,5 +1,6 @@
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -22,6 +23,7 @@ class SettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return InkWell(
       onTap: onTap,
       child: Row(
@@ -33,7 +35,9 @@ class SettingsWidget extends StatelessWidget {
                   color: AppColors.extraLightGrayColor,
                   shape: BoxShape.circle
               ),
-              child: SvgPicture.asset(icon!,color: AppColors.turquoiseColor)
+              child: SvgPicture.asset(icon!,color: AppColors.turquoiseColor,
+              width: isTablet ? 20.sp : null,
+              )
           ),
           SizedBox(width: 15.w),
           Expanded(
@@ -43,7 +47,9 @@ class SettingsWidget extends StatelessWidget {
           ),
           trailing ?? Icon(AppStorage.languageCode == "ar" ?
           Icons.keyboard_arrow_left_outlined :
-          Icons.keyboard_arrow_right_outlined)
+          Icons.keyboard_arrow_right_outlined,
+          size: isTablet ? 20.sp : null,
+          )
         ],
       ),
     );

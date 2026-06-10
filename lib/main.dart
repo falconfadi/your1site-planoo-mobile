@@ -6,6 +6,7 @@ import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/features/auth/ui/splash_screen.dart';
 import 'package:centro_partner/firebase_options.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
@@ -16,11 +17,18 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   await AppStorage.init();
   await ScreenUtil.ensureScreenSize();
+
   runApp(const MyApp());
 }
 
@@ -46,7 +54,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
 
   Locale? _locale;
-  final firebaseApi = FirebaseApi();
+  final firebaseApi = FirebaseApi.instance;
 
   void setLocale(Locale locale) {
     setState(() {

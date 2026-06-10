@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/cupertino.dart';
 
 class LoadingIndicator extends StatelessWidget {
@@ -7,6 +8,9 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoActivityIndicator(color: AppColors.turquoiseColor);
+    final isTablet = Responsive.isTablet(context);
+    return CupertinoActivityIndicator(
+        radius: isTablet ? 20.0 : 10.0,
+        color: AppColors.turquoiseColor);
   }
 }

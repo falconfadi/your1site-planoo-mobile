@@ -4,6 +4,10 @@ import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
+import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
+import 'package:centro_partner/core/ui/widgets/custom_date_picker.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
+import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/model/course/course_details_model.dart';
 import 'package:centro_partner/features/home/data/model/course/course_model.dart';
 import 'package:centro_partner/features/home/data/model/course_duration_model.dart';
@@ -11,16 +15,14 @@ import 'package:centro_partner/features/home/data/usecase/course/create_course_u
 import 'package:centro_partner/features/home/data/usecase/course/edit_course_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/course_durations_usecase.dart';
 import 'package:centro_partner/features/home/widget/facilities_widget.dart';
+import 'package:centro_partner/features/home/widget/location_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/photos_widget.dart';
 import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
-import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
 import 'package:centro_partner/features/home/data/model/location_model.dart';
-import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
 import 'package:centro_partner/features/home/data/usecase/categories_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/session_durations_usecase.dart';
 import 'package:centro_partner/features/home/ui/create_location_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
@@ -52,8 +54,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
   Set<String> selectedDays = {};
   String? fromTime;
   String? toTime;
-  int? selectedSession;
   int? selectedCourseDuration;
+  DateTime? startDate;
   LocationModel? selectedLocation;
   Set<int> selectedFacilitiesId = {};
   List<File> photosList = <File>[];
@@ -67,8 +69,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
       form.controllers[2].text = widget.course!.capacity.toString();
       form.controllers[3].text = widget.course!.cancellationFee.toString();
       form.controllers[4].text = widget.course!.description!;
-      selectedSession = widget.course!.sessionDuration;
       selectedCourseDuration = widget.course!.courseDuration;
+      startDate = DateTime.parse(widget.course!.startDate!);
       selectedLocation = widget.course!.location!;
       selectedFacilitiesId = widget.course!.facilitiesList!.map((f) => f.ID!).toSet();
     }
@@ -76,6 +78,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: CustomHeader(
@@ -84,6 +87,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
           leading: IconButton(
             icon: Icon(Icons.close),
             color: AppColors.blackColor,
+            iconSize: isTablet ? 20.sp : null,
             onPressed: () {
               Navigation.pop();
             },
@@ -117,42 +121,57 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                   SizedBox(height: 20.h),
                   GetModel<CategoryModel>(
                     useCaseCallBack: () {
-                      return CategoriesUseCase(HomeRepository()).call(params: CategoriesParams());
+                      return CategoriesUseCase(HomeRepository()).call(
+                        params: CategoriesParams(),
+                      );
                     },
                     onSuccess: (result) {
-                      if(widget.isEdit == true) {
-                        selectCategory = result.categoriesList?.firstWhere(
-                              (cat) => cat.ID == widget.course!.category!.ID,
+                      if (widget.isEdit == true) {
+                        selectCategory = result.categoriesList?.firstWhere((cat) =>
+                        cat.ID == widget.course!.category!.ID,
                           orElse: () => result.categoriesList!.first,
                         );
                       }
                     },
-                    modelBuilder: (model) => CustomDropDown(
-                      width: 1.sw,
-                      height: 60.h,
-                      text: AppLocalization.of(context).translate("category"),
-                      value: selectCategory,
-                      onChanged: (newValue) {
+                    modelBuilder: (model) =>
+                        SelectSingleItemWidget<CategoryInfoModel, int>(
+                          title: selectCategory?.name ??
+                              AppLocalization.of(context)
+                                  .translate("category"),
+                          titleColor: selectCategory == null
+                              ? AppColors.mediumGrayColor
+                              : AppColors.blackColor,
+                          list: model.categoriesList ?? [],
+                          selectedId: selectCategory?.ID,
+                          labelBuilder: (item) =>
+                          item.name ?? "",
+                          idBuilder: (item) =>
+                          item.ID ?? 0,
+                          onSelect: (id) {
+                            setState(() {
+                              selectCategory =
+                                  model.categoriesList?.firstWhere(
+                                        (item) => item.ID == id,
+                                  );
+                            });
+                          },
+                        ),
+                  ),
+                  if(widget.isEdit == false) SizedBox(height: 20.h),
+                  if(widget.isEdit == false)
+                  InkWell(
+                    onTap: () async {
+                      DateTime? selectedDate = await selectDate(context, startDate,disablePastDates: true);
+                      if (selectedDate != null) {
                         setState(() {
-                          selectCategory = newValue;
+                          startDate = selectedDate;
                         });
-                      },
-                      items: model.categoriesList!.map((CategoryInfoModel value) {
-                        return DropdownMenuItem<CategoryInfoModel>(
-                          value: value,
-                          child: Row(
-                            children: [
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Text(
-                                  value.name ?? '',
-                                  style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                      }
+                    },
+                    child: CustomContainerInfoWidget(
+                      title: startDate == null ? AppLocalization.of(context).translate("start_date") : convertDate(date: startDate.toString()),
+                      textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: startDate == null ?
+                      AppColors.mediumGrayColor : AppColors.blackColor),
                     ),
                   ),
                   if(widget.isEdit == false) SizedBox(height: 20.h),
@@ -177,67 +196,24 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                       return CourseDurationsUseCase(HomeRepository())
                           .call(params: CourseDurationsParams());
                     },
-                    modelBuilder: (model) => CustomDropDown(
-                      width: 1.sw,
-                      height: 60.h,
-                      text: AppLocalization.of(context).translate("course_duration"),
-                      value: selectedCourseDuration,
-                      onChanged: (newValue) {
-                        setState(() {
-                          selectedCourseDuration = newValue;
-                        });
-                      },
-                      items: model.courseDurationsList!.map((duration) {
-                        return DropdownMenuItem<int>(
-                          value: duration,
-                          child: Row(
-                            children: [
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Text(
-                                  "$duration ${AppLocalization.of(context).translate("day")}",
-                                  style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                  SizedBox(height: 20.h),
-                  GetModel<SessionDurationModel>(
-                    useCaseCallBack: () {
-                      return SessionDurationsUseCase(HomeRepository())
-                          .call(params: SessionDurationsParams());
-                    },
-                    modelBuilder: (model) => CustomDropDown(
-                      width: 1.sw,
-                      height: 60.h,
-                      text: AppLocalization.of(context).translate("session_duration"),
-                      value: selectedSession,
-                      onChanged: (newValue) {
-                        setState(() {
-                          selectedSession = newValue;
-                        });
-                      },
-                      items: model.durationsList!.map((duration) {
-                        return DropdownMenuItem<int>(
-                          value: duration,
-                          child: Row(
-                            children: [
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Text(
-                                  "$duration ${AppLocalization.of(context).translate("minute")}",
-                                  style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
+                    modelBuilder: (model) =>
+                        SelectSingleItemWidget<int, int>(
+                          title: selectedCourseDuration == null ?
+                              AppLocalization.of(context).translate("course_duration") :
+                          "$selectedCourseDuration ${AppLocalization.of(context).translate("day")}",
+                          titleColor: selectedCourseDuration == null
+                              ? AppColors.mediumGrayColor
+                              : AppColors.blackColor,
+                          list: model.courseDurationsList ?? [],
+                          selectedId: selectedCourseDuration,
+                          labelBuilder: (item) => "$item ${AppLocalization.of(context).translate("day")}",
+                          idBuilder: (item) => item,
+                          onSelect: (id) {
+                            setState(() {
+                              selectedCourseDuration = id;
+                            });
+                          },
+                        ),
                   ),
                   SizedBox(height: 20.h),
                   CustomTextField(
@@ -288,7 +264,8 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                     labelText: AppLocalization.of(context).translate("cancellation_fee"),
                   ),
                   SizedBox(height: 20.h),
-                  InkWell(
+                  LocationPreviewWidget(
+                    location: selectedLocation,
                     onTap: () async {
                       final result = await Navigation.push(
                         CreateLocationScreen(
@@ -304,11 +281,6 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                         });
                       }
                     },
-                    child: CustomContainerInfoWidget(
-                      title: selectedLocation == null ? AppLocalization.of(context).translate("location") :
-                      "${selectedLocation!.lat!.toStringAsFixed(6)} | ${selectedLocation!.long!.toStringAsFixed(6)}",
-                      textStyle: selectedLocation == null ? null : AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                    ),
                   ),
                   SizedBox(height: 20.h),
                   CustomTextField(
@@ -363,12 +335,12 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("times_required"));
                                 return false;
                               }
-                              if (selectedCourseDuration == null) {
-                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("course_duration_required"));
+                              if (startDate == null) {
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("start_date_required"));
                                 return false;
                               }
-                              if (selectedSession == null) {
-                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("session_duration_required"));
+                              if (selectedCourseDuration == null) {
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("course_duration_required"));
                                 return false;
                               }
                               if (selectedLocation == null) {
@@ -377,10 +349,6 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                               }
                               if (photosList.isEmpty) {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("media_required"));
-                                return false;
-                              }
-                              if (selectedFacilitiesId.isEmpty) {
-                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("facility_required"));
                                 return false;
                               }
                             }
@@ -399,10 +367,10 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                                     days: selectedDays.isEmpty ? [] : selectedDays.toList(),
                                     fromTime: fromTime ?? "",
                                     endTime: toTime ?? "",
-                                    sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                     courseDuration: selectedCourseDuration == null ? -1 : selectedCourseDuration!,
                                     price: form.controllers[1].text,
                                     capacity: form.controllers[2].text,
+                                    startDate: startDate == null ? "" : convertDate(date: startDate.toString(),format: "yyyy-MM-dd"),
                                     cancellationFee: form.controllers[3].text,
                                     description: form.controllers[4].text,
                                     latitude: selectedLocation == null ? 0.0 : selectedLocation!.lat!,
@@ -417,12 +385,12 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                                   courseId: widget.course!.iD!,
                                   name: form.controllers[0].text,
                                   categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
-                                  sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                   courseDuration: selectedCourseDuration == null ? -1 : selectedCourseDuration!,
                                   price: form.controllers[1].text,
                                   capacity: form.controllers[2].text,
                                   cancellationFee: form.controllers[3].text,
                                   description: form.controllers[4].text,
+                                  startDate: convertDate(date: startDate.toString(),format: "yyyy-MM-dd")
                                 )
                             );
                           },

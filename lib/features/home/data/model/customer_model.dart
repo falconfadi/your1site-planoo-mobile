@@ -8,6 +8,9 @@ class CustomerModel {
   bool? isNotifiable;
   int? isActive;
   ImageModel? profileImage;
+  int? remainingSessions;
+  int? isComplete;
+  String? attendedAt;
 
   CustomerModel({
     this.id,
@@ -17,6 +20,9 @@ class CustomerModel {
     this.isNotifiable,
     this.isActive,
     this.profileImage,
+    this.remainingSessions,
+    this.isComplete,
+    this.attendedAt,
   });
 
   CustomerModel.fromJson(Map<String, dynamic> json) {
@@ -27,6 +33,9 @@ class CustomerModel {
     isNotifiable = json['is_notifiable'];
     isActive = json['is_active'];
     profileImage = json['profile_image'] != null ? ImageModel.fromJson(json['profile_image']) : null;
+    remainingSessions = json['remaining_sessions'];
+    isComplete = json['is_complete'];
+    attendedAt = json['attended_at'];
   }
 
   Map<String, dynamic> toJson() {
@@ -40,6 +49,9 @@ class CustomerModel {
     if (profileImage != null) {
       data['profile_image'] = profileImage!.toJson();
     }
+    data['remaining_sessions'] = remainingSessions;
+    data['is_complete'] = isComplete;
+    data['attended_at'] = attendedAt;
     return data;
   }
 }

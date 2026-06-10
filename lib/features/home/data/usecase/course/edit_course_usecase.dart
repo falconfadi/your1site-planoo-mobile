@@ -10,22 +10,22 @@ class EditCourseParams extends BaseParams {
   final String name;
   final int categoryId;
   final String description;
-  final int sessionDuration;
   final int courseDuration;
   final String price;
   final String capacity;
   final String cancellationFee;
+  final String startDate;
 
   EditCourseParams({
     required this.courseId,
     required this.name,
     required this.categoryId,
     required this.description,
-    required this.sessionDuration,
     required this.courseDuration,
     required this.price,
     required this.capacity,
     required this.cancellationFee,
+    required this.startDate,
   });
 
   Map<String, String?> toJson() {
@@ -34,11 +34,11 @@ class EditCourseParams extends BaseParams {
       'name': name,
       'category_id': categoryId.toString(),
       'description': description,
-      'session_duration': sessionDuration.toString(),
       'course_duration': courseDuration.toString(),
       'price': price,
       'capacity': capacity,
       'cancellation_fee': cancellationFee,
+      'start_date': startDate,
     };
   }
 }

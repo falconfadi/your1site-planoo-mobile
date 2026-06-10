@@ -1,10 +1,10 @@
 
 enum MainTabs {
-  activities,
+  courts,
   courses,
   events;
   static MainTabs fromString(String s) => switch (s) {
-    "activities" => activities,
+    "courts" => courts,
     "courses" => courses,
     "events" => events,
     _ => events

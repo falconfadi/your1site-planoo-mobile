@@ -1,25 +1,22 @@
 import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Future<dynamic> customDatePicker( BuildContext context, {int? allowedWeekday}) async {
-  DateTime now = DateTime.now();
-  DateTime initialDate = now;
-  if (allowedWeekday != null && now.weekday != allowedWeekday) {
-    int daysUntilNext = (allowedWeekday - now.weekday) % 7;
-    if (daysUntilNext <= 0) daysUntilNext += 7;
-    initialDate = now.add(Duration(days: daysUntilNext));
-  }
-  return showDatePicker(
+Future<DateTime?> customDatePicker(BuildContext context, {bool disablePastDates = false}) async {
+  final now = DateTime.now();
+  final today = DateTime(
+    now.year,
+    now.month,
+    now.day,
+  );
+  return await showDatePicker(
     context: context,
-    initialDate: initialDate,
-    firstDate: DateTime(1900),
+    initialDate: today,
+    firstDate: disablePastDates ? today : DateTime(1900),
     lastDate: DateTime(2100),
-
-    selectableDayPredicate: allowedWeekday != null
-        ? (DateTime day) => day.weekday == allowedWeekday
-        : (DateTime day) => true,
     builder: (context, child) {
+      final isTablet = Responsive.isTablet(context);
       return Theme(
         data: ThemeData(
           datePickerTheme: DatePickerThemeData(
@@ -35,16 +32,19 @@ Future<dynamic> customDatePicker( BuildContext context, {int? allowedWeekday}) a
             onPrimary: AppColors.whiteColor,
           ),
         ),
-        child: child!,
+        child: Transform.scale(
+            scale: isTablet ? 1.4 : 1,
+            child: child!
+        ),
       );
     },
   );
 }
 
-Future<DateTime?> selectDate(BuildContext context, DateTime? date,{int? allowedWeekday}) async {
-  DateTime? picked = await customDatePicker(context,allowedWeekday: allowedWeekday);
-  if (picked != null && picked != date) {
-    date = picked;
+Future<DateTime?> selectDate(BuildContext context, DateTime? date,{bool disablePastDates = false}) async {
+  final pickedDate = await customDatePicker(context, disablePastDates: disablePastDates);
+  if (pickedDate != null && pickedDate != date) {
+    date = pickedDate;
   }
   return date;
 }

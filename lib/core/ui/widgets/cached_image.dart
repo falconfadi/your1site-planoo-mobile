@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/ui/widgets/loading.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CachedImage extends StatelessWidget {
   final String imageUrl;
@@ -27,6 +29,7 @@ class CachedImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(borderRadius ?? 0),
       child: Container(
@@ -46,7 +49,9 @@ class CachedImage extends StatelessWidget {
             width: width,
             placeholder: (context, url) => const Center(child: LoadingIndicator()),
             errorWidget: (context, url, error) => Icon(
-                errorForUser! ? Icons.person : Icons.image_not_supported_outlined,color: AppColors.grayColor),
+                errorForUser! ? Icons.person : Icons.image_not_supported_outlined,color: AppColors.grayColor,
+              size: isTablet ? 30.sp : null,
+            ),
           ),
         ),
       ),

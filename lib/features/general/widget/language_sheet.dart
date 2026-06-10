@@ -4,6 +4,7 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/constants/enum/app_language.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
@@ -29,6 +30,7 @@ class _LanguageSheetState extends State<LanguageSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Column(
       children: [
         SizedBox(height: 10.h),
@@ -54,6 +56,7 @@ class _LanguageSheetState extends State<LanguageSheet> {
                     child: Icon(
                       Icons.radio_button_checked,
                       color: isSelected ? AppColors.primaryColor : AppColors.grayColor,
+                      size: isTablet ? 18.sp : null,
                     ),
                   ),
                 ],

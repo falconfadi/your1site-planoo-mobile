@@ -3,7 +3,8 @@ import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart
 import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
-import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
+import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/core/utils/validators/email_validator.dart';
 import 'package:centro_partner/core/utils/validators/password_validator.dart';
 import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
@@ -13,6 +14,8 @@ import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart'
 import 'package:centro_partner/features/auth/data/usecase/user_types_usecase.dart';
 import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
 import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
+import 'package:centro_partner/features/general/ui/terms_and_conditions_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
@@ -38,9 +41,11 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
 
   String? selectAccountType;
+  bool acceptTerms = false;
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
         backgroundColor: AppColors.scaffoldColor,
         body: SafeArea(
@@ -61,31 +66,20 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                     useCaseCallBack: () {
                       return UserTypesUseCase(AuthRepository()).call(params: UserTypesParams());
                     },
-                    modelBuilder: (model) => CustomDropDown(
-                      width: 1.sw,
-                      height: 60.h,
-                      text: AppLocalization.of(context).translate("account_type"),
-                      value: selectAccountType,
-                      onChanged: (newValue) {
+                    modelBuilder: (model) => SelectSingleItemWidget<String, String>(
+                      title: selectAccountType ?? AppLocalization.of(context).translate("account_type"),
+                      titleColor: selectAccountType == null
+                          ? AppColors.mediumGrayColor
+                          : AppColors.blackColor,
+                      list: model.userTypesList!,
+                      selectedId: selectAccountType,
+                      labelBuilder: (item) => item,
+                      idBuilder: (item) => item,
+                      onSelect: (id) {
                         setState(() {
-                          selectAccountType = newValue;
+                          selectAccountType = id;
                         });
                       },
-                      items: model.userTypesList!.map((String value) => DropdownMenuItem<String>(
-                        value: value,
-                        child: Row(
-                          children: [
-                            SizedBox(width: 8.w),
-                            Expanded(
-                              child: Text(
-                                value,
-                                style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ))
-                          .toList(),
                     ),
                   ),
                   SizedBox(height: 20.h),
@@ -175,7 +169,57 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                     textEditingController: form.controllers[4],
                     labelText: AppLocalization.of(context).translate("description"),
                   ),
-                  SizedBox(height: 50.h),
+                  SizedBox(height: 20.h),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(bottom: isTablet ? 5.sp : 2.sp),
+                                child: Transform.scale(
+                                  scale: isTablet ? 1.8 : 1,
+                                  child: Checkbox(
+                                    value: acceptTerms,
+                                    activeColor: AppColors.primaryColor,
+                                    visualDensity: VisualDensity.compact,
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        acceptTerms = value ?? false;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: isTablet ? 5.w : 0),
+                              Expanded(
+                                child: RichText(
+                                    text: TextSpan(
+                                        children: <InlineSpan>[
+                                          TextSpan(
+                                            text: "${AppLocalization.of(context).translate("i_agree_to")} ",
+                                            style: AppTheme.bodyLarge.copyWith(fontSize: isTablet ? 15.sp : null),
+                                          ),
+                                          TextSpan(
+                                            text: AppLocalization.of(context).translate("terms_and_conditions").toLowerCase(),
+                                            style: AppTheme.bodyLarge.copyWith(fontSize: isTablet ? 15.sp : null,
+                                              color: AppColors.primaryColor,fontWeight: FontWeight.bold
+                                            ),
+                                            recognizer: TapGestureRecognizer()..onTap = () => Navigation.push(TermsAndConditionsScreen()),
+                                          ),
+                                        ]
+                                    )
+                                ),
+                              ),
+                            ],
+                          )
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 30.h),
                   CreateModel(
                     onSuccess: (result) async {
                       Navigation.pushAndRemoveUntil(VerificationCodeScreen(phoneNumber: form.controllers[2].text));
@@ -190,21 +234,23 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                       return isValid;
                     },
                     useCaseCallBack: ( model) {
-                      return RegisterUseCase(AuthRepository()).call(
-                          params: RegisterParams(
-                            name: form.controllers[0].text,
-                            email: form.controllers[1].text,
-                            phone: form.controllers[2].text,
-                            password: form.controllers[3].text,
-                            confirmationPassword: form.controllers[3].text,
-                            accountType: selectAccountType,
-                            description: form.controllers[4].text,
-                            firebaseToken: FirebaseApi.deviceToken.toString()
-                          ));
+                      if(acceptTerms == true) {
+                        return RegisterUseCase(AuthRepository()).call(
+                            params: RegisterParams(
+                                name: form.controllers[0].text,
+                                email: form.controllers[1].text,
+                                phone: form.controllers[2].text,
+                                password: form.controllers[3].text,
+                                confirmationPassword: form.controllers[3].text,
+                                accountType: selectAccountType,
+                                description: form.controllers[4].text,
+                                firebaseToken: FirebaseApi.deviceToken.toString()
+                            ));
+                      }
                     },
                     child: CustomButton(
                       width: 1.sw,
-                      backgroundColor: AppColors.primaryColor,
+                      backgroundColor: acceptTerms == false ? AppColors.grayColor : AppColors.primaryColor,
                       borderSideColor: AppColors.primaryColor,
                       borderRadius: 10.r,
                       buttonName: AppLocalization.of(context).translate("sign_up"),

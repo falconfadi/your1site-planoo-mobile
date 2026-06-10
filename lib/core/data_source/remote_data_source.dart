@@ -159,7 +159,7 @@ abstract class RemoteDataSource {
       return;
     }
 
-    if (minutesLeft <= 5) {
+    if (minutesLeft <= 10) {
       // Token about to expire, refresh
       if (_refreshCompleter != null) {
         // Refresh already in progress, wait for it

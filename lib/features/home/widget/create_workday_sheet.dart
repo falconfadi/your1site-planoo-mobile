@@ -2,9 +2,10 @@ import 'package:centro_partner/core/boilerplate/create_model/widgets/create_mode
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
-import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
+import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_time_picker.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/days_model.dart';
@@ -40,6 +41,7 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -48,31 +50,20 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
           useCaseCallBack: () {
             return DaysUseCase(HomeRepository()).call(params: DaysParams());
           },
-          modelBuilder: (model) => CustomDropDown(
-            width: 1.sw,
-            height: 60.h,
-            text: AppLocalization.of(context).translate("workday"),
-            value: selectedDay,
-            onChanged: (newValue) {
+          modelBuilder: (model) => SelectSingleItemWidget<String, String>(
+            title: selectedDay ?? AppLocalization.of(context).translate("workday"),
+            titleColor: selectedDay == null
+                ? AppColors.mediumGrayColor
+                : AppColors.blackColor,
+            list: model.daysList!,
+            selectedId: selectedDay,
+            labelBuilder: (item) => item,
+            idBuilder: (item) => item,
+            onSelect: (id) {
               setState(() {
-                selectedDay = newValue;
+                selectedDay = id;
               });
             },
-            items: model.daysList!.map((day) {
-              return DropdownMenuItem<String>(
-                value: day,
-                child: Row(
-                  children: [
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(day,
-                        style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
           ),
         ),
         SizedBox(height: selectedDay == null ? 0 : 20.h),
@@ -114,7 +105,7 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
                 },
                 child: CustomContainerInfoWidget(
                   title: fromTime ?? AppLocalization.of(context).translate("from_time"),
-                  textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: fromTime == null ?
+                  textStyle: AppTheme.labelLarge.copyWith(fontSize: isTablet ? 14.sp : 18.sp,color: fromTime == null ?
                   AppColors.mediumGrayColor : AppColors.blackColor),
                 ),
               ),
@@ -137,7 +128,7 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
                 },
                 child: CustomContainerInfoWidget(
                   title: toTime ?? AppLocalization.of(context).translate("from_time"),
-                  textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: toTime == null ?
+                  textStyle: AppTheme.labelLarge.copyWith(fontSize: isTablet ? 14.sp : 18.sp,color: toTime == null ?
                   AppColors.mediumGrayColor : AppColors.blackColor),
                 ),
               ),
@@ -177,4 +168,3 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
     );
   }
 }
-

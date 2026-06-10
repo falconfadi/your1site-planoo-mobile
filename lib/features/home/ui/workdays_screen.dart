@@ -9,6 +9,7 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_switch_widget.dart'
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_time_picker.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/workday/all_workdays_model.dart';
 import 'package:centro_partner/features/home/data/usecase/workday/all_workdays_usecase.dart';
@@ -43,6 +44,7 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: CustomHeader(title: "", isNavBar: false),
@@ -73,10 +75,12 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.add_circle_outline_outlined,color: AppColors.turquoiseColor),
+                  Icon(Icons.add_circle_outline_outlined,color: AppColors.turquoiseColor,
+                    size: isTablet ? 25.sp : null,
+                  ),
                   SizedBox(width: 5.w),
                   Padding(
-                    padding: EdgeInsets.only(top: 3.h),
+                    padding: EdgeInsets.only(top: 2.h),
                     child: Text(AppLocalization.of(context).translate("add"),
                       style: AppTheme.bodyLarge.copyWith(fontSize: 20.sp,color: AppColors.turquoiseColor),
                     ),

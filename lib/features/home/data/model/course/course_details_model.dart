@@ -13,11 +13,13 @@ class CourseDetailsModel {
   bool? isActive;
   int? price;
   bool? isFull;
-  int? sessionDuration;
   int? courseDuration;
   int? capacity;
   int? cancellationFee;
+  String? startDate;
+  String? status;
   int? rate;
+  int? attendees;
   List<WorkdayDetailsModel>? workdaysList;
   List<FacilityInfoModel>? facilitiesList;
   LocationModel? location;
@@ -32,11 +34,13 @@ class CourseDetailsModel {
     this.isActive,
     this.price,
     this.isFull,
-    this.sessionDuration,
     this.courseDuration,
     this.capacity,
     this.cancellationFee,
+    this.startDate,
+    this.status,
     this.rate,
+    this.attendees,
     this.workdaysList,
     this.facilitiesList,
     this.location,
@@ -52,11 +56,13 @@ class CourseDetailsModel {
     isActive = json['is_active'];
     price = json['price'];
     isFull = json['is_full'];
-    sessionDuration = json['session_duration'];
     courseDuration = json['course_duration'];
     capacity = json['capacity'];
     cancellationFee = json['cancellation_fee'];
+    startDate = json['start_date'];
+    status = json['status'];
     rate = json['rate'];
+    attendees = json['attendees'];
     if (json['days'] != null) {
       workdaysList = <WorkdayDetailsModel>[];
       json['days'].forEach((v) {
@@ -95,11 +101,13 @@ class CourseDetailsModel {
     data['is_active'] = isActive;
     data['price'] = price;
     data['is_full'] = isFull;
-    data['session_duration'] = sessionDuration;
     data['course_duration'] = courseDuration;
     data['capacity'] = capacity;
     data['cancellation_fee'] = cancellationFee;
+    data['start_date'] = startDate;
+    data['status'] = status;
     data['rate'] = rate;
+    data['attendees'] = attendees;
     if (facilitiesList != null) {
       data['tags'] = facilitiesList!.map((v) => v.toJson()).toList();
     }

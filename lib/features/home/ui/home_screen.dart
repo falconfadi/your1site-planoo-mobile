@@ -7,15 +7,16 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/tabs_widget.dart';
 import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
-import 'package:centro_partner/features/home/data/model/activity/all_activities_model.dart';
+import 'package:centro_partner/features/home/data/model/court/all_courts_model.dart';
 import 'package:centro_partner/features/home/data/model/course/all_courses_model.dart';
 import 'package:centro_partner/features/home/data/model/event/all_events_model.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/all_activities_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/all_courts_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/all_courses_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/event/all_events_usecase.dart';
-import 'package:centro_partner/features/home/ui/activity/activity_details_screen.dart';
-import 'package:centro_partner/features/home/ui/activity/add_activity_screen.dart';
+import 'package:centro_partner/features/home/ui/court/court_details_screen.dart';
+import 'package:centro_partner/features/home/ui/court/add_court_screen.dart';
 import 'package:centro_partner/features/home/ui/course/add_course_screen.dart';
 import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
 import 'package:centro_partner/features/home/ui/event/add_event_screen.dart';
@@ -37,12 +38,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   int selectedTab = 0;
-  GetModelCubit<AllActivitiesModel>? allActivitiesCubit;
+  GetModelCubit<AllCourtsModel>? allCourtsCubit;
   GetModelCubit<AllCoursesModel>? allCoursesCubit;
   GetModelCubit<AllEventsModel>? allEventsCubit;
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: "",withLogo: true,isNavBar: true),
@@ -54,9 +56,9 @@ class _HomeScreenState extends State<HomeScreen> {
               InkWell(
                 onTap: () {
                   if (selectedTab == 0) {
-                    Navigation.push(AddActivityScreen(
+                    Navigation.push(AddCourtScreen(
                       onRefresh: () async {
-                        await allActivitiesCubit?.getModel();
+                        await allCourtsCubit?.getModel();
                       },
                     ));
                   } else if (selectedTab == 1) {
@@ -76,10 +78,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.add_circle_outline_outlined,color: AppColors.turquoiseColor),
+                    Icon(Icons.add_circle_outline_outlined,color: AppColors.turquoiseColor,
+                      size: isTablet ? 25.sp : null,
+                    ),
                     SizedBox(width: 5.w),
                     Padding(
-                      padding: EdgeInsets.only(top: 3.h),
+                      padding: EdgeInsets.only(top: 2.h),
                       child: Text(AppLocalization.of(context).translate("add"),
                         style: AppTheme.bodyLarge.copyWith(fontSize: 20.sp,color: AppColors.turquoiseColor),
                       ),
@@ -93,28 +97,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTabChanged: (index) {
                   setState(() {
                     selectedTab = index;
+                    if(selectedTab == 0) {
+                      allCourtsCubit?.getModel();
+                    } else if(selectedTab == 1) {
+                      allCoursesCubit?.getModel();
+                    } else {
+                      allEventsCubit?.getModel();
+                    }
                   });
                 },
               ),
               Expanded(
                 child: selectedTab == 0 ?
-                GetModel<AllActivitiesModel>(
+                GetModel<AllCourtsModel>(
                   onCubitCreated: (cubit) {
-                    allActivitiesCubit = cubit as GetModelCubit<AllActivitiesModel>;
+                    allCourtsCubit = cubit as GetModelCubit<AllCourtsModel>;
                   },
                   useCaseCallBack: () {
-                    return AllActivitiesUseCase(HomeRepository()).call(params: AllActivitiesParams());
+                    return AllCourtsUseCase(HomeRepository()).call(params: AllCourtsParams());
                   },
                   modelBuilder: (model) => ResponsiveGridList(
                     horizontalGridMargin: 10,
                     verticalGridMargin: 20,
-                    minItemWidth: 100,
-                    children: model.activitiesList!.map((e) => InkWell(
+                    minItemWidth: isTablet ? 150 : 100,
+                    children: model.courtsList!.map((e) => InkWell(
                       onTap: () {
-                        Navigation.push(ActivityDetailsScreen(
-                          activityId: e.iD!,
+                        Navigation.push(CourtDetailsScreen(
+                          courtId: e.iD!,
                           onRefresh: () async {
-                            await allActivitiesCubit?.getModel();
+                            await allCourtsCubit?.getModel();
                           },
                         ));
                       },
@@ -140,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   modelBuilder: (model) => ResponsiveGridList(
                     horizontalGridMargin: 10,
                     verticalGridMargin: 20,
-                    minItemWidth: 100,
+                    minItemWidth: isTablet ? 150 : 100,
                     children: model.coursesList!.map((e) => InkWell(
                       onTap: () {
                         Navigation.push(CourseDetailsScreen(
@@ -171,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       modelBuilder: (model) => ResponsiveGridList(
                         horizontalGridMargin: 10,
                         verticalGridMargin: 20,
-                        minItemWidth: 100,
+                        minItemWidth: isTablet ? 150 : 100,
                         children: model.eventsList!.map((e) => InkWell(
                           onTap: () {
                             Navigation.push(EventDetailsScreen(

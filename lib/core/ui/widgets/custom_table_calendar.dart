@@ -1,5 +1,6 @@
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -45,6 +46,7 @@ class _AppointmentsCalendarWidgetState extends State<AppointmentsCalendarWidget>
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return TableCalendar(
       firstDay: DateTime.utc(1900, 1, 1),
       lastDay: DateTime.utc(2100, 12, 31),
@@ -59,6 +61,7 @@ class _AppointmentsCalendarWidgetState extends State<AppointmentsCalendarWidget>
         return events[normalized] ?? [];
       },
       calendarStyle: CalendarStyle(
+        markersMaxCount: 1,
         disabledTextStyle: AppTheme.bodyMedium.copyWith(
           color: AppColors.grayColor,
         ),
@@ -78,6 +81,7 @@ class _AppointmentsCalendarWidgetState extends State<AppointmentsCalendarWidget>
           shape: BoxShape.circle,
         ),
       ),
+      daysOfWeekHeight: isTablet ? 70 : 16,
       headerStyle: HeaderStyle(
         titleCentered: true,
         formatButtonVisible: false,

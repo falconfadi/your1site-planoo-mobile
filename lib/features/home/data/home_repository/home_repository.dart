@@ -3,8 +3,8 @@ import 'package:centro_partner/core/data_source/remote_data_source.dart';
 import 'package:centro_partner/core/http/http_method.dart';
 import 'package:centro_partner/core/repository/core_repository.dart';
 import 'package:centro_partner/core/results/result.dart';
-import 'package:centro_partner/features/home/data/model/activity/activity_model.dart';
-import 'package:centro_partner/features/home/data/model/activity/all_activities_model.dart';
+import 'package:centro_partner/features/home/data/model/court/court_model.dart';
+import 'package:centro_partner/features/home/data/model/court/all_courts_model.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
 import 'package:centro_partner/features/home/data/model/course/all_courses_model.dart';
 import 'package:centro_partner/features/home/data/model/course/course_model.dart';
@@ -18,13 +18,13 @@ import 'package:centro_partner/features/home/data/model/review_model.dart';
 import 'package:centro_partner/features/home/data/model/session_duration_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/all_workdays_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/workday_model.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/activity_details_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/all_activities_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/delete_activity_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/edit_activity_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/toggle_activation_activity_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/court_details_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/all_courts_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/delete_court_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/edit_court_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/toggle_activation_court_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/categories_usecase.dart';
-import 'package:centro_partner/features/home/data/usecase/activity/create_activity_usecase.dart';
+import 'package:centro_partner/features/home/data/usecase/court/create_court_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/all_courses_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/course_details_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/course/create_course_usecase.dart';
@@ -107,14 +107,14 @@ class HomeRepository extends CoreRepository {
     return call(result: result);
   }
 
-  /// activity
-  Future<Result<ActivityModel>> createActivity({required CreateActivityParams params}) async {
-    final result = await RemoteDataSource.upload<ActivityModel>(
+  /// court
+  Future<Result<CourtModel>> createCourt({required CreateCourtParams params}) async {
+    final result = await RemoteDataSource.upload<CourtModel>(
       withAuthentication: true,
-      url: createActivityUrl,
+      url: createCourtUrl,
       data: params.toFormDataMap(),
-      responseStr: 'ActivityModel',
-      converter: (json) => ActivityModel.fromJson(json),
+      responseStr: 'CourtModel',
+      converter: (json) => CourtModel.fromJson(json),
       filesMap: {
         'media[][file]': params.files!,
       },
@@ -122,54 +122,54 @@ class HomeRepository extends CoreRepository {
     return call(result: result);
   }
 
-  Future<Result<AllActivitiesModel>> getAllActivities({required AllActivitiesParams params}) async {
+  Future<Result<AllCourtsModel>> getAllCourts({required AllCourtsParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: true,
-        url: allActivitiesUrl,
+        url: allCourtsUrl,
         method: HttpMethod.GET,
-        responseStr: 'AllActivitiesResponse',
-        converter: (json) => AllActivitiesResponse.fromJson(json));
+        responseStr: 'AllCourtsResponse',
+        converter: (json) => AllCourtsResponse.fromJson(json));
     return call(result: result);
   }
 
-  Future<Result<ActivityModel>> getActivityDetails({required ActivityDetailsParams params}) async {
+  Future<Result<CourtModel>> getCourtDetails({required CourtDetailsParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: true,
-        url: "$activityDetailsUrl?activity_id=${params.activityId}",
+        url: "$courtDetailsUrl?activity_id=${params.courtId}",
         method: HttpMethod.GET,
-        responseStr: 'ActivityResponse',
-        converter: (json) => ActivityResponse.fromJson(json));
+        responseStr: 'CourtResponse',
+        converter: (json) => CourtResponse.fromJson(json));
     return call(result: result);
   }
 
-  Future<Result<bool>> deleteActivity({required DeleteActivityParams params}) async {
+  Future<Result<bool>> deleteCourt({required DeleteCourtParams params}) async {
     final result = await RemoteDataSource.noModelRequest(
       withAuthentication: true,
-      url: deleteActivityUrl,
+      url: deleteCourtUrl,
       data: params.toJson(),
       method: HttpMethod.DELETE,
     );
     return noModelCall(result: result);
   }
 
-  Future<Result<bool>> toggleActivationActivity({required ToggleActivationActivityParams params}) async {
+  Future<Result<bool>> toggleActivationCourt({required ToggleActivationCourtParams params}) async {
     final result = await RemoteDataSource.noModelRequest(
       withAuthentication: true,
-      url: toggleActivationActivityUrl,
+      url: toggleActivationCourtUrl,
       data: params.toJson(),
       method: HttpMethod.POST,
     );
     return noModelCall(result: result);
   }
 
-  Future<Result<ActivityModel>> editActivity({required EditActivityParams params}) async {
+  Future<Result<CourtModel>> editCourt({required EditCourtParams params}) async {
     final result = await RemoteDataSource.request(
         withAuthentication: true,
-        url: editActivityUrl,
+        url: editCourtUrl,
         data: params.toJson(),
         method: HttpMethod.PATCH,
-        responseStr: 'ActivityResponse',
-        converter: (json) => ActivityResponse.fromJson(json));
+        responseStr: 'CourtResponse',
+        converter: (json) => CourtResponse.fromJson(json));
     return call(result: result);
   }
 

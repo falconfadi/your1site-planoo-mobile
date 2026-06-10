@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:centro_partner/core/utils/navigation/navigation.dart';
-import 'package:centro_partner/features/appointment/ui/appointment_details_screen.dart';
+import 'package:centro_partner/features/appointment/ui/court_appointment_details_screen.dart';
 import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
 import 'package:centro_partner/features/home/ui/course/course_details_screen.dart';
 import 'package:centro_partner/features/home/ui/event/event_details_screen.dart';
@@ -12,10 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class FirebaseApi {
+
+  FirebaseApi._();
+  static final FirebaseApi instance = FirebaseApi._();
+
   static String? deviceToken;
   static RemoteMessage? _initialMessage;
   static bool _appReady = false;
+  VoidCallback? onNotificationChange;
 
+  final ValueNotifier<bool> hasNewNotificationsNotifier = ValueNotifier(false);
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
 
@@ -76,11 +82,13 @@ class FirebaseApi {
     /// Foreground
     FirebaseMessaging.onMessage.listen((message) {
       _showLocalNotification(message);
+      onNotificationChange?.call();
     });
 
     /// Background (opened from notification)
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
       _handleMessageNavigation(message);
+      onNotificationChange?.call();
     });
 
     /// Terminated
@@ -188,7 +196,7 @@ class FirebaseApi {
         break;
 
       case 5:
-        target = AppointmentDetailsScreen(
+        target = CourtAppointmentDetailsScreen(
           appointmentId: int.parse(data['appointment']),
         );
         break;

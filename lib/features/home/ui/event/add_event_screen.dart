@@ -4,16 +4,18 @@ import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
+import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_date_picker.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/features/home/data/model/event/event_details_model.dart';
 import 'package:centro_partner/features/home/data/model/event/event_model.dart';
 import 'package:centro_partner/features/home/data/usecase/event/create_event_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/event/edit_event_usecase.dart';
 import 'package:centro_partner/features/home/widget/facilities_widget.dart';
+import 'package:centro_partner/features/home/widget/location_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/photos_widget.dart';
 import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
-import 'package:centro_partner/core/ui/widgets/custom_drop_down.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
@@ -73,6 +75,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
         appBar: CustomHeader(
@@ -81,6 +84,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
           leading: IconButton(
             icon: Icon(Icons.close),
             color: AppColors.blackColor,
+            iconSize: isTablet ? 20.sp : null,
             onPressed: () {
               Navigation.pop();
             },
@@ -114,60 +118,59 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                   SizedBox(height: 20.h),
                   GetModel<CategoryModel>(
                     useCaseCallBack: () {
-                      return CategoriesUseCase(HomeRepository()).call(params: CategoriesParams());
+                      return CategoriesUseCase(HomeRepository()).call(
+                        params: CategoriesParams(),
+                      );
                     },
                     onSuccess: (result) {
-                      if(widget.isEdit == true) {
-                        selectCategory = result.categoriesList?.firstWhere(
-                              (cat) => cat.ID == widget.event!.category!.ID,
+                      if (widget.isEdit == true) {
+                        selectCategory = result.categoriesList?.firstWhere((cat) =>
+                        cat.ID == widget.event!.category!.ID,
                           orElse: () => result.categoriesList!.first,
                         );
                       }
                     },
-                    modelBuilder: (model) => CustomDropDown(
-                      width: 1.sw,
-                      height: 60.h,
-                      text: AppLocalization.of(context).translate("category"),
-                      value: selectCategory,
-                      onChanged: (newValue) {
-                        setState(() {
-                          selectCategory = newValue;
-                        });
+                    modelBuilder: (model) =>
+                        SelectSingleItemWidget<CategoryInfoModel, int>(
+                          title: selectCategory?.name ??
+                              AppLocalization.of(context)
+                                  .translate("category"),
+                          titleColor: selectCategory == null
+                              ? AppColors.mediumGrayColor
+                              : AppColors.blackColor,
+                          list: model.categoriesList ?? [],
+                          selectedId: selectCategory?.ID,
+                          labelBuilder: (item) =>
+                          item.name ?? "",
+                          idBuilder: (item) =>
+                          item.ID ?? 0,
+                          onSelect: (id) {
+                            setState(() {
+                              selectCategory =
+                                  model.categoriesList?.firstWhere(
+                                        (item) => item.ID == id,
+                                  );
+                            });
+                          },
+                        ),
+                  ),
+                  if(widget.isEdit == false) SizedBox(height: 20.h),
+                  if(widget.isEdit == false)
+                    InkWell(
+                      onTap: () async {
+                        DateTime? selectedDate = await selectDate(context, startDate,disablePastDates: true);
+                        if (selectedDate != null) {
+                          setState(() {
+                            startDate = selectedDate;
+                          });
+                        }
                       },
-                      items: model.categoriesList!.map((CategoryInfoModel value) {
-                        return DropdownMenuItem<CategoryInfoModel>(
-                          value: value,
-                          child: Row(
-                            children: [
-                              SizedBox(width: 8.w),
-                              Expanded(
-                                child: Text(
-                                  value.name ?? '',
-                                  style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+                      child: CustomContainerInfoWidget(
+                        title: startDate == null ? AppLocalization.of(context).translate("start_date") : convertDate(date: startDate.toString()),
+                        textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: startDate == null ?
+                        AppColors.mediumGrayColor : AppColors.blackColor),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20.h),
-                  InkWell(
-                    onTap: () async {
-                      DateTime? selectedDate = await selectDate(context, startDate);
-                      if (selectedDate != null) {
-                        setState(() {
-                          startDate = selectedDate;
-                        });
-                      }
-                    },
-                    child: CustomContainerInfoWidget(
-                      title: startDate == null ? AppLocalization.of(context).translate("start_date") : convertDate(date: startDate.toString()),
-                      textStyle: AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: startDate == null ?
-                      AppColors.mediumGrayColor : AppColors.blackColor),
-                    ),
-                  ),
                   if(widget.isEdit == false) SizedBox(height: 20.h),
                   if(widget.isEdit == false)
                     WorkdaysWidget(
@@ -249,7 +252,8 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                     labelText: AppLocalization.of(context).translate("cancellation_fee"),
                   ),
                   SizedBox(height: 20.h),
-                  InkWell(
+                  LocationPreviewWidget(
+                    location: selectedLocation,
                     onTap: () async {
                       final result = await Navigation.push(
                         CreateLocationScreen(
@@ -265,11 +269,6 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                         });
                       }
                     },
-                    child: CustomContainerInfoWidget(
-                      title: selectedLocation == null ? AppLocalization.of(context).translate("location") :
-                      "${selectedLocation!.lat!.toStringAsFixed(6)} | ${selectedLocation!.long!.toStringAsFixed(6)}",
-                      textStyle: selectedLocation == null ? null : AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                    ),
                   ),
                   SizedBox(height: 20.h),
                   CustomTextField(
@@ -336,10 +335,6 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("media_required"));
                                 return false;
                               }
-                              if (selectedFacilitiesId.isEmpty) {
-                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("facility_required"));
-                                return false;
-                              }
                             }
                             return true;
                           },
@@ -378,7 +373,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                                   capacity: form.controllers[2].text,
                                   admissionFee: form.controllers[3].text,
                                   withdrawalFee: form.controllers[4].text,
-                                  startDate: startDate == null ? "" : convertDate(date: startDate.toString(),format: "yyyy-MM-dd"),
+                                  startDate: convertDate(date: startDate.toString(),format: "yyyy-MM-dd"),
                                   description: form.controllers[5].text,
                                 )
                             );

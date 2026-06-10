@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/constants/app_colors.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/cupertino.dart';
 
 // ignore: must_be_immutable
@@ -17,8 +18,9 @@ class _CustomSwitchWidgetState extends State<CustomSwitchWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Transform.scale(
-      scale: widget.scale ?? 0.7,
+      scale: isTablet ? 1.5 : widget.scale ?? 0.7,
       child: CupertinoSwitch(
         value: widget.activate,
         activeColor: AppColors.turquoiseColor,

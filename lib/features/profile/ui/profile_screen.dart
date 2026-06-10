@@ -10,6 +10,7 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/features/auth/data/model/sign_in_model.dart';
 import 'package:centro_partner/core/ui/shared_widgets/view_image_widget.dart';
 import 'package:centro_partner/features/profile/data/profile_repository/profile_repository.dart';
@@ -39,6 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: CustomHeader(scaffoldKey: widget.scaffoldKey,title: AppLocalization.of(context).translate("profile"), isNavBar: true),
@@ -92,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 },
                                 useCaseCallBack: (model) => DeleteProfileImageUseCase(ProfileRepository()).call(
                                     params: DeleteProfileImageParams()),
-                                child: SvgPicture.asset(delete,width: 25.w),
+                                child: SvgPicture.asset(delete,width: isTablet ? 20.w : 25.w),
                               ),
                               padding: 30.w,
                               context: context,
@@ -113,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: AppColors.turquoiseColor,
                               ),
                               child: Center(
-                                child: SvgPicture.asset(image),
+                                child: SvgPicture.asset(image,width: isTablet ? 25.w : null),
                               ),
                             ),
                           ),

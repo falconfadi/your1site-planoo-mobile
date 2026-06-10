@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
@@ -35,12 +36,15 @@ class SelectMultiItemsWidget<T, ID> extends StatefulWidget {
 }
 
 class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T, ID>> {
+
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Column(
       children: [
         InkWell(
           onTap: () {
+            final tempSelectedIds = Set<ID>.from(widget.selectedIds);
             CustomSheet.show(
               isDismissible: true,
               header: Text(widget.title, style: AppTheme.titleLarge.copyWith(fontSize: 18.sp)),
@@ -53,17 +57,18 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                       return ListView.builder(
                         shrinkWrap: true,
                         itemCount: widget.list.length,
+                        physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           final item = widget.list[index];
                           final id = widget.idBuilder(item);
-                          final isSelected = widget.selectedIds.contains(id);
+                          final isSelected = tempSelectedIds.contains(id);
                           return InkWell(
                             onTap: () {
                               setSheetState(() {
                                 if (isSelected) {
-                                  widget.selectedIds.remove(id);
+                                  tempSelectedIds.remove(id);
                                 } else {
-                                  widget.selectedIds.add(id);
+                                  tempSelectedIds.add(id);
                                 }
                               });
                             },
@@ -91,7 +96,7 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                     borderRadius: 10.r,
                     buttonName: AppLocalization.of(context).translate("save"),
                     function: () {
-                      widget.onSelect(widget.selectedIds);
+                      widget.onSelect(Set<ID>.from(tempSelectedIds));
                       Navigation.pop();
                     },
                   ),
@@ -134,7 +139,7 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                               widget.onDelete!(id);
                             }
                           },
-                          child: Icon(Icons.close))
+                          child: Icon(Icons.close,size: isTablet ? 20.sp : null))
                     )
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
+import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,7 @@ class CustomContainerInfoWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = Responsive.isTablet(context);
     return Container(
       height: height ?? 60.h,
       decoration: BoxDecoration(
@@ -28,7 +30,7 @@ class CustomContainerInfoWidget extends StatelessWidget {
           children: [
             Expanded(child: Text(title,style: textStyle ?? AppTheme.labelLarge.copyWith(fontSize: 18.sp,color: AppColors.mediumGrayColor))),
             SizedBox(width: 10.w),
-            Icon(Icons.keyboard_arrow_down_outlined,color: AppColors.grayColor)
+            Icon(Icons.keyboard_arrow_down_outlined,color: AppColors.grayColor,size: isTablet ? 20.sp : null)
           ],
         ),
       ),
