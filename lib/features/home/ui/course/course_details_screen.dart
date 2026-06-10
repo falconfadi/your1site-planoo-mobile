@@ -2,6 +2,7 @@ import 'package:centro_partner/core/boilerplate/create_model/widgets/create_mode
 import 'package:centro_partner/core/boilerplate/get_model/cubits/get_model_cubit.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
@@ -348,7 +349,10 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                       ),
                                     ),
                                   ),
-                                  Icon(isExpanded ? Icons.arrow_circle_down_outlined : Icons.arrow_circle_right_outlined,color: AppColors.turquoiseColor,
+                                  Icon(isExpanded ? Icons.arrow_circle_down_outlined :
+                                  AppStorage.languageCode == "ar" ?
+                                  Icons.arrow_circle_left_outlined :
+                                  Icons.arrow_circle_right_outlined,color: AppColors.turquoiseColor,
                                     size: isTablet ? 22.sp : null,
                                   )
                                 ],
@@ -433,7 +437,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                 ),
                               ),
                               SizedBox(width: 10.h),
-                              Icon(Icons.arrow_circle_right_outlined,color: AppColors.turquoiseColor,
+                              Icon(AppStorage.languageCode == "ar" ?
+                              Icons.arrow_circle_left_outlined :
+                              Icons.arrow_circle_right_outlined,color: AppColors.turquoiseColor,
                                 size: isTablet ? 22.sp : null,
                               )
                             ],

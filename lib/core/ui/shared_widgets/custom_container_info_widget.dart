@@ -17,14 +17,14 @@ class CustomContainerInfoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final isTablet = Responsive.isTablet(context);
     return Container(
-      height: height ?? 60.h,
+      height: height ?? 50.h,
       decoration: BoxDecoration(
           color: AppColors.whiteColor,
           borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: AppColors.blackColor,width: 0.5)
+          border: Border.all(color: AppColors.mediumGrayColor,width: 0.5)
       ),
       child: Padding(
-        padding: EdgeInsets.only(left: 15.w,right: 10.w,top: 5.h),
+        padding: EdgeInsets.only(left: 20.w,right: 10.w,top: 5.h),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

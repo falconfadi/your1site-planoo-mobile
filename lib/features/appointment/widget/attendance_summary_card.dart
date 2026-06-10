@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_row_widget.dart';
@@ -196,7 +197,9 @@ class _AttendanceSummaryCardState extends State<AttendanceSummaryCard> {
                                 Icon(
                                   isExpanded
                                       ? Icons.arrow_circle_down_outlined
-                                      : Icons.arrow_circle_right_outlined,
+                                      : AppStorage.languageCode == "ar" ?
+                                      Icons.arrow_circle_left_outlined :
+                                  Icons.arrow_circle_right_outlined,
                                   color: AppColors.turquoiseColor,
                                   size: isTablet ? 22.sp : null,
                                 ),
