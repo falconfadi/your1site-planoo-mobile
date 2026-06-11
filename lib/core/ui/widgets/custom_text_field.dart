@@ -170,10 +170,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 borderSide: const BorderSide(width: 1,color: AppColors.redColor),
               ),
               contentPadding: EdgeInsets.only(
-                  left: 15,
-                  right: 15,
-                  top: isTablet ? 20 : 15,
-                  bottom: 8
+                  left: 15.w,right: 10.w,
+                  top: isTablet ? 18.h : 15.h,
+                  bottom: 8.h
               ),
               isCollapsed: true,
               prefixIcon: widget.prefixIcon != null ? Icon(widget.prefixIcon!,

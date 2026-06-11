@@ -42,18 +42,21 @@ class CategoryModel extends BaseModel {
 class CategoryInfoModel extends BaseModel {
   int? ID;
   String? name;
+  String? icon;
 
-  CategoryInfoModel({this.ID, this.name});
+  CategoryInfoModel({this.ID, this.name,this.icon});
 
   CategoryInfoModel.fromJson(Map<String, dynamic> json) {
     ID = json['id'];
     name = json['name'];
+    icon = json['icon'];
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': ID,
       'name': name,
+      'icon': icon,
     };
   }
 

@@ -2,6 +2,7 @@ import 'package:centro_partner/core/boilerplate/create_model/widgets/create_mode
 import 'package:centro_partner/core/boilerplate/get_model/cubits/get_model_cubit.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
@@ -239,7 +240,9 @@ class _CourtDetailsScreenState extends State<CourtDetailsScreen> {
                                 params: ReviewsParams(ownerType: "activity", ownerId: model.court!.iD!)
                             ),
                             onError: (error) {
-                              if (error.contains("Not found")) {
+                              if ((AppStorage.languageCode == "en" && error.contains("Not found")) ||
+                                  AppStorage.languageCode == "ar" && error.contains("التعليقات غير موجود")
+                              ) {
                                 return ReviewModel(reviewsList: []);
                               }
                               return null;

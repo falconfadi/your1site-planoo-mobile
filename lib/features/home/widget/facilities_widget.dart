@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
 import 'package:centro_partner/core/classes/app_localization.dart';
+import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_multi_items_widget.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
@@ -39,6 +40,7 @@ class _FacilitiesWidgetState extends State<FacilitiesWidget> {
         list: model.facilitiesList!,
         selectedIds: widget.selectedFacilitiesId,
         labelBuilder: (item) => item.name!,
+        imageBuilder: (item) => item.icon != null ? serverUrl + item.icon! : '',
         idBuilder: (item) => item.ID!,
         onSelect: (ids) {
           setState(() {

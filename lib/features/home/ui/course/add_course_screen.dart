@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:centro_partner/core/boilerplate/create_model/widgets/create_model.dart';
 import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart';
+import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
@@ -143,10 +144,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                               : AppColors.blackColor,
                           list: model.categoriesList ?? [],
                           selectedId: selectCategory?.ID,
-                          labelBuilder: (item) =>
-                          item.name ?? "",
-                          idBuilder: (item) =>
-                          item.ID ?? 0,
+                          labelBuilder: (item) => item.name ?? "",
+                          imageBuilder: (item) => item.icon != null ? serverUrl + item.icon! : '',
+                          idBuilder: (item) => item.ID ?? 0,
                           onSelect: (id) {
                             setState(() {
                               selectCategory =

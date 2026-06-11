@@ -273,7 +273,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     params: ReviewsParams(ownerType: "event", ownerId: model.event!.iD!)
                                 ),
                                 onError: (error) {
-                                  if (error.contains("Not found")) {
+                                  if ((AppStorage.languageCode == "en" && error.contains("Not found")) ||
+                                      AppStorage.languageCode == "ar" && error.contains("التعليقات غير موجود")
+                                  ) {
                                     return ReviewModel(reviewsList: []);
                                   }
                                   return null;

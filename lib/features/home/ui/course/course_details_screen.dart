@@ -274,7 +274,9 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                     params: ReviewsParams(ownerType: "course", ownerId: model.course!.iD!)
                                 ),
                                 onError: (error) {
-                                  if (error.contains("Not found")) {
+                                  if ((AppStorage.languageCode == "en" && error.contains("Not found")) ||
+                                      AppStorage.languageCode == "ar" && error.contains("التعليقات غير موجود")
+                                  ) {
                                     return ReviewModel(reviewsList: []);
                                   }
                                   return null;

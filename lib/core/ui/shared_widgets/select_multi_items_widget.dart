@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/ui/shared_widgets/custom_container_info_widget.dart';
+import 'package:centro_partner/core/ui/widgets/cached_image.dart';
 import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,7 @@ class SelectMultiItemsWidget<T, ID> extends StatefulWidget {
   final List<T> list;
   final Set<ID> selectedIds;
   final String Function(T) labelBuilder;
+  final String Function(T)? imageBuilder;
   final ID Function(T) idBuilder;
   final void Function(Set<ID>) onSelect;
   final bool? isDelete;
@@ -25,6 +27,7 @@ class SelectMultiItemsWidget<T, ID> extends StatefulWidget {
     required this.list,
     required this.selectedIds,
     required this.labelBuilder,
+    this.imageBuilder,
     required this.idBuilder,
     required this.onSelect,
     this.isDelete,
@@ -73,7 +76,7 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                               });
                             },
                             child: Container(
-                              padding: EdgeInsets.only(left: 20.w,right: 20.w, top: 15.h,bottom: 8.h),
+                              padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.h),
                               margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8.r),
@@ -81,8 +84,30 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                                     ? AppColors.primaryColor.withOpacity(0.3)
                                     : AppColors.extraLightGrayColor,
                               ),
-                              child: Center(
-                                child: Text(widget.labelBuilder(item),style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (widget.imageBuilder != null) ...[
+                                    CachedImage(
+                                      width: 45.w,
+                                      height: 45.w,
+                                      imageUrl: widget.imageBuilder!(item),
+                                      fit: BoxFit.cover,
+                                      borderRadius: 10.r,
+                                      borderColor: AppColors.primaryColor,
+                                      borderWidth: 0.5,
+                                    ),
+                                    SizedBox(width: 10.w),
+                                  ],
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8.h),
+                                    child: Text(
+                                      widget.labelBuilder(item),
+                                      style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           );
@@ -118,14 +143,27 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
               child: Stack(
                 children: [
                   Container(
-                    padding: EdgeInsets.only(left: 15.w,right: 15.w,top: widget.isDelete == true ? 20.h : 15.h,bottom: 10.h),
+                    padding: EdgeInsets.only(left: 15.w,right: 15.w,top: widget.isDelete == true ? 20.h : 10.h,bottom: 10.h),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.r),
                       color: AppColors.primaryColor.withOpacity(0.1),
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        if (widget.imageBuilder != null) ...[
+                          CachedImage(
+                            width: 45.w,
+                            height: 45.w,
+                            imageUrl: widget.imageBuilder!(item),
+                            fit: BoxFit.cover,
+                            borderRadius: 10.r,
+                            borderColor: AppColors.primaryColor,
+                            borderWidth: 0.5,
+                          ),
+                          SizedBox(width: 10.w),
+                        ],
                         Text(widget.labelBuilder(item), style: AppTheme.labelLarge.copyWith(fontSize: 18.sp)),
                       ],
                     ),

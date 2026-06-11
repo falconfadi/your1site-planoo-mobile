@@ -105,16 +105,19 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       onTabChanged: (index) {
                         setState(() {
                           selectedTab = index;
+                          selectedStatus = StatusEnum.accepted;
+                          date = null;
                         });
-                        selectedStatus = StatusEnum.accepted;
-                        date = null;
-                        if(selectedTab == 0) {
-                          cubit.getList();
-                        } else if(selectedTab == 1) {
-                          allCoursesCubit!.getModel();
-                        } else {
-                          allEventsCubit!.getModel();
-                        }
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (!mounted) return;
+                          if (selectedTab == 0) {
+                            cubit.getList();
+                          } else if (selectedTab == 1) {
+                            allCoursesCubit?.getModel();
+                          } else {
+                            allEventsCubit?.getModel();
+                          }
+                        });
                       },
                     ),
                   ),
@@ -183,87 +186,91 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   },
                 ),
               ) : selectedTab == 1 ?
-              GetModel<AllCoursesModel>(
-                  onCubitCreated: (cubit) {
-                    allCoursesCubit = cubit as GetModelCubit<AllCoursesModel>;
-                  },
-                  loadingHeight: 1.sh * 0.65,
-                  useCaseCallBack: () {
-                    return AllCoursesUseCase(HomeRepository()).call(params: AllCoursesParams());
-                  },
-                  modelBuilder: (model) => ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: model.coursesList!.length,
-                    itemBuilder: (context,index) {
-                      final course = model.coursesList![index];
-                      return AppointmentCard(
-                          onTap: () {
-                            Navigation.push(CourseAppointmentDetailsScreen(course: course));
-                          },
-                          isAppointment: false,
-                          imageHeight: 1.sh * 0.16,
-                          title: course.name!,
-                          imageUrl: course.mediaList!.isEmpty ? "" :
-                          course.mediaList!.first.url!,
-                          date: course.startDate!,
-                          details: [
-                            IconTextWidget(
-                              icon: image.capacity,
-                              iconSize: 23.sp,
-                              text: course.capacity.toString(),
-                              textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
-                            ),
-                            IconTextWidget(
-                              icon: image.user,
-                              iconSize: 18.sp,
-                              text: course.customersList!.length.toString(),
-                              textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
-                            ),
-                          ]
-                      );
+              Expanded(
+                child: GetModel<AllCoursesModel>(
+                    onCubitCreated: (cubit) {
+                      allCoursesCubit = cubit as GetModelCubit<AllCoursesModel>;
                     },
-                  )
+                    loadingHeight: 1.sh * 0.65,
+                    useCaseCallBack: () {
+                      return AllCoursesUseCase(HomeRepository()).call(params: AllCoursesParams());
+                    },
+                    modelBuilder: (model) => ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: model.coursesList!.length,
+                      itemBuilder: (context,index) {
+                        final course = model.coursesList![index];
+                        return AppointmentCard(
+                            onTap: () {
+                              Navigation.push(CourseAppointmentDetailsScreen(course: course));
+                            },
+                            isAppointment: false,
+                            imageHeight: 1.sh * 0.16,
+                            title: course.name!,
+                            imageUrl: course.mediaList!.isEmpty ? "" :
+                            course.mediaList!.first.url!,
+                            date: course.startDate!,
+                            details: [
+                              IconTextWidget(
+                                icon: image.capacity,
+                                iconSize: 23.sp,
+                                text: course.capacity.toString(),
+                                textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
+                              ),
+                              IconTextWidget(
+                                icon: image.user,
+                                iconSize: 18.sp,
+                                text: course.customersList!.length.toString(),
+                                textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
+                              ),
+                            ]
+                        );
+                      },
+                    )
+                ),
               ) :
-              GetModel<AllEventsModel>(
-                  onCubitCreated: (cubit) {
-                    allEventsCubit = cubit as GetModelCubit<AllEventsModel>;
-                  },
-                  loadingHeight: 1.sh * 0.65,
-                  useCaseCallBack: () {
-                    return AllEventsUseCase(HomeRepository()).call(params: AllEventsParams());
-                  },
-                  modelBuilder: (model) => ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: model.eventsList!.length,
-                    itemBuilder: (context,index) {
-                      final event = model.eventsList![index];
-                      return AppointmentCard(
-                          onTap: () {
-                            Navigation.push(EventAppointmentDetailsScreen(event: event));
-                          },
-                          isAppointment: false,
-                          imageHeight: 1.sh * 0.16,
-                          title: event.name!,
-                          imageUrl: event.mediaList!.isEmpty ? "" :
-                          event.mediaList!.first.url!,
-                          date: event.startDate!,
-                          details: [
-                            IconTextWidget(
-                              icon: image.capacity,
-                              iconSize: 23.sp,
-                              text: event.capacity.toString(),
-                              textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
-                            ),
-                            IconTextWidget(
-                              icon: image.user,
-                              iconSize: 18.sp,
-                              text: event.customersList!.length.toString(),
-                              textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
-                            ),
-                          ]
-                      );
+              Expanded(
+                child: GetModel<AllEventsModel>(
+                    onCubitCreated: (cubit) {
+                      allEventsCubit = cubit as GetModelCubit<AllEventsModel>;
                     },
-                  )
+                    loadingHeight: 1.sh * 0.65,
+                    useCaseCallBack: () {
+                      return AllEventsUseCase(HomeRepository()).call(params: AllEventsParams());
+                    },
+                    modelBuilder: (model) => ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: model.eventsList!.length,
+                      itemBuilder: (context,index) {
+                        final event = model.eventsList![index];
+                        return AppointmentCard(
+                            onTap: () {
+                              Navigation.push(EventAppointmentDetailsScreen(event: event));
+                            },
+                            isAppointment: false,
+                            imageHeight: 1.sh * 0.16,
+                            title: event.name!,
+                            imageUrl: event.mediaList!.isEmpty ? "" :
+                            event.mediaList!.first.url!,
+                            date: event.startDate!,
+                            details: [
+                              IconTextWidget(
+                                icon: image.capacity,
+                                iconSize: 23.sp,
+                                text: event.capacity.toString(),
+                                textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
+                              ),
+                              IconTextWidget(
+                                icon: image.user,
+                                iconSize: 18.sp,
+                                text: event.customersList!.length.toString(),
+                                textStyle: AppTheme.labelLarge.copyWith(color: AppColors.mediumGrayColor),
+                              ),
+                            ]
+                        );
+                      },
+                    )
+                ),
               ),
             ],
           ),
