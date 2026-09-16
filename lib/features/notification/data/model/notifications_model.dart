@@ -87,9 +87,10 @@ class NotificationInfoModel extends BaseModel {
 class Payload {
   int? type;
   int? code;
-  int? appointment;
-  int? course;
-  int? event;
+  String? appointment;
+  String? course;
+  String? event;
+  String? conflicts;
   Result? result;
 
   Payload({
@@ -98,6 +99,7 @@ class Payload {
     this.appointment,
     this.course,
     this.event,
+    this.conflicts,
     this.result,
   });
 
@@ -107,7 +109,17 @@ class Payload {
     appointment = json['appointment'];
     course = json['course'];
     event = json['event'];
-    result = json['result'] != null ? Result.fromJson(json['result']) : null;
+    conflicts = json['conflicts'];
+    if (json['result'] != null) {
+      if (json['result'] is Map<String, dynamic>) {
+        result = Result.fromJson(json['result']);
+      } else if (json['result'] is String) {
+        result = Result(name: json['result']);
+      }
+    } else {
+      result = null;
+    }
+    // result = json['result'] != null ? Result.fromJson(json['result']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -117,6 +129,7 @@ class Payload {
     data['appointment'] = this.appointment;
     data['course'] = this.course;
     data['event'] = this.event;
+    data['conflicts'] = this.conflicts;
     if (result != null) {
       data['result'] = result!.toJson();
     }

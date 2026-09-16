@@ -8,7 +8,7 @@ import '../../../../../core/usecase/usecase.dart';
 class CreateMediaParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
   final File file;
 
   CreateMediaParams({

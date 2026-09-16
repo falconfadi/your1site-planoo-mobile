@@ -21,7 +21,7 @@ import 'package:image/image.dart' as img;
 class PhotosWidget extends StatefulWidget {
 
   final String? ownerType;
-  final int? ownerId;
+  final String? ownerId;
   final List<File> photos;
   final bool? isEdit;
 

@@ -31,7 +31,7 @@ class CustomHeader extends StatelessWidget implements PreferredSizeWidget {
       surfaceTintColor: Colors.transparent,
       shadowColor: AppColors.blackColor.withOpacity(0.5),
       backgroundColor: AppColors.whiteColor,
-      leadingWidth: withLogo == true ? 1.sw : isTablet ? 40.w : null, // todo stop here
+      leadingWidth: withLogo == true ? 1.sw : isTablet ? 40.w : null,
       leading: isNavBar ? Row(
         mainAxisSize: MainAxisSize.min,
         children: [

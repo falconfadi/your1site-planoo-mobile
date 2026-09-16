@@ -5,7 +5,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class DeleteCourtParams extends BaseParams {
 
-  final int courtId;
+  final String courtId;
 
   DeleteCourtParams({
     required this.courtId,

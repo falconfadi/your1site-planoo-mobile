@@ -6,7 +6,7 @@ import '../../../../../core/usecase/usecase.dart';
 class EditLocationParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
   final int locationId;
   final double lat;
   final double long;

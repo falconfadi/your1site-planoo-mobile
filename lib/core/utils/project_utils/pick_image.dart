@@ -8,6 +8,7 @@ class PickImage {
     final pickedFile = await imagePicker.pickImage(
       source: imageSource,
       imageQuality: 25,
+      requestFullMetadata: true,
     );
     if (pickedFile != null) {
       return File(pickedFile.path);

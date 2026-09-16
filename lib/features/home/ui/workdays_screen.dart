@@ -25,7 +25,7 @@ import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 class WorkdaysScreen extends StatefulWidget {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
   final VoidCallback? onRefresh;
 
   const WorkdaysScreen({super.key,

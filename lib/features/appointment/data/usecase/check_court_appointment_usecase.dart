@@ -6,7 +6,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class CheckCourtAppointmentParams extends BaseParams {
 
-  final int courtId;
+  final String courtId;
   final int dayId;
   final String date;
   final int sessionDuration;

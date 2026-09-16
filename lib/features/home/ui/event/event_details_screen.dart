@@ -11,6 +11,7 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_back_icon_widget.da
 import 'package:centro_partner/core/ui/shared_widgets/custom_popup_menu_button_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_row_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
+import 'package:centro_partner/core/ui/shared_widgets/icon_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
@@ -37,10 +38,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class EventDetailsScreen extends StatefulWidget {
 
-  final int eventId;
+  final String eventId;
   final VoidCallback? onRefresh;
+  final VoidCallback? onRefreshAllEvents;
 
-  const EventDetailsScreen({super.key,required this.eventId,this.onRefresh});
+  const EventDetailsScreen({super.key,required this.eventId,this.onRefresh,this.onRefreshAllEvents});
 
   @override
   State<EventDetailsScreen> createState() => _EventDetailsScreenState();
@@ -142,6 +144,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     event: model.event,
                                     onRefresh: () async {
                                       refreshCubit?.getModel();
+                                      widget.onRefreshAllEvents?.call();
                                     },
                                   ))
                               ),
@@ -259,6 +262,16 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       ],
                     ),
                     SizedBox(height: 5.h),
+                    IconTextWidget(
+                      icon: court,
+                      iconColor: AppColors.turquoiseColor,
+                      iconSize: 30.w,
+                      text: model.event!.mainCourt!.name!,
+                      textStyle: AppTheme.labelLarge.copyWith(
+                        color: AppColors.mediumGrayColor,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
                     Row(
                       children: [
                         Expanded(
@@ -273,7 +286,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     params: ReviewsParams(ownerType: "event", ownerId: model.event!.iD!)
                                 ),
                                 onError: (error) {
-                                  if ((AppStorage.languageCode == "en" && error.contains("Not found")) ||
+                                  if ((AppStorage.languageCode == "en" && error.contains("reviews not found")) ||
                                       AppStorage.languageCode == "ar" && error.contains("التعليقات غير موجود")
                                   ) {
                                     return ReviewModel(reviewsList: []);

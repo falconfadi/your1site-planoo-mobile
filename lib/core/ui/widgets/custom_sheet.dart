@@ -13,6 +13,7 @@ class CustomSheet<T> extends StatelessWidget {
   final bool? isDismissible;
   final bool? addHeader;
   final double? padding;
+  final double? height;
 
   const CustomSheet._({super.key,
     required this.child,
@@ -20,7 +21,8 @@ class CustomSheet<T> extends StatelessWidget {
     this.action,
     this.isDismissible,
     this.addHeader = true,
-    this.padding
+    this.padding,
+    this.height,
   });
 
 
@@ -31,6 +33,7 @@ class CustomSheet<T> extends StatelessWidget {
     Widget? action,
     bool addHeader = true,
     double? padding,
+    double? height,
     ValueChanged<BuildContext>? onClose,
     Color? closeButtonColor,
     TextStyle? headerStyle,
@@ -49,6 +52,7 @@ class CustomSheet<T> extends StatelessWidget {
       action: action,
       addHeader: addHeader,
       padding: padding,
+      height: height,
       child: child,
     ),
   );
@@ -59,6 +63,7 @@ class CustomSheet<T> extends StatelessWidget {
     return BackdropFilter(
       filter: ImageFilter.blur(sigmaX: 4, sigmaY: 4),
       child: Container(
+        height: height,
         decoration: BoxDecoration(
             color: AppColors.whiteColor,
           borderRadius: BorderRadius.vertical(top: Radius.circular(50.r))

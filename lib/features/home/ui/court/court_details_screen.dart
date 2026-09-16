@@ -10,6 +10,7 @@ import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_back_icon_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_popup_menu_button_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
+import 'package:centro_partner/core/ui/shared_widgets/icon_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
@@ -35,10 +36,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CourtDetailsScreen extends StatefulWidget {
 
-  final int courtId;
+  final String courtId;
   final VoidCallback? onRefresh;
+  final VoidCallback? onRefreshAllCourts;
 
-  const CourtDetailsScreen({super.key,required this.courtId,this.onRefresh});
+  const CourtDetailsScreen({super.key,required this.courtId,this.onRefresh,this.onRefreshAllCourts});
 
   @override
   State<CourtDetailsScreen> createState() => _CourtDetailsScreenState();
@@ -124,7 +126,9 @@ class _CourtDetailsScreenState extends State<CourtDetailsScreen> {
                                     court: model.court,
                                     onRefresh: () async {
                                       refreshCubit?.getModel();
+                                      widget.onRefreshAllCourts?.call();
                                     },
+
                                   ))
                               ),
                               PopupMenuItem(
@@ -228,6 +232,16 @@ class _CourtDetailsScreenState extends State<CourtDetailsScreen> {
                     ),
                     Text(model.court!.name!,style: AppTheme.labelLarge),
                     SizedBox(height: 5.h),
+                    IconTextWidget(
+                      icon: court,
+                      iconColor: AppColors.turquoiseColor,
+                      iconSize: 30.w,
+                      text: model.court!.mainCourt!.name!,
+                      textStyle: AppTheme.labelLarge.copyWith(
+                        color: AppColors.mediumGrayColor,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -240,7 +254,7 @@ class _CourtDetailsScreenState extends State<CourtDetailsScreen> {
                                 params: ReviewsParams(ownerType: "activity", ownerId: model.court!.iD!)
                             ),
                             onError: (error) {
-                              if ((AppStorage.languageCode == "en" && error.contains("Not found")) ||
+                              if ((AppStorage.languageCode == "en" && error.contains("reviews not found")) ||
                                   AppStorage.languageCode == "ar" && error.contains("التعليقات غير موجود")
                               ) {
                                 return ReviewModel(reviewsList: []);

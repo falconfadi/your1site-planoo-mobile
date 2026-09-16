@@ -5,10 +5,11 @@ import '../auth_repository/auth_repository.dart';
 
 class ResetPasswordParams extends BaseParams {
 
-  final String? phone,password,confirmationPassword,code,firebaseToken;
+  final String? phone,countryCode,password,confirmationPassword,code,firebaseToken;
 
   ResetPasswordParams({
     this.phone,
+    this.countryCode,
     this.password,
     this.confirmationPassword,
     this.code,
@@ -18,6 +19,7 @@ class ResetPasswordParams extends BaseParams {
   Map<String, String?> toJson() {
     return {
       "phone": phone,
+      "country_code": countryCode,
       "password": password,
       "password_confirmation": confirmationPassword,
       "code": code,

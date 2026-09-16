@@ -3,10 +3,10 @@ import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
-import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:lottie/lottie.dart';
 
@@ -61,8 +61,11 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.primaryColor,
-      body: Center(
+      backgroundColor: const Color(0xff45368f),
+      body: Container(
+        height: 1.sh,
+        width: 1.sw,
+        color: const Color(0xff45368f),
         child: Lottie.asset(
           splash,
           controller: _controller,

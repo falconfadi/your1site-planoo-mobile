@@ -2,6 +2,7 @@ import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ExpandableTextWidget extends StatefulWidget {
 
@@ -23,25 +24,11 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
   bool _expanded = false;
   bool _isOverflowing = false;
 
-  // final _textKey = GlobalKey();
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _checkOverflow());
   }
-
-  // void _checkOverflow() {
-  //   final renderBox = _textKey.currentContext?.findRenderObject() as RenderBox?;
-  //   if (renderBox != null) {
-  //     final lines = renderBox.size.height;
-  //     if (lines > 3) {
-  //       setState(() {
-  //         _isOverflowing = true;
-  //       });
-  //     }
-  //   }
-  // }
 
   void _checkOverflow() {
     final textSpan = TextSpan(
@@ -88,7 +75,7 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
                   AppLocalization.of(context).translate("see_more"),
                   style: AppTheme.titleLarge.copyWith(color: AppColors.turquoiseColor)
                 ),
-                Icon(Icons.keyboard_arrow_down_outlined,size: 18,color: AppColors.turquoiseColor)
+                Icon(Icons.keyboard_arrow_down_outlined,size: 18.sp,color: AppColors.turquoiseColor)
               ],
             ),
           )

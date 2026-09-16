@@ -8,6 +8,10 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_date_picker.dart';
 import 'package:centro_partner/core/utils/responsive/responsive.dart';
+import 'package:centro_partner/features/general/data/general_repository/general_repository.dart';
+import 'package:centro_partner/features/general/data/model/main_court/all_main_courts_model.dart';
+import 'package:centro_partner/features/general/data/model/main_court/main_court_details_model.dart';
+import 'package:centro_partner/features/general/data/usecase/main_court/all_main_courts_usecase.dart';
 import 'package:centro_partner/features/home/data/model/event/event_details_model.dart';
 import 'package:centro_partner/features/home/data/model/event/event_model.dart';
 import 'package:centro_partner/features/home/data/usecase/event/create_event_usecase.dart';
@@ -50,6 +54,7 @@ class AddEventScreen extends StatefulWidget {
 class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
 
   CategoryInfoModel? selectCategory;
+  MainCourtDetailsModel? selectMainCourt;
   DateTime? startDate;
   Set<String> selectedDays = {};
   String? fromTime;
@@ -117,6 +122,35 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                     labelText: AppLocalization.of(context).translate("name"),
                   ),
                   SizedBox(height: 20.h),
+                  if(widget.isEdit == false)
+                    GetModel<AllMainCourtsModel>(
+                      useCaseCallBack: () {
+                        return AllMainCourtsUseCase(GeneralRepository()).call(
+                          params: AllMainCourtsParams(),
+                        );
+                      },
+                      onSuccess: (result) {},
+                      modelBuilder: (model) =>
+                          SelectSingleItemWidget<MainCourtDetailsModel, String>(
+                            title: AppLocalization.of(context).translate("court"),
+                            subTitle: selectMainCourt?.name ?? AppLocalization.of(context).translate("court"),
+                            subTitleColor: selectMainCourt == null
+                                ? AppColors.mediumGrayColor
+                                : AppColors.blackColor,
+                            list: model.courtsList ?? [],
+                            selectedId: selectMainCourt?.id,
+                            labelBuilder: (item) => item.name ?? "",
+                            idBuilder: (item) => item.id ?? "",
+                            onSelect: (id) {
+                              setState(() {
+                                selectMainCourt = model.courtsList?.firstWhere(
+                                      (item) => item.id == id,
+                                );
+                              });
+                            },
+                          ),
+                    ),
+                  if(widget.isEdit == false) SizedBox(height: 20.h),
                   GetModel<CategoryModel>(
                     useCaseCallBack: () {
                       return CategoriesUseCase(HomeRepository()).call(
@@ -133,10 +167,9 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                     },
                     modelBuilder: (model) =>
                         SelectSingleItemWidget<CategoryInfoModel, int>(
-                          title: selectCategory?.name ??
-                              AppLocalization.of(context)
-                                  .translate("category"),
-                          titleColor: selectCategory == null
+                          title: AppLocalization.of(context).translate("category"),
+                          subTitle: selectCategory?.name ?? AppLocalization.of(context).translate("category"),
+                          subTitleColor: selectCategory == null
                               ? AppColors.mediumGrayColor
                               : AppColors.blackColor,
                           list: model.categoriesList ?? [],
@@ -299,6 +332,11 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                     ownerId: widget.isEdit == true ? widget.event!.iD! : null,
                     selectedFacilitiesId: selectedFacilitiesId,
                     isEdit: widget.isEdit == true ? true : false,
+                    onFacilitiesChanged: (newSelectedIds) {
+                      setState(() {
+                        selectedFacilitiesId = newSelectedIds;
+                      });
+                    },
                   ),
                   SizedBox(height: 30.h),
                   Row(
@@ -311,6 +349,10 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                             bool isValid = form.validate();
                             if (!isValid) return false;
                             if (widget.isEdit == false) {
+                              if (selectMainCourt == null) {
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("court_required"));
+                                return false;
+                              }
                               if (selectCategory == null) {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("category_required"));
                                 return false;
@@ -347,6 +389,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                               return CreateEventUseCase(HomeRepository()).call(
                                   params: CreateEventParams(
                                     name: form.controllers[0].text,
+                                    mainCourtId: selectMainCourt == null ? "-1" : selectMainCourt!.id!,
                                     categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                     days: selectedDays.isEmpty ? [] : selectedDays.toList(),
                                     fromTime: fromTime ?? "",
@@ -368,6 +411,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                                 params: EditEventParams(
                                   eventId: widget.event!.iD!,
                                   name: form.controllers[0].text,
+                                  mainCourtId:  widget.event!.mainCourt!.id!,
                                   categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                   eventDuration: form.controllers[1].text,
                                   capacity: form.controllers[2].text,

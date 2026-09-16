@@ -7,7 +7,7 @@ import '../../../../../core/usecase/usecase.dart';
 class AllWorkdaysParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
 
   AllWorkdaysParams({
     required this.ownerType,

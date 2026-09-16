@@ -1,7 +1,7 @@
 import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 
 class CustomerModel {
-  int? id;
+  String? id;
   String? name;
   int? status;
   String? isVerified;

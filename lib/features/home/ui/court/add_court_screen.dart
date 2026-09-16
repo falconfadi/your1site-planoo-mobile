@@ -6,6 +6,10 @@ import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
 import 'package:centro_partner/core/utils/responsive/responsive.dart';
+import 'package:centro_partner/features/general/data/general_repository/general_repository.dart';
+import 'package:centro_partner/features/general/data/model/main_court/all_main_courts_model.dart';
+import 'package:centro_partner/features/general/data/model/main_court/main_court_details_model.dart';
+import 'package:centro_partner/features/general/data/usecase/main_court/all_main_courts_usecase.dart';
 import 'package:centro_partner/features/home/widget/facilities_widget.dart';
 import 'package:centro_partner/features/home/widget/location_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/photos_widget.dart';
@@ -48,6 +52,7 @@ class AddCourtScreen extends StatefulWidget {
 class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
 
   CategoryInfoModel? selectCategory;
+  MainCourtDetailsModel? selectMainCourt;
   Set<String> selectedDays = {};
   String? fromTime;
   String? toTime;
@@ -112,6 +117,36 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                     labelText: AppLocalization.of(context).translate("name"),
                   ),
                   SizedBox(height: 20.h),
+                  if(widget.isEdit == false)
+                    GetModel<AllMainCourtsModel>(
+                      useCaseCallBack: () {
+                        return AllMainCourtsUseCase(GeneralRepository()).call(
+                          params: AllMainCourtsParams(),
+                        );
+                      },
+                      onSuccess: (result) {},
+                      modelBuilder: (model) =>
+                          SelectSingleItemWidget<MainCourtDetailsModel, String>(
+                            title: AppLocalization.of(context).translate("court"),
+                            subTitle: selectMainCourt?.name ?? AppLocalization.of(context).translate("court"),
+                            subTitleColor: selectMainCourt == null
+                                ? AppColors.mediumGrayColor
+                                : AppColors.blackColor,
+                            list: model.courtsList ?? [],
+                            selectedId: selectMainCourt?.id,
+                            labelBuilder: (item) => item.name ?? "",
+                            idBuilder: (item) => item.id ?? "",
+                            onSelect: (id) {
+                              setState(() {
+                                selectMainCourt =
+                                    model.courtsList?.firstWhere(
+                                          (item) => item.id == id,
+                                    );
+                              });
+                            },
+                          ),
+                    ),
+                  if(widget.isEdit == false) SizedBox(height: 20.h),
                   GetModel<CategoryModel>(
                     useCaseCallBack: () {
                       return CategoriesUseCase(HomeRepository()).call(
@@ -128,9 +163,9 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                     },
                     modelBuilder: (model) =>
                         SelectSingleItemWidget<CategoryInfoModel, int>(
-                          title: selectCategory?.name ??
-                              AppLocalization.of(context).translate("category"),
-                          titleColor: selectCategory == null
+                          title: AppLocalization.of(context).translate("category"),
+                          subTitle: selectCategory?.name ?? AppLocalization.of(context).translate("category"),
+                          subTitleColor: selectCategory == null
                               ? AppColors.mediumGrayColor
                               : AppColors.blackColor,
                           list: model.categoriesList ?? [],
@@ -173,9 +208,9 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                     },
                     modelBuilder: (model) =>
                         SelectSingleItemWidget<int, int>(
-                          title: selectedSession == null ? AppLocalization.of(context).translate("session_duration")
-                              : "$selectedSession ${AppLocalization.of(context).translate("minute")}",
-                          titleColor: selectedSession == null
+                          title: AppLocalization.of(context).translate("session_duration"),
+                          subTitle: selectedSession == null ? AppLocalization.of(context).translate("session_duration") : "$selectedSession ${AppLocalization.of(context).translate("minute")}",
+                          subTitleColor: selectedSession == null
                               ? AppColors.mediumGrayColor
                               : AppColors.blackColor,
                           list: model.durationsList ?? [],
@@ -253,6 +288,11 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                     ownerId: widget.isEdit == true ? widget.court!.iD! : null,
                     selectedFacilitiesId: selectedFacilitiesId,
                     isEdit: widget.isEdit == true ? true : false,
+                    onFacilitiesChanged: (newSelectedIds) {
+                      setState(() {
+                        selectedFacilitiesId = newSelectedIds;
+                      });
+                    },
                   ),
                   SizedBox(height: 30.h),
                   Row(
@@ -265,6 +305,10 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                             bool isValid = form.validate();
                             if (!isValid) return false;
                             if (widget.isEdit == false) {
+                              if (selectMainCourt == null) {
+                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("court_required"));
+                                return false;
+                              }
                               if (selectCategory == null) {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("category_required"));
                                 return false;
@@ -301,6 +345,7 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                               return CreateCourtUseCase(HomeRepository()).call(
                                   params: CreateCourtParams(
                                     name: form.controllers[0].text,
+                                    mainCourtId: selectMainCourt == null ? "-1" : selectMainCourt!.id!,
                                     categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                     days:  selectedDays.isEmpty ? [] : selectedDays.toList(),
                                     fromTime: fromTime ?? "",
@@ -319,6 +364,7 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                                 params: EditCourtParams(
                                   courtId: widget.court!.iD,
                                   name: form.controllers[0].text,
+                                  mainCourtId:  widget.court!.mainCourt!.id!,
                                   categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
                                   sessionDuration: selectedSession == null ? -1 : selectedSession!,
                                   price: form.controllers[1].text,

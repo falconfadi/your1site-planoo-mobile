@@ -5,7 +5,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class CreateCourtAppointmentParams extends BaseParams {
 
-  final int courtId;
+  final String courtId;
   final String code;
   final int dayId;
   final String date;
@@ -13,6 +13,7 @@ class CreateCourtAppointmentParams extends BaseParams {
   final String time;
   final String? note;
   final String customerPhone;
+  final String countryCode;
 
   CreateCourtAppointmentParams({
     required this.courtId,
@@ -22,7 +23,8 @@ class CreateCourtAppointmentParams extends BaseParams {
     required this.sessionDuration,
     required this.time,
     this.note,
-    required this.customerPhone
+    required this.customerPhone,
+    required this.countryCode
   });
 
   Map<String, dynamic> toJson() {
@@ -35,6 +37,7 @@ class CreateCourtAppointmentParams extends BaseParams {
       'time': time,
       'notes': note,
       'customer_phone': customerPhone,
+      'country_code': countryCode,
     };
   }
 }

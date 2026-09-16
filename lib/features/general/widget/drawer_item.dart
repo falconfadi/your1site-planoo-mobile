@@ -21,7 +21,7 @@ class DrawerItem extends StatelessWidget {
     final isTablet = Responsive.isTablet(context);
     return ListTile(
       onTap: onTap,
-      leading: SvgPicture.asset(iconPath,width: isTablet ? 20.w : null),
+      leading: SvgPicture.asset(iconPath,width: isTablet ? 20.w : 25.sp),
       title: Padding(
         padding: EdgeInsets.only(top: 5.h),
         child: Text(

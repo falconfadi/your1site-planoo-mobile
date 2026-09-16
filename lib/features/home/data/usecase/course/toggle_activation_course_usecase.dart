@@ -5,7 +5,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class ToggleActivationCourseParams extends BaseParams {
 
-  final int courseId;
+  final String courseId;
 
   ToggleActivationCourseParams({
     required this.courseId,

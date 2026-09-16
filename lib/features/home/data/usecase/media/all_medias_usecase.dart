@@ -7,7 +7,7 @@ import '../../../../../core/usecase/usecase.dart';
 class AllMediasParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
 
   AllMediasParams({
     required this.ownerType,

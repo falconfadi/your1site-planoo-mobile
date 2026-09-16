@@ -88,6 +88,7 @@
   "gallery": "Gallery",
   "camera": "Camera",
   "select_image": "Select image",
+  "court_required": "Court is required",
   "category_required": "Category is required",
   "days_required": "Day is required",
   "times_required": "Times are required",
@@ -140,5 +141,7 @@
   "remaining": "Remaining",
   "details": "Details",
   "attendance_date": "Attendance date",
-  "remaining_sessions": "Remaining sessions"
+  "remaining_sessions": "Remaining sessions",
+  "welcome_Create_first_court": "Welcome! Create your first court",
+  "invalid_country_phone": "The phone number is invalid for the selected country"
 }

@@ -6,7 +6,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class CourseDetailsParams extends BaseParams {
 
-  final int courseId;
+  final String courseId;
 
 
   CourseDetailsParams({required this.courseId});

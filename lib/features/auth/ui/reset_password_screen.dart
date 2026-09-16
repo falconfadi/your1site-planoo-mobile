@@ -24,8 +24,12 @@ import 'package:pinput/pinput.dart';
 class ResetPasswordScreen extends StatefulWidget {
 
   final String phone;
+  final String countryDialCode;
 
-  const ResetPasswordScreen({required this.phone,super.key});
+  const ResetPasswordScreen({super.key,
+    required this.phone,
+    required this.countryDialCode,
+  });
 
   @override
   State<ResetPasswordScreen> createState() => _ResetPasswordScreenState();
@@ -80,7 +84,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
                 Image.asset(logo,width: 1.sw,height: 90.h),
                 SizedBox(height: 40.h),
                 Pinput(
-                  length: 5,
+                  length: 6,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   controller: codeController,
                   defaultPinTheme: defaultPinTheme,
@@ -139,6 +143,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen>  with FormSta
                         params: ResetPasswordParams(
                           phone: widget.phone,
                           password: form.controllers[0].text,
+                          countryCode: widget.countryDialCode,
                           confirmationPassword: form.controllers[1].text,
                           code: codeController.text,
                           firebaseToken: FirebaseApi.deviceToken.toString()

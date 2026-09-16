@@ -1,3 +1,4 @@
+import 'package:centro_partner/features/general/data/model/main_court/main_court_details_model.dart';
 import 'package:centro_partner/features/home/data/model/category_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/workday_details_model.dart';
 import 'package:centro_partner/features/home/data/model/facility_model.dart';
@@ -5,9 +6,10 @@ import 'package:centro_partner/features/home/data/model/location_model.dart';
 import 'package:centro_partner/features/profile/data/model/profile_image_model.dart';
 
 class CourtDetailsModel {
-  int? iD;
+  String? iD;
   String? name;
   String? description;
+  MainCourtDetailsModel? mainCourt;
   CategoryInfoModel? category;
   bool? isActive;
   int? price;
@@ -22,6 +24,7 @@ class CourtDetailsModel {
     this.iD,
     this.name,
     this.description,
+    this.mainCourt,
     this.category,
     this.isActive,
     this.price,
@@ -37,6 +40,7 @@ class CourtDetailsModel {
     iD = json['id'];
     name = json['name'];
     description = json['description'];
+    mainCourt = json['court'] != null ? MainCourtDetailsModel.fromJson(json['court']) : null;
     category = json['category'] != null ? CategoryInfoModel.fromJson(json['category']) : null;
     isActive = json['is_active'];
     price = json['price'];
@@ -68,6 +72,9 @@ class CourtDetailsModel {
     data['id'] = iD;
     data['name'] = name;
     data['description'] = description;
+    if (mainCourt != null) {
+      data['court'] = mainCourt!.toJson();
+    }
     if (category != null) {
       data['category'] = category!.toJson();
     }

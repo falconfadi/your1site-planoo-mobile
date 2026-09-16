@@ -5,7 +5,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class DeleteEventParams extends BaseParams {
 
-  final int eventId;
+  final String eventId;
 
   DeleteEventParams({
     required this.eventId,

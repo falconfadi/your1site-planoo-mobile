@@ -7,7 +7,7 @@ import '../../../../../core/usecase/usecase.dart';
 class EditWorkdayParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
   final int dayId;
   final String start;
   final String end;

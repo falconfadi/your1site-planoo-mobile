@@ -11,6 +11,7 @@ import 'package:centro_partner/core/ui/shared_widgets/custom_back_icon_widget.da
 import 'package:centro_partner/core/ui/shared_widgets/custom_popup_menu_button_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_row_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/expandable_text_widget.dart';
+import 'package:centro_partner/core/ui/shared_widgets/icon_text_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/custom_sheet.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
@@ -37,10 +38,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 class CourseDetailsScreen extends StatefulWidget {
 
-  final int courseId;
+  final String courseId;
   final VoidCallback? onRefresh;
+  final VoidCallback? onRefreshAllCourses;
 
-  const CourseDetailsScreen({super.key,required this.courseId,this.onRefresh});
+  const CourseDetailsScreen({super.key,required this.courseId,this.onRefresh,this.onRefreshAllCourses});
 
   @override
   State<CourseDetailsScreen> createState() => _CourseDetailsScreenState();
@@ -143,6 +145,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                     course: model.course,
                                     onRefresh: () async {
                                       refreshCubit?.getModel();
+                                      widget.onRefreshAllCourses?.call();
                                     },
                                   ))
                               ),
@@ -260,6 +263,16 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                       ],
                     ),
                     SizedBox(height: 5.h),
+                    IconTextWidget(
+                      icon: court,
+                      iconColor: AppColors.turquoiseColor,
+                      iconSize: 30.w,
+                      text: model.course!.mainCourt!.name!,
+                      textStyle: AppTheme.labelLarge.copyWith(
+                        color: AppColors.mediumGrayColor,
+                      ),
+                    ),
+                    SizedBox(height: 10.h),
                     Row(
                       children: [
                         Expanded(
@@ -274,7 +287,7 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                     params: ReviewsParams(ownerType: "course", ownerId: model.course!.iD!)
                                 ),
                                 onError: (error) {
-                                  if ((AppStorage.languageCode == "en" && error.contains("Not found")) ||
+                                  if ((AppStorage.languageCode == "en" && error.contains("reviews not found")) ||
                                       AppStorage.languageCode == "ar" && error.contains("التعليقات غير موجود")
                                   ) {
                                     return ReviewModel(reviewsList: []);

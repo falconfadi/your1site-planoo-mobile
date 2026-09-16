@@ -6,8 +6,9 @@ import '../../../../../core/usecase/usecase.dart';
 
 class EditCourtParams extends BaseParams {
 
-  final int? courtId;
+  final String? courtId;
   final String name;
+  final String mainCourtId;
   final int categoryId;
   final String description;
   final int sessionDuration;
@@ -16,6 +17,7 @@ class EditCourtParams extends BaseParams {
   EditCourtParams({
     required this.courtId,
     required this.name,
+    required this.mainCourtId,
     required this.categoryId,
     required this.description,
     required this.sessionDuration,
@@ -26,6 +28,7 @@ class EditCourtParams extends BaseParams {
     return {
       'activity_id': courtId.toString(),
       'name': name,
+      'court_id': mainCourtId.toString(),
       'category_id': categoryId.toString(),
       'description': description,
       'session_duration': sessionDuration.toString(),

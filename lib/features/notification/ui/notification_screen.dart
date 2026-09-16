@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:centro_partner/core/boilerplate/get_model/cubits/get_model_cubit.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_header.dart';
@@ -36,6 +37,7 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> with SingleTickerProviderStateMixin {
 
   GetModelCubit<NotificationsModel>? getCubit;
+  bool _isConflictCardExpanded = false;
 
   Future viewNotification(bool isViewed,int notificationId) async {
     if(isViewed == false) {
@@ -48,6 +50,51 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
       }
     }
   }
+
+  Map<String, String> flattenConflicts(dynamic data, [String prefix = '']) {
+    Map<String, String> result = {};
+
+    if (data == null) return result;
+
+    if (data is String) {
+      try {
+        String cleanedData = data.trim();
+        if (cleanedData.endsWith('...')) {
+          cleanedData = cleanedData.substring(0, cleanedData.length - 3);
+        }
+        final decoded = jsonDecode(cleanedData);
+        return flattenConflicts(decoded, prefix);
+      } catch (e) {
+        result[prefix.isEmpty ? 'Conflict' : prefix] = data;
+        return result;
+      }
+    }
+
+    if (data is Map) {
+      data.forEach((key, value) {
+        String newKey = prefix.isEmpty ? '$key' : '$prefix ➡️ $key';
+
+        if (value is Map || value is List) {
+          result.addAll(flattenConflicts(value, newKey));
+        } else {
+          result[newKey] = value.toString();
+        }
+      });
+    }
+    else if (data is List) {
+      for (int i = 0; i < data.length; i++) {
+        String newKey = prefix.isEmpty ? '[${i + 1}]' : '$prefix [${i + 1}]';
+
+        if (data[i] is Map || data[i] is List) {
+          result.addAll(flattenConflicts(data[i], newKey));
+        } else {
+          result[newKey] = data[i].toString();
+        }
+      }
+    }
+    return result;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +124,10 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: newModel.notificationsList!.length,
                 itemBuilder: (context,index) {
+
+                  final Map<String, String> conflictMap = flattenConflicts(newModel.notificationsList![index].payload!.conflicts);
+                  final List<String> keys = conflictMap.keys.toList();
+
                   return Padding(
                     padding: EdgeInsets.symmetric(vertical: 10.w),
                     child: InkWell(
@@ -99,7 +150,6 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                           case NotificationType.event:
                             Navigation.push(EventDetailsScreen(eventId: newModel.notificationsList![index].payload!.event!));
                             break;
-                          // todo add (session - chat) cases later
                           default:
                             break;
                         }
@@ -168,6 +218,69 @@ class _NotificationScreenState extends State<NotificationScreen> with SingleTick
                               ),
                               SizedBox(height: 10.h),
                               Text(newModel.notificationsList![index].body!, style: AppTheme.bodyLarge),
+                              SizedBox(height: 5.h),
+                              keys.isEmpty
+                                  ? const SizedBox.shrink()
+                                  : InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _isConflictCardExpanded = !_isConflictCardExpanded;
+                                  });
+                                },
+                                splashColor: Colors.transparent,
+                                highlightColor: Colors.transparent,
+                                child: AnimatedSize(
+                                  duration: const Duration(milliseconds: 250),
+                                  curve: Curves.easeInOut,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        itemCount: _isConflictCardExpanded ? keys.length :
+                                        (keys.length > 1 ? 1 : keys.length),
+                                        itemBuilder: (context, conflictIndex) {
+                                          final String currentKey = keys[conflictIndex];
+                                          final String currentValue = conflictMap[currentKey]!;
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 5),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "$currentKey: ",
+                                                  style: AppTheme.bodyMedium.copyWith(color: AppColors.redColor),
+                                                ),
+                                                Text(
+                                                  currentValue,
+                                                  style: AppTheme.bodySmall,
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      if (keys.length > 1)
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 5),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                _isConflictCardExpanded ? "" : AppLocalization.of(context).translate("see_more"),
+                                                style: AppTheme.bodySmall.copyWith(
+                                                    color: AppColors.primaryColor,
+                                                    fontWeight: FontWeight.bold
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                               SizedBox(height: 5.h),
                               Text(newModel.notificationsList![index].type!,
                                 style: AppTheme.headlineSmall.copyWith(color: AppColors.turquoiseColor),

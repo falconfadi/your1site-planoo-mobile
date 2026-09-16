@@ -20,7 +20,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class CreateWorkdaySheet extends StatefulWidget {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
   final VoidCallback onRefresh;
 
   const CreateWorkdaySheet({super.key,
@@ -51,8 +51,9 @@ class _CreateWorkdaySheetState extends State<CreateWorkdaySheet> {
             return DaysUseCase(HomeRepository()).call(params: DaysParams());
           },
           modelBuilder: (model) => SelectSingleItemWidget<String, String>(
-            title: selectedDay ?? AppLocalization.of(context).translate("workday"),
-            titleColor: selectedDay == null
+            title: AppLocalization.of(context).translate("workday"),
+            subTitle: selectedDay ?? AppLocalization.of(context).translate("workday"),
+            subTitleColor: selectedDay == null
                 ? AppColors.mediumGrayColor
                 : AppColors.blackColor,
             list: model.daysList!,

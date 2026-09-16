@@ -3,11 +3,11 @@ import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart
 import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
+import 'package:centro_partner/core/ui/shared_widgets/custom_country_code_picker_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
 import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:centro_partner/core/utils/validators/email_validator.dart';
 import 'package:centro_partner/core/utils/validators/password_validator.dart';
-import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
 import 'package:centro_partner/features/auth/data/model/user_type_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart';
@@ -15,6 +15,7 @@ import 'package:centro_partner/features/auth/data/usecase/user_types_usecase.dar
 import 'package:centro_partner/features/auth/ui/verification_code_screen.dart';
 import 'package:centro_partner/features/auth/widgets/footer_widget.dart';
 import 'package:centro_partner/features/general/ui/terms_and_conditions_screen.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
@@ -29,6 +30,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/core/utils/extension/text_field_ext.dart';
 import 'package:centro_partner/core/utils/form_utils/form_state_mixin.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 
 class SignUpScreen extends StatefulWidget {
 
@@ -42,6 +44,8 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
 
   String? selectAccountType;
   bool acceptTerms = false;
+  String selectedIsoCode = 'SY';
+  String countryDialCode = "+963";
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +71,9 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                       return UserTypesUseCase(AuthRepository()).call(params: UserTypesParams());
                     },
                     modelBuilder: (model) => SelectSingleItemWidget<String, String>(
-                      title: selectAccountType ?? AppLocalization.of(context).translate("account_type"),
-                      titleColor: selectAccountType == null
+                      title: AppLocalization.of(context).translate("account_type"),
+                      subTitle: selectAccountType ?? AppLocalization.of(context).translate("account_type"),
+                      subTitleColor: selectAccountType == null
                           ? AppColors.mediumGrayColor
                           : AppColors.blackColor,
                       list: model.userTypesList!,
@@ -118,22 +123,59 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                     labelText: AppLocalization.of(context).translate("email_address"),
                   ),
                   SizedBox(height: 20.h),
-                  CustomTextField(
-                    autoFocus: false,
-                    autoValidateMode: AutovalidateMode.onUserInteraction,
-                    keyboardType: TextInputType.phone,
-                    prefixIcon: Icons.phone_android_outlined,
-                    validator: (value) {
-                      return BaseValidator.validateValue(
-                        context,
-                        value!,
-                        [RequiredValidator(),PhoneNumberValidator()],
-                      );
-                    },
-                    focusNode: form.nodes[2],
-                    nextFocusNode: form.nodes[3],
-                    textEditingController: form.controllers[2],
-                    labelText: AppLocalization.of(context).translate("phone"),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: isTablet ? 15.h : 5.h),
+                        child: CustomCountryCodePickerWidget(
+                          enabled: true,
+                          initialSelection: countryDialCode,
+                          onChanged: (CountryCode countryCode) {
+                            setState(() {
+                              selectedIsoCode = (countryCode.code!).toUpperCase();
+                              countryDialCode = countryCode.dialCode!;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: CustomTextField(
+                          autoFocus: false,
+                          autoValidateMode: AutovalidateMode.onUserInteraction,
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            final baseError = BaseValidator.validateValue(
+                              context,
+                              value ?? '',
+                              [RequiredValidator()],
+                            );
+                            if (baseError != null) return baseError;
+                            try {
+                              final targetIso = IsoCode.values.firstWhere(
+                                    (element) => element.name == selectedIsoCode.toUpperCase(),
+                                orElse: () => IsoCode.IQ,
+                              );
+                              final parsedPhone = PhoneNumber.parse(
+                                value!.trim(),
+                                callerCountry: targetIso,
+                              );
+
+                              if (!parsedPhone.isValid()) {
+                                return AppLocalization.of(context).translate("invalid_country_phone");
+                              }
+                            } catch (e) {
+                              return AppLocalization.of(context).translate("invalid_phone_format");
+                            }
+                            return null;
+                          },
+                          focusNode: form.nodes[2],
+                          nextFocusNode: form.nodes[3],
+                          textEditingController: form.controllers[2],
+                          labelText: AppLocalization.of(context).translate("phone"),
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: 20.h),
                   CustomTextField(
@@ -221,9 +263,6 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                   ),
                   SizedBox(height: 30.h),
                   CreateModel(
-                    onSuccess: (result) async {
-                      Navigation.pushAndRemoveUntil(VerificationCodeScreen(phoneNumber: form.controllers[2].text));
-                    },
                     withValidation: true,
                     onTap: () {
                       bool isValid = form.validate();
@@ -233,6 +272,13 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                       }
                       return isValid;
                     },
+                    onSuccess: (result) {
+                      Navigation.pushAndRemoveUntil(VerificationCodeScreen(
+                          countryDialCode: countryDialCode,
+                          selectedIsoCode: selectedIsoCode,
+                          phoneNumber: form.controllers[2].text
+                      ));
+                    },
                     useCaseCallBack: ( model) {
                       if(acceptTerms == true) {
                         return RegisterUseCase(AuthRepository()).call(
@@ -240,12 +286,14 @@ class _SignUpScreenState extends State<SignUpScreen>  with FormStateMinxin {
                                 name: form.controllers[0].text,
                                 email: form.controllers[1].text,
                                 phone: form.controllers[2].text,
+                                countryCode: countryDialCode,
                                 password: form.controllers[3].text,
                                 confirmationPassword: form.controllers[3].text,
                                 accountType: selectAccountType,
                                 description: form.controllers[4].text,
                                 firebaseToken: FirebaseApi.deviceToken.toString()
-                            ));
+                            )
+                        );
                       }
                     },
                     child: CustomButton(

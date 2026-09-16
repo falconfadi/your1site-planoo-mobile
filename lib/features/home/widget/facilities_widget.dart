@@ -14,11 +14,16 @@ import 'package:flutter/material.dart';
 class FacilitiesWidget extends StatefulWidget {
 
   final String? ownerType;
-  final int? ownerId;
+  final String? ownerId;
   Set<int> selectedFacilitiesId;
   final bool? isEdit;
+  final ValueChanged<Set<int>> onFacilitiesChanged;
 
-  FacilitiesWidget({super.key,this.ownerType,this.ownerId,required this.selectedFacilitiesId,this.isEdit});
+  FacilitiesWidget({super.key,
+    this.ownerType,this.ownerId,
+    required this.selectedFacilitiesId,this.isEdit,
+    required this.onFacilitiesChanged
+  });
 
   @override
   State<FacilitiesWidget> createState() => _FacilitiesWidgetState();
@@ -43,9 +48,8 @@ class _FacilitiesWidgetState extends State<FacilitiesWidget> {
         imageBuilder: (item) => item.icon != null ? serverUrl + item.icon! : '',
         idBuilder: (item) => item.ID!,
         onSelect: (ids) {
-          setState(() {
-            widget.selectedFacilitiesId = ids;
-          });
+          widget.onFacilitiesChanged(ids);
+
           if(widget.isEdit == true) {
             _debounce?.cancel();
             _debounce = Timer(const Duration(milliseconds: 400), () async {
@@ -61,9 +65,9 @@ class _FacilitiesWidgetState extends State<FacilitiesWidget> {
         },
         isDelete: widget.isEdit == true ? true : false,
         onDelete: (id) async {
-          setState(() {
-            widget.selectedFacilitiesId.remove(id);
-          });
+          final updatedSet = Set<int>.from(widget.selectedFacilitiesId)..remove(id);
+          widget.onFacilitiesChanged(updatedSet);
+
           _debounce?.cancel();
           _debounce = Timer(const Duration(milliseconds: 400), () async {
             await DeleteFacilityUseCase(HomeRepository()).call(

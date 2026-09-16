@@ -5,13 +5,14 @@ import '../../../../core/usecase/usecase.dart';
 
 class ResendCodeParams extends BaseParams {
 
-  final String? phone;
+  final String? phone,countryCode;
 
-  ResendCodeParams({this.phone});
+  ResendCodeParams({this.phone,this.countryCode});
 
-  Map<String, String?> toJson(){
+  Map<String, String?> toJson() {
     return {
-      "phone": phone
+      "phone": phone,
+      "country_code": countryCode
     };
   }
 }

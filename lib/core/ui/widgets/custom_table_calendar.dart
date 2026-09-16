@@ -2,6 +2,7 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/utils/responsive/responsive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AppointmentsCalendarWidget extends StatefulWidget {
@@ -48,6 +49,8 @@ class _AppointmentsCalendarWidgetState extends State<AppointmentsCalendarWidget>
   Widget build(BuildContext context) {
     final isTablet = Responsive.isTablet(context);
     return TableCalendar(
+      daysOfWeekHeight: Responsive.isTablet(context) ? 80 : 16,
+      rowHeight: Responsive.isTablet(context) ? 80 : 52,
       firstDay: DateTime.utc(1900, 1, 1),
       lastDay: DateTime.utc(2100, 12, 31),
       focusedDay: focusedDay,
@@ -81,20 +84,22 @@ class _AppointmentsCalendarWidgetState extends State<AppointmentsCalendarWidget>
           shape: BoxShape.circle,
         ),
       ),
-      daysOfWeekHeight: isTablet ? 70 : 16,
       headerStyle: HeaderStyle(
         titleCentered: true,
         formatButtonVisible: false,
         titleTextStyle: AppTheme.bodyLarge.copyWith(
           color: AppColors.primaryColor,
+            fontSize: isTablet ? 18.sp : null
         ),
         leftChevronIcon: Icon(
           Icons.chevron_left,
           color: AppColors.primaryColor,
+          size: isTablet ? 24.sp : null,
         ),
         rightChevronIcon: Icon(
           Icons.chevron_right,
           color: AppColors.primaryColor,
+          size: isTablet ? 24.sp : null,
         ),
       ),
       onDaySelected: (selected, focused) {

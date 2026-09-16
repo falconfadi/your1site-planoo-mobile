@@ -50,83 +50,96 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
             final tempSelectedIds = Set<ID>.from(widget.selectedIds);
             CustomSheet.show(
               isDismissible: true,
+              height: 0.7.sh,
               header: Text(widget.title, style: AppTheme.titleLarge.copyWith(fontSize: 18.sp)),
               padding: 30.w,
               context: context,
-              child: Column(
-                children: [
-                  StatefulBuilder(
-                    builder: (context, setSheetState) {
-                      return ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: widget.list.length,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context, index) {
-                          final item = widget.list[index];
-                          final id = widget.idBuilder(item);
-                          final isSelected = tempSelectedIds.contains(id);
-                          return InkWell(
-                            onTap: () {
-                              setSheetState(() {
-                                if (isSelected) {
-                                  tempSelectedIds.remove(id);
-                                } else {
-                                  tempSelectedIds.add(id);
-                                }
-                              });
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.h),
-                              margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8.r),
-                                color: isSelected
-                                    ? AppColors.primaryColor.withOpacity(0.3)
-                                    : AppColors.extraLightGrayColor,
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (widget.imageBuilder != null) ...[
-                                    CachedImage(
-                                      width: 45.w,
-                                      height: 45.w,
-                                      imageUrl: widget.imageBuilder!(item),
-                                      fit: BoxFit.cover,
-                                      borderRadius: 10.r,
-                                      borderColor: AppColors.primaryColor,
-                                      borderWidth: 0.5,
-                                    ),
-                                    SizedBox(width: 10.w),
-                                  ],
-                                  Padding(
-                                    padding: EdgeInsets.only(top: 8.h),
-                                    child: Text(
-                                      widget.labelBuilder(item),
-                                      style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
-                                    ),
+              child: StatefulBuilder(
+                builder: (context, setSheetState) {
+                  return Container(
+                    constraints: BoxConstraints(
+                      maxHeight: 0.7.sh - 120.h,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: widget.list.length,
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            shrinkWrap: false,
+                            padding: EdgeInsets.only(bottom: 16.h),
+                            itemBuilder: (context, index) {
+                              final item = widget.list[index];
+                              final id = widget.idBuilder(item);
+                              final isSelected = tempSelectedIds.contains(id);
+                              return InkWell(
+                                onTap: () {
+                                  setSheetState(() {
+                                    if (isSelected) {
+                                      tempSelectedIds.remove(id);
+                                    } else {
+                                      tempSelectedIds.add(id);
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 20.w,vertical: 10.h),
+                                  margin: EdgeInsets.symmetric(horizontal: 5.w, vertical: 10.h),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    color: isSelected
+                                        ? AppColors.primaryColor.withOpacity(0.3)
+                                        : AppColors.extraLightGrayColor,
                                   ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                  CustomButton(
-                    width: 1.sw,
-                    backgroundColor: AppColors.primaryColor,
-                    borderRadius: 10.r,
-                    buttonName: AppLocalization.of(context).translate("save"),
-                    function: () {
-                      widget.onSelect(Set<ID>.from(tempSelectedIds));
-                      Navigation.pop();
-                    },
-                  ),
-                  SizedBox(height: 30.h),
-                ],
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      if (widget.imageBuilder != null) ...[
+                                        CachedImage(
+                                          width: isTablet ? 80 : 45.w,
+                                          height: isTablet ? 80 : 45.w,
+                                          imageUrl: widget.imageBuilder!(item),
+                                          fit: BoxFit.cover,
+                                          borderRadius: 10.r,
+                                          borderColor: AppColors.primaryColor,
+                                          borderWidth: 1.0,
+                                        ),
+                                        SizedBox(width: 10.w),
+                                      ],
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 8.h),
+                                        child: Text(
+                                          widget.labelBuilder(item),
+                                          style: AppTheme.labelLarge.copyWith(fontSize: 18.sp),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        ),
+                        Container(
+                          color: Colors.white,
+                          padding: EdgeInsets.only(top: 10.h, bottom: 20.h),
+                          child: CustomButton(
+                            width: 1.sw,
+                            backgroundColor: AppColors.primaryColor,
+                            borderRadius: 10.r,
+                            buttonName: AppLocalization.of(context).translate("save"),
+                            function: () {
+                              widget.onSelect(Set<ID>.from(tempSelectedIds));
+                              Navigation.pop();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             );
           },
@@ -154,13 +167,13 @@ class _SelectMultiItemsWidgetState<T, ID> extends State<SelectMultiItemsWidget<T
                       children: [
                         if (widget.imageBuilder != null) ...[
                           CachedImage(
-                            width: 45.w,
-                            height: 45.w,
+                            width: isTablet ? 80 : 45.w,
+                            height: isTablet ? 80 : 45.w,
                             imageUrl: widget.imageBuilder!(item),
                             fit: BoxFit.cover,
                             borderRadius: 10.r,
                             borderColor: AppColors.primaryColor,
-                            borderWidth: 0.5,
+                            borderWidth: 1.0,
                           ),
                           SizedBox(width: 10.w),
                         ],

@@ -7,7 +7,7 @@ import '../../../../../core/usecase/usecase.dart';
 class ReviewsParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
 
   ReviewsParams({
     required this.ownerType,

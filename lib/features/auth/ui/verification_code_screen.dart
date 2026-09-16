@@ -1,8 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/constants/app_images.dart';
+import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/auth/data/auth_repository/auth_repository.dart';
+import 'package:centro_partner/features/auth/data/model/country_code_model.dart';
 import 'package:centro_partner/features/auth/data/usecase/resend_code_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/verify_code_usecase.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
@@ -16,13 +20,19 @@ import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pinput/pinput.dart';
 
-
 class VerificationCodeScreen extends StatefulWidget {
 
   final String phoneNumber;
+  final String countryDialCode;
+  final String selectedIsoCode;
   final bool fromSingUp;
 
-  const VerificationCodeScreen({required this.phoneNumber,this.fromSingUp = true,super.key});
+  const VerificationCodeScreen({super.key,
+    required this.phoneNumber,
+    required this.countryDialCode,
+    required this.selectedIsoCode,
+    this.fromSingUp = true
+  });
 
   @override
   State<VerificationCodeScreen> createState() => _VerificationCodeScreenState();
@@ -93,9 +103,9 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
 
   @override
   void dispose() {
-    super.dispose();
     codeController.dispose();
     timer!.cancel();
+    super.dispose();
   }
 
   @override
@@ -124,7 +134,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                       text: " ",
                     ),
                     TextSpan(
-                      text: widget.phoneNumber,
+                      text: widget.countryDialCode + widget.phoneNumber,
                       style: AppTheme.titleLarge.copyWith(fontSize: 18.sp),
                     ),
                   ],
@@ -132,7 +142,7 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               ),
               SizedBox(height: 20.h),
               Pinput(
-                length: 5,
+                length: 6,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 controller: codeController,
                 defaultPinTheme: defaultPinTheme,
@@ -145,14 +155,29 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
               CreateModel(
                 withValidation: false,
                 onTap: () {},
-                onSuccess: (data) {
-                  Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("account_verified"));
-                  Navigation.pushAndRemoveUntil(SignInScreen());
+                onSuccess: (data) async {
+                  await AppStorage.saveData(
+                    key: countryCodeKey,
+                    value: jsonEncode(
+                      CountryCodeModel(
+                        isoCode: widget.selectedIsoCode,
+                        dialCode: widget.countryDialCode,
+                      ).toJson(),
+                    ),
+                  );
+
+                  if (context.mounted) {
+                    Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("account_verified"));
+                    Navigation.pushAndRemoveUntil(SignInScreen());
+                  }
                 },
                 useCaseCallBack: (model) {
                   return VerifyCodeUseCase(AuthRepository()).call(
                       params: VerifyCodeParams(
-                          phone: widget.phoneNumber, code: codeController.text));
+                          phone: widget.phoneNumber,
+                          countryCode: widget.countryDialCode,
+                          code: codeController.text
+                      ));
                 },
                 child: CustomButton(
                   width: 1.sw,
@@ -163,26 +188,27 @@ class _VerificationCodeScreenState extends State<VerificationCodeScreen> {
                 ),
               ),
               SizedBox(height: 80.h),
-              CreateModel(
+              enableResend ? CreateModel(
                 withValidation: false,
                 onSuccess: (result) {
                   _resendCode();
                 },
                 useCaseCallBack: (data) {
-                  if (enableResend) {
-                    codeController.clear();
-                    return  ResendCodeUseCase(AuthRepository())
-                        .call(params: ResendCodeParams(phone: widget.phoneNumber));
-                  } else {
-                    return null;
-                  }
+                  codeController.clear();
+                  return ResendCodeUseCase(AuthRepository()).call(
+                      params: ResendCodeParams(
+                          phone: widget.phoneNumber,
+                          countryCode: widget.countryDialCode
+                      )
+                  );
                 },
                 child: FooterWidget(
                   text: AppLocalization.of(context).translate("did_not_receive_code"),
-                  link: !enableResend ?
-                  _seconds > 0 ? ' ($_seconds)' : ''
-                      : AppLocalization.of(context).translate("resend"),
+                  link: AppLocalization.of(context).translate("resend"),
                 ),
+              ) : FooterWidget(
+                text: AppLocalization.of(context).translate("did_not_receive_code"),
+                link: _seconds > 0 ? ' ($_seconds)' : '',
               ),
               SizedBox(height: 50.h),
             ],

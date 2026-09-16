@@ -5,13 +5,14 @@ import '../../../../core/usecase/usecase.dart';
 
 class VerifyCodeParams extends BaseParams {
 
-  final String? phone,code;
+  final String? phone,countryCode,code;
 
-  VerifyCodeParams({this.phone,this.code});
+  VerifyCodeParams({this.phone,this.countryCode,this.code});
 
   Map<String, String?> toJson() {
     return {
       "phone": phone,
+      "country_code": countryCode,
       "code": code,
     };
   }

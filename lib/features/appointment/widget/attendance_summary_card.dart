@@ -133,119 +133,121 @@ class _AttendanceSummaryCardState extends State<AttendanceSummaryCard> {
               ],
             ),
             SizedBox(height: 10.h),
-            const Divider(),
-            SizedBox(height: 10.h),
-            Text(
-              AppLocalization.of(context).translate("participants"),
-              style: AppTheme.headlineMedium,
-            ),
-            SizedBox(height: 10.h),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: widget.participantsList.length,
-              itemBuilder: (context, index) {
-                final participant = widget.participantsList[index];
-                final isExpanded = expandedItems.contains(index);
-                return Padding(
-                  padding: EdgeInsets.only(bottom: 5.h),
-                  child: Card(
-                    color: AppColors.extraLightGrayColor,
-                    child: Padding(
-                      padding: EdgeInsets.all(10.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                if (isExpanded) {
-                                  expandedItems.remove(index);
-                                } else {
-                                  expandedItems.add(index);
+            if(widget.participantsList.isNotEmpty) ...[
+              const Divider(),
+              SizedBox(height: 10.h),
+              Text(
+                AppLocalization.of(context).translate("participants"),
+                style: AppTheme.headlineMedium,
+              ),
+              SizedBox(height: 10.h),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.zero,
+                itemCount: widget.participantsList.length,
+                itemBuilder: (context, index) {
+                  final participant = widget.participantsList[index];
+                  final isExpanded = expandedItems.contains(index);
+                  return Padding(
+                    padding: EdgeInsets.only(bottom: 5.h),
+                    child: Card(
+                      color: AppColors.extraLightGrayColor,
+                      child: Padding(
+                        padding: EdgeInsets.all(10.w),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                setState(() {
+                                  if (isExpanded) {
+                                    expandedItems.remove(index);
+                                  } else {
+                                    expandedItems.add(index);
+                                  }
+                                });
+                                if (!isExpanded) {
+                                  Future.delayed(
+                                    const Duration(milliseconds: 350),
+                                    _scrollToBottom,
+                                  );
                                 }
-                              });
-                              if (!isExpanded) {
-                                Future.delayed(
-                                  const Duration(milliseconds: 350),
-                                  _scrollToBottom,
-                                );
-                              }
-                            },
-                            child: Row(
-                              children: [
-                                CachedImage(
-                                  width: 40.w,
-                                  height: 40.w,
-                                  imageUrl: participant.profileImage?.url ?? "",
-                                  fit: BoxFit.cover,
-                                  borderColor: AppColors.grayColor,
-                                  borderRadius: 10.r,
-                                  borderWidth: 1,
-                                  errorForUser: true,
-                                ),
-                                SizedBox(width: 10.w),
-                                Expanded(
-                                  child: Text(
-                                    participant.name ?? "",
-                                    style: AppTheme.headlineSmall.copyWith(
-                                      color: AppColors.mediumGrayColor,
+                              },
+                              child: Row(
+                                children: [
+                                  CachedImage(
+                                    width: 40.w,
+                                    height: 40.w,
+                                    imageUrl: participant.profileImage?.url ?? "",
+                                    fit: BoxFit.cover,
+                                    borderColor: AppColors.grayColor,
+                                    borderRadius: 10.r,
+                                    borderWidth: 1,
+                                    errorForUser: true,
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Expanded(
+                                    child: Text(
+                                      participant.name ?? "",
+                                      style: AppTheme.headlineSmall.copyWith(
+                                        color: AppColors.mediumGrayColor,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Icon(
-                                  isExpanded
-                                      ? Icons.arrow_circle_down_outlined
-                                      : AppStorage.languageCode == "ar" ?
-                                      Icons.arrow_circle_left_outlined :
-                                  Icons.arrow_circle_right_outlined,
-                                  color: AppColors.turquoiseColor,
-                                  size: isTablet ? 22.sp : null,
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: isExpanded ? 10.h : 0),
-                          AnimatedSize(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                            child: isExpanded ? Column(
-                              children: [
-                                CustomRowWidget(
-                                  title: AppLocalization.of(context).translate("attendance_date"),
-                                  subTitle: convertDate(date: participant.attendedAt!),
-                                  titleTextStyle: AppTheme.bodyLarge,
-                                  subTitleTextStyle: AppTheme.bodyLarge.copyWith(
-                                    color: AppColors.mediumGrayColor,
+                                  Icon(
+                                    isExpanded
+                                        ? Icons.arrow_circle_down_outlined
+                                        : AppStorage.languageCode == "ar" ?
+                                    Icons.arrow_circle_left_outlined :
+                                    Icons.arrow_circle_right_outlined,
+                                    color: AppColors.turquoiseColor,
+                                    size: isTablet ? 22.sp : null,
                                   ),
-                                ),
-                                if (!widget.isEvent && participant.remainingSessions! > 0)
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: isExpanded ? 10.h : 0),
+                            AnimatedSize(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                              child: isExpanded ? Column(
+                                children: [
                                   CustomRowWidget(
-                                    title: AppLocalization.of(context).translate("remaining_sessions"),
-                                    subTitle: participant.remainingSessions.toString(),
+                                    title: AppLocalization.of(context).translate("attendance_date"),
+                                    subTitle: convertDate(date: participant.attendedAt!),
                                     titleTextStyle: AppTheme.bodyLarge,
                                     subTitleTextStyle: AppTheme.bodyLarge.copyWith(
                                       color: AppColors.mediumGrayColor,
                                     ),
                                   ),
-                                if (!widget.isEvent && participant.remainingSessions == 0)
-                                  Row(
-                                    children: [
-                                      Text(AppLocalization.of(context).translate("completed"),
-                                          style: AppTheme.headlineSmall.copyWith(color: AppColors.darkGreenColor)),
-                                    ],
-                                  ),
-                              ],
-                            ) : const SizedBox.shrink(),
-                          ),
-                        ],
+                                  if (!widget.isEvent && participant.remainingSessions! > 0)
+                                    CustomRowWidget(
+                                      title: AppLocalization.of(context).translate("remaining_sessions"),
+                                      subTitle: participant.remainingSessions.toString(),
+                                      titleTextStyle: AppTheme.bodyLarge,
+                                      subTitleTextStyle: AppTheme.bodyLarge.copyWith(
+                                        color: AppColors.mediumGrayColor,
+                                      ),
+                                    ),
+                                  if (!widget.isEvent && participant.remainingSessions == 0)
+                                    Row(
+                                      children: [
+                                        Text(AppLocalization.of(context).translate("completed"),
+                                            style: AppTheme.headlineSmall.copyWith(color: AppColors.darkGreenColor)),
+                                      ],
+                                    ),
+                                ],
+                              ) : const SizedBox.shrink(),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            )
+                  );
+                },
+              )
+            ]
           ],
         ),
       ),

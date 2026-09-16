@@ -115,7 +115,7 @@ class FirebaseApi {
     );
 
     await _localNotifications.initialize(
-      settings,
+      settings: settings,
       onDidReceiveNotificationResponse: (response) {},
     );
 
@@ -149,10 +149,10 @@ class FirebaseApi {
     );
 
     await _localNotifications.show(
-      Random().nextInt(100000),
-      message.notification?.title,
-      message.notification?.body,
-      details,
+      id: Random().nextInt(100000),
+      title: message.notification?.title,
+      body: message.notification?.body,
+      notificationDetails: details,
     );
   }
 
@@ -169,6 +169,7 @@ class FirebaseApi {
   }
 
   void _handleMessageNavigation(RemoteMessage message) {
+    hasNewNotificationsNotifier.value = true;
     final data = message.data;
 
     if (data.isEmpty || !data.containsKey('type')) return;
@@ -185,19 +186,19 @@ class FirebaseApi {
 
       case 3:
         target = CourseDetailsScreen(
-          courseId: int.parse(data['course']),
+          courseId: data['course'],
         );
         break;
 
       case 4:
         target = EventDetailsScreen(
-          eventId: int.parse(data['event']),
+          eventId: data['event'],
         );
         break;
 
       case 5:
         target = CourtAppointmentDetailsScreen(
-          appointmentId: int.parse(data['appointment']),
+          appointmentId: data['appointment'],
         );
         break;
 

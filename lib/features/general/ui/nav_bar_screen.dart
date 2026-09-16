@@ -168,7 +168,6 @@ class _NavBarScreenState extends State<NavBarScreen> {
           stateManagement: true,
           hideNavigationBarWhenKeyboardAppears: true,
           popBehaviorOnSelectedNavBarItemPress: PopBehavior.once,
-          padding: EdgeInsets.symmetric(vertical: isTablet ? 0 : 5.h),
           backgroundColor: AppColors.whiteColor,
           decoration: NavBarDecoration(
             colorBehindNavBar: AppColors.whiteColor,
@@ -181,7 +180,8 @@ class _NavBarScreenState extends State<NavBarScreen> {
             ],
           ),
           confineToSafeArea: true,
-          navBarHeight: isTablet ? 75 : kBottomNavigationBarHeight,
+          navBarHeight: isTablet ? 100 : kBottomNavigationBarHeight,
+          padding: EdgeInsets.symmetric(vertical: isTablet ? 0 : 5.h),
           navBarStyle: _navBarStyle,
         )
     );

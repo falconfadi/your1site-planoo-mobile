@@ -6,7 +6,7 @@ import '../../../../../core/usecase/usecase.dart';
 class DeleteWorkdayParams extends BaseParams {
 
   final String ownerType;
-  final int ownerId;
+  final String ownerId;
   final int dayId;
 
   DeleteWorkdayParams({

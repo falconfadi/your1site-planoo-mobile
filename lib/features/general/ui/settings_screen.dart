@@ -134,6 +134,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       AppStorage.removeData(key: kAccessToken);
                       AppStorage.removeData(key: userID);
                       AppStorage.removeData(key: userType);
+                      AppStorage.removeData(key: rememberMeKey);
+                      AppStorage.removeData(key: countryCodeKey);
                       Navigation.pushAndRemoveUntil(SignInScreen());
                     },
                     useCaseCallBack: (model) {

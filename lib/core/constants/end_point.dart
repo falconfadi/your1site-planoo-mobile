@@ -10,6 +10,7 @@ const kAccessTokenExpirationDate = 'token_expiration';
 const userID = 'user_id';
 const userType = 'user_type';
 const String rememberMeKey = "remember_me";
+const String countryCodeKey = "country_code";
 
 const String serverUrl = "https://planoo.net/";
 const String baseUrl = "https://planoo.net/api/partner/v1/";
@@ -38,6 +39,13 @@ const String deleteProfileImageUrl = "user/deleteProfileImage";
 const String editUserUrl = "user/update";
 const String deleteUserUrl = "user/delete";
 const String toggleUserNotificationUrl = "user/toggleNotification";
+/// main court
+const String allMainCourtsUrl = "court/all";
+const String createMainCourtUrl = "court/create";
+const String editMainCourtUrl = "court/update";
+const String deleteMainCourtUrl = "court/delete";
+const String checkNewMainCourtUrl = "court/hasCourt";
+
 /// court
 const String createCourtUrl = "activity/create";
 const String allCourtsUrl = "activity/all";

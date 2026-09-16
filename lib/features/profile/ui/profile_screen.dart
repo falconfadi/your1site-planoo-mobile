@@ -127,7 +127,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 SizedBox(height: 40.h),
                 ProfileCard(title: "name",subtitle: model.user!.name!),
                 SizedBox(height: 15.h),
-                ProfileCard(title: "phone",subtitle: model.user!.phone!),
+                ProfileCard(title: "phone",subtitle: model.user!.countryCode! + model.user!.phone!),
                 SizedBox(height: 20.h),
                 ProfileCard(title: "email_address",subtitle: model.user!.email!),
                 SizedBox(height: 15.h),

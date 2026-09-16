@@ -33,7 +33,7 @@ Future<DateTime?> customDatePicker(BuildContext context, {bool disablePastDates 
           ),
         ),
         child: Transform.scale(
-            scale: isTablet ? 1.4 : 1,
+            scale: isTablet ? 1.8 : 1,
             child: child!
         ),
       );

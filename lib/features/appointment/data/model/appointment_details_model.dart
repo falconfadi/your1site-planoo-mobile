@@ -19,7 +19,7 @@ class AppointmentDetailsResponse extends ApiResponse<AppointmentDetailsModel> {
 
 class AppointmentDetailsModel extends BaseModel {
 
-  int? iD;
+  String? iD;
   String? date;
   String? time;
   String? status;
@@ -78,7 +78,7 @@ class AppointmentDetailsModel extends BaseModel {
 }
 
 class HolderModel {
-  int? id;
+  String? id;
   String? type;
   String? name;
   CategoryInfoModel? category;
@@ -130,7 +130,7 @@ class HolderModel {
 class HolderImageModel {
   int? id;
   String? belongToType;
-  int? belongToId;
+  String? belongToId;
   String? url;
   String? type;
   String? name;

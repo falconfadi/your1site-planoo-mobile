@@ -3,6 +3,7 @@ import 'package:centro_partner/core/boilerplate/get_model/widgets/get_model.dart
 import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/ui/dialogs/dialogs.dart';
+import 'package:centro_partner/core/ui/shared_widgets/custom_country_code_picker_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/custom_row_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/icon_text_widget.dart';
 import 'package:centro_partner/core/ui/shared_widgets/select_single_item_widget.dart';
@@ -21,22 +22,23 @@ import 'package:centro_partner/features/appointment/data/usecase/create_court_ap
 import 'package:centro_partner/features/appointment/widget/payment_sheet.dart';
 import 'package:centro_partner/features/home/data/model/court/court_details_model.dart';
 import 'package:centro_partner/features/home/data/model/workday/workday_details_model.dart';
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
 import 'package:centro_partner/core/utils/extension/text_field_ext.dart';
 import 'package:centro_partner/core/utils/form_utils/form_state_mixin.dart';
-import 'package:centro_partner/core/utils/validators/phone_number_validation.dart';
 import 'package:centro_partner/core/utils/validators/base_validator.dart';
 import 'package:centro_partner/core/constants/app_images.dart' as image;
 import 'package:intl/intl.dart';
+import 'package:phone_numbers_parser/phone_numbers_parser.dart';
 
 class BookCourtSheet extends StatefulWidget {
 
-  CourtDetailsModel court;
+  final CourtDetailsModel court;
 
-  BookCourtSheet({super.key,required this.court});
+  const BookCourtSheet({super.key,required this.court});
 
   @override
   State<BookCourtSheet> createState() => _BookCourtSheetState();
@@ -47,6 +49,8 @@ class _BookCourtSheetState extends State<BookCourtSheet> with FormStateMinxin {
   WorkdayDetailsModel? selectedDay;
   DateTime? date;
   int selectedSlot = 0;
+  String selectedIsoCode = 'SY';
+  String countryDialCode = "+963";
 
   int getWeekdayFromName(String dayName) {
     switch (dayName.toLowerCase()) {
@@ -67,8 +71,9 @@ class _BookCourtSheetState extends State<BookCourtSheet> with FormStateMinxin {
     return Column(
       children: [
         SelectSingleItemWidget<WorkdayDetailsModel, int>(
-          title: selectedDay?.day ?? AppLocalization.of(context).translate("workdays"),
-          titleColor: selectedDay == null
+          title: AppLocalization.of(context).translate("workdays"),
+          subTitle: selectedDay?.day ?? AppLocalization.of(context).translate("workdays"),
+          subTitleColor: selectedDay == null
               ? AppColors.mediumGrayColor
               : AppColors.blackColor,
           list: widget.court.workdaysList ?? [],
@@ -256,21 +261,58 @@ class _BookCourtSheetState extends State<BookCourtSheet> with FormStateMinxin {
                                             labelText: AppLocalization.of(context).translate("note"),
                                           ),
                                           SizedBox(height: 15.h),
-                                          CustomTextField(
-                                            autoFocus: false,
-                                            autoValidateMode: AutovalidateMode.onUserInteraction,
-                                            keyboardType: TextInputType.phone,
-                                            prefixIcon: Icons.phone_android_outlined,
-                                            validator: (value) {
-                                              return BaseValidator.validateValue(
-                                                context,
-                                                value!,
-                                                [RequiredValidator(),PhoneNumberValidator(value: value)],
-                                              );
-                                            },
-                                            focusNode: form.nodes[1],
-                                            textEditingController: form.controllers[1],
-                                            labelText: AppLocalization.of(context).translate("customer_phone"),
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(top: isTablet ? 15.h : 5.h),
+                                                child: CustomCountryCodePickerWidget(
+                                                  enabled: true,
+                                                  initialSelection: countryDialCode,
+                                                  onChanged: (CountryCode countryCode) {
+                                                    setState(() {
+                                                      selectedIsoCode = (countryCode.code!).toUpperCase();
+                                                      countryDialCode = countryCode.dialCode!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: CustomTextField(
+                                                  autoFocus: false,
+                                                  autoValidateMode: AutovalidateMode.onUserInteraction,
+                                                  keyboardType: TextInputType.phone,
+                                                  validator: (value) {
+                                                    final baseError = BaseValidator.validateValue(
+                                                      context,
+                                                      value ?? '',
+                                                      [RequiredValidator()],
+                                                    );
+                                                    if (baseError != null) return baseError;
+                                                    try {
+                                                      final targetIso = IsoCode.values.firstWhere(
+                                                            (element) => element.name == selectedIsoCode.toUpperCase(),
+                                                        orElse: () => IsoCode.IQ,
+                                                      );
+                                                      final parsedPhone = PhoneNumber.parse(
+                                                        value!.trim(),
+                                                        callerCountry: targetIso,
+                                                      );
+
+                                                      if (!parsedPhone.isValid()) {
+                                                        return AppLocalization.of(context).translate("invalid_country_phone");
+                                                      }
+                                                    } catch (e) {
+                                                      return AppLocalization.of(context).translate("invalid_phone_format");
+                                                    }
+                                                    return null;
+                                                  },
+                                                  focusNode: form.nodes[1],
+                                                  textEditingController: form.controllers[1],
+                                                  labelText: AppLocalization.of(context).translate("customer_phone"),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ]
                                     )
@@ -298,7 +340,8 @@ class _BookCourtSheetState extends State<BookCourtSheet> with FormStateMinxin {
                                                 sessionDuration: widget.court.sessionDuration!,
                                                 time: model.slot!.slots!.isEmpty ? "" : model.slot!.slots![selectedSlot].startTime!,
                                                 note: form.controllers[0].text,
-                                                customerPhone: form.controllers[1].text
+                                                customerPhone: form.controllers[1].text,
+                                                countryCode: countryDialCode
                                             ),
                                           )
                                       );

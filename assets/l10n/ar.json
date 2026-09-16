@@ -88,6 +88,7 @@
   "gallery": "المعرض",
   "camera": "الكاميرا",
   "select_image": "اختر صورة",
+  "court_required": "الملعب مطلوب",
   "category_required": "الفئة مطلوبة",
   "days_required": "اليوم مطلوب",
   "times_required": "الأوقات مطلوبة",
@@ -140,5 +141,7 @@
   "remaining": "متبقي",
   "details": "التفاصيل",
   "attendance_date": "تاريخ الحضور",
-  "remaining_sessions": "الجلسات المتبقية"
+  "remaining_sessions": "الجلسات المتبقية",
+  "welcome_Create_first_court": "أهلاً وسهلاً! أنشئ ملعبك الأول",
+  "invalid_country_phone": "رقم الهاتف غير صحيح للدولة المحددة"
 }

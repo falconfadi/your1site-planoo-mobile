@@ -2,10 +2,11 @@ import 'package:centro_partner/features/profile/data/model/profile_image_model.d
 
 class UserModel {
 
-  int? id;
+  String? id;
   String? name;
   String? email;
   String? phone;
+  String? countryCode;
   String? accountType;
   String? description;
   String? isVerified;
@@ -19,6 +20,7 @@ class UserModel {
     this.name,
     this.email,
     this.phone,
+    this.countryCode,
     this.accountType,
     this.description,
     this.isVerified,
@@ -33,6 +35,7 @@ class UserModel {
     name = json['name'];
     email = json['email'];
     phone = json['phone'];
+    countryCode = json['country_code'];
     accountType = json['account_type'];
     description = json['description'];
     isVerified = json['is_verified'];
@@ -48,6 +51,7 @@ class UserModel {
     data['name'] = name;
     data['email'] = email;
     data['phone'] = phone;
+    data['country_code'] = countryCode;
     data['account_type'] = accountType;
     data['description'] = description;
     data['is_verified'] = isVerified;

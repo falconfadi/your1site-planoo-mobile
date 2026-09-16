@@ -8,6 +8,7 @@ import '../../../../../core/usecase/usecase.dart';
 class CreateCourseParams extends BaseParams {
 
   final String name;
+  final String mainCourtId;
   final int categoryId;
   final String description;
   final int courseDuration;
@@ -25,6 +26,7 @@ class CreateCourseParams extends BaseParams {
 
   CreateCourseParams({
     required this.name,
+    required this.mainCourtId,
     required this.categoryId,
     required this.description,
     required this.courseDuration,
@@ -44,6 +46,7 @@ class CreateCourseParams extends BaseParams {
   Map<String, dynamic> toFormDataMap() {
     Map<String, dynamic> data = {
       'name': name,
+      'court_id': mainCourtId.toString(),
       'category_id': categoryId.toString(),
       'description': description,
       'course_duration': courseDuration.toString(),

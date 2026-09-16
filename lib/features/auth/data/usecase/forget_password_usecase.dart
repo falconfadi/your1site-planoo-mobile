@@ -5,13 +5,14 @@ import '../auth_repository/auth_repository.dart';
 
 class ForgetPasswordParams extends BaseParams {
 
-  final String? phone,firebaseToken;
+  final String? phone,countryCode,firebaseToken;
 
-  ForgetPasswordParams({this.phone,this.firebaseToken});
+  ForgetPasswordParams({this.phone,this.countryCode,this.firebaseToken});
 
   Map<String, String?> toJson(){
     return {
       "phone": phone,
+      "country_code": countryCode,
       "firebase_token": firebaseToken
     };
   }

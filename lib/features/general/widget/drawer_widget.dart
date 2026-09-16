@@ -14,6 +14,7 @@ import 'package:centro_partner/features/auth/data/auth_repository/auth_repositor
 import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/features/general/ui/about_screen.dart';
+import 'package:centro_partner/features/general/ui/main_courts_screen.dart';
 import 'package:centro_partner/features/general/ui/settings_screen.dart';
 import 'package:centro_partner/features/general/ui/terms_and_conditions_screen.dart';
 import 'package:centro_partner/features/general/widget/drawer_item.dart';
@@ -35,6 +36,11 @@ class DrawerWidget extends StatelessWidget {
         children: [
           SizedBox(height: 20.h),
           Image.asset(miniLogo,width: 100.w,height: 100.w),
+          DrawerItem(
+            title: AppLocalization.of(context).translate("courts"),
+            iconPath: court,
+            onTap: () => Navigation.push(MainCourtsScreen()),
+          ),
           DrawerItem(
             title: AppLocalization.of(context).translate("settings"),
             iconPath: settings,

@@ -12,12 +12,12 @@ import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/ui/widgets/loading.dart';
 import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 
 class CreateLocationScreen extends StatefulWidget {
 
   final String? ownerType;
-  final int? ownerId;
+  final String? ownerId;
   final LocationModel? location;
   final bool? isEdit;
 
@@ -32,118 +32,102 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
   bool _searchLoading = false;
   LocationData? locationData;
   CameraPosition? _cameraPosition;
-  LatLng? initialPosition;
-  Position _pickPosition = Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1, altitudeAccuracy: 0.0,headingAccuracy: 0.0);
+  LatLng initialPosition = const LatLng(0, 0);
+  bool _isPositionInitialized = false;
+
+  geolocator.Position _pickPosition = geolocator.Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1, altitudeAccuracy: 0.0,headingAccuracy: 0.0);
+
   Location location = Location();
+  GoogleMapController? _mapController;
 
   @override
   void initState() {
     super.initState();
-    if (widget.location != null) {
+    if (widget.location != null && widget.location!.lat != null && widget.location!.long != null) {
       initialPosition = LatLng(
         widget.location!.lat!.toDouble(),
         widget.location!.long!.toDouble(),
       );
-
-      _cameraPosition = CameraPosition(
-        target: initialPosition!,
-        zoom: 16,
-      );
-
-      _pickPosition = Position(
-        latitude: initialPosition!.latitude,
-        longitude: initialPosition!.longitude,
-        timestamp: DateTime.now(),
-        accuracy: 1,
-        altitude: 1,
-        heading: 1,
-        speed: 1,
-        speedAccuracy: 1,
-        altitudeAccuracy: 0.0,
-        headingAccuracy: 0.0,
-      );
-
-      _searchLoading = false;
-      setState(() {});
-
+      _setupPositions(initialPosition);
     } else {
       getCurrentLocation();
     }
   }
 
+  void _setupPositions(LatLng targetPosition) {
+    _cameraPosition = CameraPosition(target: targetPosition, zoom: 16);
+    _pickPosition = geolocator.Position(
+      latitude: targetPosition.latitude,
+      longitude: targetPosition.longitude,
+      timestamp: DateTime.now(),
+      accuracy: 1, altitude: 1, heading: 1, speed: 1, speedAccuracy: 1,
+      altitudeAccuracy: 0.0, headingAccuracy: 0.0,
+    );
+    _isPositionInitialized = true;
+  }
+
   Future<void> getCurrentLocation() async {
-    _searchLoading = true;
-    setState(() {});
+    setState(() {
+      _searchLoading = true;
+    });
 
     bool serviceEnabled;
-    PermissionStatus permissionGranted;
 
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
+    try {
+      serviceEnabled = await location.serviceEnabled();
       if (!serviceEnabled) {
-        _searchLoading = false;
-        setState(() {});
-        return;
+        serviceEnabled = await location.requestService();
+        if (!serviceEnabled) {
+          setState(() {
+            _searchLoading = false;
+          });
+          return;
+        }
       }
-    }
 
-    permissionGranted = await location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) {
-        _searchLoading = false;
-        setState(() {});
-        return;
+      PermissionStatus permissionGranted = await location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          _exitLoadingWithError();
+          return;
+        }
       }
+
+      await location.changeSettings(accuracy: LocationAccuracy.high);
+      locationData = await location.getLocation();
+
+      if (locationData != null && locationData!.latitude != null && locationData!.longitude != null) {
+        initialPosition = LatLng(locationData!.latitude!, locationData!.longitude!);
+        _setupPositions(initialPosition);
+
+        if (_mapController != null && _cameraPosition != null) {
+          _mapController!.animateCamera(CameraUpdate.newCameraPosition(_cameraPosition!));
+        }
+      }
+    } catch(e) {
+      debugPrint("Error fetching location: $e");
     }
 
-    locationData = await location.getLocation();
-    if (locationData != null) {
-      initialPosition = LatLng(
-        locationData!.latitude!.toDouble(),
-        locationData!.longitude!.toDouble(),
-      );
-    }
+    setState(() => _searchLoading = false);
+  }
 
-    _cameraPosition = CameraPosition(
-      target: initialPosition!,
-      zoom: 16,
-    );
+  void _exitLoadingWithError() {
+    setState(() {
+      _searchLoading = false;
+    });
+  }
 
-    _pickPosition = Position(
-      latitude: locationData!.latitude!,
-      longitude: locationData!.longitude!,
+  void updatePosition(CameraPosition position) {
+    _pickPosition = geolocator.Position(
+      latitude: position.target.latitude,
+      longitude: position.target.longitude,
       timestamp: DateTime.now(),
-      accuracy: 1,
-      altitude: 1,
-      heading: 1,
-      speed: 1,
-      speedAccuracy: 1,
+      accuracy: 1, altitude: 1, heading: 1,
+      speedAccuracy: 1, speed: 1,
       altitudeAccuracy: 0.0,
       headingAccuracy: 0.0,
     );
-
-    _searchLoading = false;
-    setState(() {});
-  }
-
-  void updatePosition(CameraPosition position, bool fromAddress) {
-    try {
-      _pickPosition = Position(
-        latitude: position.target.latitude,
-        longitude: position.target.longitude,
-        timestamp: DateTime.now(),
-        accuracy: 1,
-        altitude: 1,
-        heading: 1,
-        speedAccuracy: 1,
-        speed: 1,
-        altitudeAccuracy: 0.0,
-        headingAccuracy: 0.0,
-      );
-      setState(() {});
-    } catch (e) {}
   }
 
   LocationModel _buildResultLocation() {
@@ -157,33 +141,33 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
   @override
   Widget build(BuildContext context) {
     final isTablet = Responsive.isTablet(context);
+    if (_searchLoading && !_isPositionInitialized) {
+      return const Scaffold(body: Center(child: LoadingIndicator()));
+    }
     return Scaffold(
       body: SafeArea(
-          child: _searchLoading ?  const Center(
-            child: LoadingIndicator(),
-          ) : Stack(
+          child: Stack(
               children: [
                 GoogleMap(
                   initialCameraPosition: CameraPosition(
-                    target: initialPosition ?? const LatLng(0, 0),
+                    target: initialPosition,
                     zoom: 16,
                   ),
                   minMaxZoomPreference: const MinMaxZoomPreference(0, 16),
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   onMapCreated: (GoogleMapController mapController) {
-                    mapController = mapController;
+                    _mapController = mapController;
                   },
                   onCameraMove: (CameraPosition cameraPosition) {
                     _cameraPosition = cameraPosition;
-                  },
-                  onCameraIdle: () {
-                    if (_cameraPosition != null) {
-                      updatePosition(_cameraPosition!, false);
-                    }
+                    updatePosition(cameraPosition);
                   },
                 ),
-                Center(child: Icon(Icons.location_on,size: isTablet ? 80 : 50,color: Colors.red)),
+                Center(child: Padding(
+                  padding: EdgeInsets.only(bottom: 25.h),
+                  child: Icon(Icons.location_on,size: isTablet ? 80 : 50,color: AppColors.redColor),
+                )),
                 Positioned(
                     bottom: 20.h,
                     left: 20.w,
@@ -218,7 +202,8 @@ class _CreateLocationScreenState extends State<CreateLocationScreen> {
                       ),
                     )
                 ),
-              ])
+              ]
+          )
       )
     );
   }

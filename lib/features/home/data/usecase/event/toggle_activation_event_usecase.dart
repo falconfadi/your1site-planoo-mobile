@@ -5,7 +5,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class ToggleActivationEventParams extends BaseParams {
 
-  final int eventId;
+  final String eventId;
 
   ToggleActivationEventParams({
     required this.eventId,

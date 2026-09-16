@@ -28,7 +28,7 @@ import 'package:intl/intl.dart';
 
 class CourtAppointmentDetailsScreen extends StatefulWidget {
 
-  int appointmentId;
+  String appointmentId;
   VoidCallback? onRefresh;
 
   CourtAppointmentDetailsScreen({super.key,required this.appointmentId,this.onRefresh});

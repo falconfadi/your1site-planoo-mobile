@@ -6,7 +6,7 @@ import '../../../../../core/usecase/usecase.dart';
 
 class EventDetailsParams extends BaseParams {
 
-  final int eventId;
+  final String eventId;
 
   EventDetailsParams({required this.eventId});
 }
