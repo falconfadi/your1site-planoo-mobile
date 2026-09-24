@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/utils/project_utils/phone_utils.dart';
 import 'package:centro_partner/features/appointment/data/appointment_repository/appointment_repository.dart';
 import '../../../../../core/params/base_params.dart';
 import '../../../../../core/results/result.dart';
@@ -36,7 +37,7 @@ class CreateCourtAppointmentParams extends BaseParams {
       'session_duration': sessionDuration,
       'time': time,
       'notes': note,
-      'customer_phone': customerPhone,
+      'customer_phone': toNationalPhoneNumber(customerPhone),
       'country_code': countryCode,
     };
   }

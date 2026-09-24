@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/utils/project_utils/phone_utils.dart';
 import 'package:centro_partner/core/results/result.dart';
 import '../../../../core/params/base_params.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -11,7 +12,7 @@ class ForgetPasswordParams extends BaseParams {
 
   Map<String, String?> toJson(){
     return {
-      "phone": phone,
+      "phone": toNationalPhoneNumber(phone),
       "country_code": countryCode,
       "firebase_token": firebaseToken
     };

@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/utils/project_utils/phone_utils.dart';
 import '../../../../core/params/base_params.dart';
 import '../../../../core/results/result.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -22,7 +23,7 @@ class RegisterParams extends BaseParams {
   Map<String, String?> toJson() {
     return {
       "name": name,
-      "phone": phone,
+      "phone": toNationalPhoneNumber(phone),
       "country_code": countryCode,
       "email": email,
       "password": password,

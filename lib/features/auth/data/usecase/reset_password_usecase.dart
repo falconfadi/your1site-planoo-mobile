@@ -1,3 +1,4 @@
+import 'package:centro_partner/core/utils/project_utils/phone_utils.dart';
 import '../../../../core/params/base_params.dart';
 import '../../../../core/results/result.dart';
 import '../../../../core/usecase/usecase.dart';
@@ -18,7 +19,7 @@ class ResetPasswordParams extends BaseParams {
 
   Map<String, String?> toJson() {
     return {
-      "phone": phone,
+      "phone": toNationalPhoneNumber(phone),
       "country_code": countryCode,
       "password": password,
       "password_confirmation": confirmationPassword,
