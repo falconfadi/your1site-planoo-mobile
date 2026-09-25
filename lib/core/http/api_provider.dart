@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../constants/end_point.dart';
 import '../errors/bad_request_error.dart';
 import '../errors/base_error.dart';
@@ -36,7 +37,23 @@ class ApiProvider {
       }
   );
 
-  static final Dio dio = Dio(options);
+  static final Dio dio = _createDio();
+
+  static Dio _createDio() {
+    final dio = Dio(options);
+    if (kDebugMode) {
+      dio.interceptors.add(PrettyDioLogger(
+        requestHeader: true,
+        requestBody: true,
+        responseHeader: false,
+        responseBody: true,
+        error: true,
+        compact: true,
+        maxWidth: 120,
+      ));
+    }
+    return dio;
+  }
 
 
   static Future<Either<BaseError, T>> uploadFilesWithKeys<T>({
@@ -81,7 +98,6 @@ class ApiProvider {
       );
 
       final decodedJson = _normalizeResponse(response.data);
-      debugPrint('response : $decodedJson');
       if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
         if ((decodedJson['message'] ?? '').isNotEmpty && decodedJson['payload'] != null) {
           return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
@@ -105,10 +121,6 @@ class ApiProvider {
     required String strString,
   }) async {
     try {
-      debugPrint('[${method.name}: $url] data : [$data]');
-      debugPrint('queryParameters : [$queryParameters]');
-      debugPrint(jsonEncode(data));
-
       final response = await _sendRequest(method, url, data, headers, queryParameters);
       final decodedJson = _normalizeResponse(response.data);
 
@@ -134,10 +146,6 @@ class ApiProvider {
     CancelToken? cancelToken,
   }) async {
     try {
-      debugPrint('[${method.name}: $url] data : [$data]');
-      debugPrint('queryParameters : [$queryParameters]');
-      debugPrint(jsonEncode(data));
-
       final response = await _sendRequest(method, url, data, headers, queryParameters);
       final decodedJson = _normalizeResponse(response.data);
 
@@ -187,8 +195,6 @@ class ApiProvider {
   }
 
   static BaseError handleDioError(DioException error) {
-    if (kDebugMode) debugPrint('error : $error');
-
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.sendTimeout ||
         error.type == DioExceptionType.receiveTimeout) {

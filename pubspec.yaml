@@ -43,6 +43,7 @@ dependencies:
   bloc: ^9.2.1
   flutter_svg: ^2.3.0
   dio: ^5.9.2
+  pretty_dio_logger: ^1.4.0
   image_picker: ^1.2.2
   flutter_screenutil: ^5.9.3
   awesome_dialog: ^3.3.0
