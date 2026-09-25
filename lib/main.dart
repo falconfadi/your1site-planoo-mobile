@@ -1,19 +1,17 @@
-import 'package:centro_partner/core/classes/Keys.dart';
+import 'package:centro_partner/core/classes/app_localization.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
+import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:centro_partner/core/constants/app_colors.dart';
 import 'package:centro_partner/core/constants/app_styles.dart';
 import 'package:centro_partner/core/constants/end_point.dart';
 import 'package:centro_partner/features/auth/ui/splash_screen.dart';
 import 'package:centro_partner/firebase_options.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:centro_partner/core/classes/app_localization.dart';
-import 'package:centro_partner/core/classes/firebase_api.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +37,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class MyApp extends StatefulWidget {
-
   const MyApp({super.key});
 
   @override
@@ -52,7 +49,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   Locale? _locale;
   final firebaseApi = FirebaseApi.instance;
 
@@ -73,7 +69,7 @@ class _MyAppState extends State<MyApp> {
 
     AppStorage.loadLanguage().then((languageCode) {
       setState(() {
-        if(AppStorage.getData(key: headerLanguageKey) == null) {
+        if (AppStorage.getData(key: headerLanguageKey) == null) {
           AppStorage.saveData(key: headerLanguageKey, value: languageCode);
         }
         _locale = Locale(languageCode);
@@ -89,31 +85,31 @@ class _MyAppState extends State<MyApp> {
       splitScreenMode: true,
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
-            navigatorKey: Keys.navigatorKey,
-            supportedLocales: const [Locale('en', ''), Locale('ar', '')],
-            locale: _locale,
-            localizationsDelegates: const [
-              AppLocalization.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            localeResolutionCallback: (local, supportedLocales) {
-              for (var supportedLocale in supportedLocales) {
-                if (supportedLocale.languageCode == local!.languageCode) {
-                  return supportedLocale;
-                }
+          navigatorKey: Keys.navigatorKey,
+          supportedLocales: const [Locale('en', ''), Locale('ar', '')],
+          locale: _locale,
+          localizationsDelegates: const [
+            AppLocalization.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          localeResolutionCallback: (local, supportedLocales) {
+            for (var supportedLocale in supportedLocales) {
+              if (supportedLocale.languageCode == local!.languageCode) {
+                return supportedLocale;
               }
-              return supportedLocales.first;
-            },
-            debugShowCheckedModeBanner: false,
-            title: 'Planoo',
-            theme: ThemeData(
-              iconTheme: IconThemeData(color: AppColors.blackColor),
-              textTheme: AppTheme.textTheme,
-              useMaterial3: true,
-            ),
-            home: SplashScreen()
+            }
+            return supportedLocales.first;
+          },
+          debugShowCheckedModeBanner: false,
+          title: 'Planoo',
+          theme: ThemeData(
+            iconTheme: IconThemeData(color: AppColors.blackColor),
+            textTheme: AppTheme.textTheme,
+            useMaterial3: true,
+          ),
+          home: SplashScreen(),
         );
       },
     );
