@@ -23,7 +23,7 @@
   "new_password": "New password",
   "send": "Send",
   "verification_code": "Verification Code",
-  "we_sent_you_code": "We sent you a 5-digit code to",
+  "we_sent_you_code": "We sent you a 6-digit code to",
   "to": "to",
   "verify": "Verify",
   "did_not_receive_code": "Did not receive code?",
