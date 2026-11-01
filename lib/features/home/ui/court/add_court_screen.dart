@@ -10,6 +10,7 @@ import 'package:centro_partner/features/general/data/general_repository/general_
 import 'package:centro_partner/features/general/data/model/main_court/all_main_courts_model.dart';
 import 'package:centro_partner/features/general/data/model/main_court/main_court_details_model.dart';
 import 'package:centro_partner/features/general/data/usecase/main_court/all_main_courts_usecase.dart';
+import 'package:centro_partner/features/home/widget/edit_workdays_widget.dart';
 import 'package:centro_partner/features/home/widget/facilities_widget.dart';
 import 'package:centro_partner/features/home/widget/location_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/photos_widget.dart';
@@ -183,7 +184,7 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                           },
                         ),
                   ),
-                  if(widget.isEdit == false) SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   if(widget.isEdit == false)
                     WorkdaysWidget(
                       selectedDays: selectedDays,
@@ -198,6 +199,13 @@ class _AddCourtScreenState extends State<AddCourtScreen> with FormStateMinxin {
                       onDaysChanged: (days) {
                         setState(() => selectedDays = days);
                       },
+                    ),
+                  if(widget.isEdit == true)
+                    EditWorkdaysWidget(
+                      ownerType: "activity",
+                      ownerId: widget.court!.iD!,
+                      workdaysList: widget.court!.workdaysList ?? [],
+                      onRefresh: widget.onRefresh,
                     ),
                   SizedBox(height: 20.h),
                   GetModel<SessionDurationModel>(

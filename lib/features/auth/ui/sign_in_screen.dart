@@ -124,9 +124,14 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                     Padding(
                       padding: EdgeInsets.only(top: isTablet ? 15.h : 5.h),
                       child: CustomCountryCodePickerWidget(
-                        enabled: false,
+                        enabled: true,
                         initialSelection: countryDialCode,
-                        onChanged: (CountryCode countryCode) {},
+                        onChanged: (CountryCode countryCode) {
+                          setState(() {
+                            selectedIsoCode = (countryCode.code!).toUpperCase();
+                            countryDialCode = countryCode.dialCode!;
+                          });
+                        },
                       ),
                     ),
                     Expanded(
@@ -255,6 +260,7 @@ class _SignInScreenState extends State<SignInScreen>  with FormStateMinxin {
                     await saveLoginTokens(model.token!);
                     AppStorage.saveData(key: userID, value: model.user!.id);
                     AppStorage.saveData(key: userType, value: model.user!.accountType);
+                    FirebaseApi.instance.syncDeviceToken();
                     Navigation.pushAndRemoveUntil(NavBarScreen(pageIndex: 0));
                   },
                   onTap: () {

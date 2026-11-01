@@ -72,13 +72,13 @@ class _BookCourtSheetState extends State<BookCourtSheet> with FormStateMinxin {
       children: [
         SelectSingleItemWidget<WorkdayDetailsModel, int>(
           title: AppLocalization.of(context).translate("workdays"),
-          subTitle: selectedDay?.day ?? AppLocalization.of(context).translate("workdays"),
+          subTitle: selectedDay?.day != null ? AppLocalization.of(context).translate(selectedDay!.day!.toLowerCase()) : AppLocalization.of(context).translate("workdays"),
           subTitleColor: selectedDay == null
               ? AppColors.mediumGrayColor
               : AppColors.blackColor,
           list: widget.court.workdaysList ?? [],
           selectedId: selectedDay?.iD,
-          labelBuilder: (item) => item.day ?? "",
+          labelBuilder: (item) => item.day == null ? "" : AppLocalization.of(context).translate(item.day!.toLowerCase()),
           idBuilder: (item) => item.iD ?? 0,
           onSelect: (id) {
             setState(() {
@@ -204,7 +204,7 @@ class _BookCourtSheetState extends State<BookCourtSheet> with FormStateMinxin {
                               children: [
                                 CustomRowWidget(title: AppLocalization.of(context).translate("court"), subTitle: widget.court.name!),
                                 SizedBox(height: 5.h),
-                                CustomRowWidget(title: AppLocalization.of(context).translate("day"), subTitle: model.slot!.day!),
+                                CustomRowWidget(title: AppLocalization.of(context).translate("day"), subTitle: AppLocalization.of(context).translate(model.slot!.day!.toLowerCase())),
                                 SizedBox(height: 5.h),
                                 CustomRowWidget(title: AppLocalization.of(context).translate("date"), subTitle: convertDate(date: model.slot!.date!)),
                                 SizedBox(height: 10.h),

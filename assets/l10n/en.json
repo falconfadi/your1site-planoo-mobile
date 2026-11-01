@@ -65,7 +65,6 @@
   "completed": "Completed",
   "accepted": "Accepted",
   "about_appointment": "About appointment",
-  "edit_days": "Edit days",
   "show_map": "Show map",
   "reviews": "Reviews",
   "activate": "Activate",
@@ -130,7 +129,7 @@
   "course": "Course",
   "syr": "SYR",
   "?": "?",
-  "about_planoo": "PLANOO is a smart digital platform designed to simplify how people discover, book, and manage activities and services.\nWe connect users with trusted partners through an easy-to-use system that saves time, improves organization, and delivers a smooth booking experience for everyone.",
+  "about_planoo": "PLANOO Partner\n\nYour Business. Your Schedule. Your Growth.\n\nPLANOO Partner is a smart, all-in-one management app designed for sports clubs, academies, coaches, trainers, facility owners, and entertainment service providers.\n\nWhether you manage a football field, fitness studio, sports academy, music school, or entertainment venue, PLANOO Partner helps you organize your services, manage bookings, and connect with more customers — all from one place.\n\nWhat Can You Do with PLANOO Partner?\n\n• Manage Bookings: Receive, organize, and track customer reservations easily.\n• Control Your Schedule: Set availability, working hours, and session times.\n• Showcase Your Business: Add photos, facilities, activities, and service descriptions.\n• Manage Services & Prices: Create, update, and customize your offerings.\n• Promote Events & Activities: Share classes, tournaments, workshops, and upcoming events.\n• Reach More Customers: Increase your visibility and connect with people looking for your services.\n• Stay Organized: Manage your daily operations through one simple platform.\n\nWhy Choose PLANOO Partner?\n\nSpend less time managing reservations and more time growing your business.\n\nOne Platform. More Opportunities. Smarter Management.\n\nPLANOO Partner will take your business to the next level.",
   "logout_clear_token_warning": "This option is only used when switching to another device.\nAfter deleting the authentication code, you will no longer receive notifications on that device.\nThis option is risky, so please use it with caution.",
   "your_appointments": "Your appointments",
   "delete_account": "Delete Account",
@@ -143,5 +142,12 @@
   "attendance_date": "Attendance date",
   "remaining_sessions": "Remaining sessions",
   "welcome_Create_first_court": "Welcome! Create your first court",
-  "invalid_country_phone": "The phone number is invalid for the selected country"
+  "invalid_country_phone": "The phone number is invalid for the selected country",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday"
 }

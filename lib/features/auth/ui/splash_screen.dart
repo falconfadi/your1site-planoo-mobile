@@ -1,4 +1,5 @@
 import 'package:centro_partner/core/classes/firebase_api.dart';
+import 'package:centro_partner/core/data_source/remote_data_source.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:centro_partner/features/general/ui/nav_bar_screen.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     });
   }
 
-  void _navigateToNextScreen() {
+  Future<void> _navigateToNextScreen() async {
     final token = AppStorage.getData(key: kAccessToken);
 
     if (token == null) {
@@ -43,10 +44,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     }
 
     if (JwtDecoder.isExpired(token)) {
-      AppStorage.removeData(key: kAccessToken);
-      AppStorage.removeData(key: kAccessTokenExpirationDate);
-      Navigation.pushReplacement(SignInScreen());
-      return;
+      await RemoteDataSource.checkTokenValidation();
+      if (AppStorage.getData(key: kAccessToken) == null) return;
     }
     Navigation.pushReplacement(NavBarScreen(pageIndex: 0));
     FirebaseApi.instance.appIsReady();
@@ -71,7 +70,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
           controller: _controller,
           animate: false,
           onLoaded: (composition) {
-            _controller..duration = composition.duration..forward(from: 0.0);
+            _controller..duration = composition.duration * 0.5..forward(from: 0.0);
           },
         ),
       ),

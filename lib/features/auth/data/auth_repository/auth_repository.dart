@@ -12,6 +12,7 @@ import 'package:centro_partner/features/auth/data/usecase/logout_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/register_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/resend_code_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/reset_password_usecase.dart';
+import 'package:centro_partner/features/auth/data/usecase/update_firebase_token_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/user_types_usecase.dart';
 import 'package:centro_partner/features/auth/data/usecase/verify_code_usecase.dart';
 
@@ -92,6 +93,16 @@ class AuthRepository extends CoreRepository {
     final result = await RemoteDataSource.noModelRequest(
       withAuthentication: true,
       url: logoutUrl,
+      method: HttpMethod.POST,
+    );
+    return noModelCall(result: result);
+  }
+
+  Future<Result<bool>> updateFirebaseToken({required UpdateFirebaseTokenParams params}) async {
+    final result = await RemoteDataSource.noModelRequest(
+      withAuthentication: true,
+      url: updateFirebaseTokenUrl,
+      data: params.toJson(),
       method: HttpMethod.POST,
     );
     return noModelCall(result: result);

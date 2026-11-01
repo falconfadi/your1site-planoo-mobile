@@ -25,7 +25,6 @@ import 'package:centro_partner/features/home/data/usecase/court/delete_court_use
 import 'package:centro_partner/features/home/data/usecase/court/toggle_activation_court_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/ui/court/add_court_screen.dart';
-import 'package:centro_partner/features/home/ui/workdays_screen.dart';
 import 'package:centro_partner/features/home/widget/customers_sheet.dart';
 import 'package:centro_partner/features/home/widget/facilities_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/images_slider_widget.dart';
@@ -129,23 +128,6 @@ class _CourtDetailsScreenState extends State<CourtDetailsScreen> {
                                       widget.onRefreshAllCourts?.call();
                                     },
 
-                                  ))
-                              ),
-                              PopupMenuItem(
-                                  value: "",
-                                  height: 50.h,
-                                  child: Center(
-                                    child: Text(
-                                      AppLocalization.of(context).translate("edit_days"),
-                                      style: AppTheme.bodyLarge,
-                                    ),
-                                  ),
-                                  onTap: () => Navigation.push(WorkdaysScreen(
-                                    ownerType: "activity",
-                                    ownerId: model.court!.iD!,
-                                    onRefresh: () async {
-                                      refreshCubit?.getModel();
-                                    },
                                   ))
                               ),
                               PopupMenuItem(

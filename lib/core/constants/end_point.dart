@@ -7,6 +7,7 @@ const headerContentType = HttpHeaders.contentTypeHeader;
 
 const kAccessToken = 'access_token';
 const kAccessTokenExpirationDate = 'token_expiration';
+const kSyncedFirebaseToken = 'synced_firebase_token';
 const userID = 'user_id';
 const userType = 'user_type';
 const String rememberMeKey = "remember_me";
@@ -32,6 +33,7 @@ const String resetPasswordUrl = "auth/resetPassword";
 const String changePasswordUrl = "auth/changePassword";
 const String logoutUrl = "auth/logout";
 const String refreshTokenUrl = "auth/refreshToken";
+const String updateFirebaseTokenUrl = "auth/updateFirebaseToken";
 /// user
 const String getUserUrl = "user/get";
 const String uploadProfileImageUrl = "user/uploadProfileImage";

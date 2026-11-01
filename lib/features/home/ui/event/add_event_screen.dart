@@ -19,6 +19,7 @@ import 'package:centro_partner/features/home/data/usecase/event/edit_event_useca
 import 'package:centro_partner/features/home/widget/facilities_widget.dart';
 import 'package:centro_partner/features/home/widget/location_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/photos_widget.dart';
+import 'package:centro_partner/features/home/widget/edit_workdays_widget.dart';
 import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/core/utils/validators/convert_date_time.dart';
@@ -56,12 +57,25 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
   CategoryInfoModel? selectCategory;
   MainCourtDetailsModel? selectMainCourt;
   DateTime? startDate;
-  Set<String> selectedDays = {};
   String? fromTime;
   String? toTime;
   LocationModel? selectedLocation;
   Set<int> selectedFacilitiesId = {};
   List<File> photosList = <File>[];
+
+  static const List<String> weekdayNames = [
+    "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+  ];
+
+  // Weekdays covered by the event, from start date over the duration in days.
+  Set<String> get eventDays {
+    final duration = int.tryParse(form.controllers[1].text) ?? 0;
+    if (startDate == null || duration <= 0) return {};
+    return {
+      for (int i = 0; i < duration && i < 7; i++)
+        weekdayNames[startDate!.add(Duration(days: i)).weekday - 1],
+    };
+  }
 
   @override
   void initState() {
@@ -204,10 +218,11 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                         AppColors.mediumGrayColor : AppColors.blackColor),
                       ),
                     ),
-                  if(widget.isEdit == false) SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   if(widget.isEdit == false)
                     WorkdaysWidget(
-                      selectedDays: selectedDays,
+                      showDays: false,
+                      selectedDays: const {},
                       fromTime: fromTime,
                       toTime: toTime,
                       onFromTimeChanged: (time) {
@@ -216,9 +231,13 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                       onToTimeChanged: (time) {
                         setState(() => toTime = time);
                       },
-                      onDaysChanged: (days) {
-                        setState(() => selectedDays = days);
-                      },
+                    ),
+                  if(widget.isEdit == true)
+                    EditWorkdaysWidget(
+                      ownerType: "event",
+                      ownerId: widget.event!.iD!,
+                      workdaysList: widget.event!.workdaysList ?? [],
+                      onRefresh: widget.onRefresh,
                     ),
                   SizedBox(height: 20.h),
                   CustomTextField(
@@ -357,10 +376,6 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("category_required"));
                                 return false;
                               }
-                              if (selectedDays.isEmpty) {
-                                Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("days_required"));
-                                return false;
-                              }
                               if (fromTime == null || toTime == null) {
                                 Dialogs.showSnackBar(context: context, message: AppLocalization.of(context).translate("times_required"));
                                 return false;
@@ -391,7 +406,7 @@ class _AddEventScreenState extends State<AddEventScreen> with FormStateMinxin {
                                     name: form.controllers[0].text,
                                     mainCourtId: selectMainCourt == null ? "-1" : selectMainCourt!.id!,
                                     categoryId: selectCategory == null ? -1 : selectCategory!.ID!,
-                                    days: selectedDays.isEmpty ? [] : selectedDays.toList(),
+                                    days: eventDays.toList(),
                                     fromTime: fromTime ?? "",
                                     endTime: toTime ?? "",
                                     eventDuration: form.controllers[1].text,

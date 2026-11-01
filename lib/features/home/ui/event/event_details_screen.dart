@@ -27,7 +27,6 @@ import 'package:centro_partner/features/home/data/usecase/event/event_details_us
 import 'package:centro_partner/features/home/data/usecase/event/toggle_activation_event_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/ui/event/add_event_screen.dart';
-import 'package:centro_partner/features/home/ui/workdays_screen.dart';
 import 'package:centro_partner/features/home/widget/customers_sheet.dart';
 import 'package:centro_partner/features/home/widget/facilities_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/images_slider_widget.dart';
@@ -145,23 +144,6 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                     onRefresh: () async {
                                       refreshCubit?.getModel();
                                       widget.onRefreshAllEvents?.call();
-                                    },
-                                  ))
-                              ),
-                              PopupMenuItem(
-                                  value: "",
-                                  height: 50.h,
-                                  child: Center(
-                                    child: Text(
-                                      AppLocalization.of(context).translate("edit_days"),
-                                      style: AppTheme.bodyLarge,
-                                    ),
-                                  ),
-                                  onTap: () => Navigation.push(WorkdaysScreen(
-                                    ownerType: "event",
-                                    ownerId: model.event!.iD!,
-                                    onRefresh: () async {
-                                      refreshCubit?.getModel();
                                     },
                                   ))
                               ),

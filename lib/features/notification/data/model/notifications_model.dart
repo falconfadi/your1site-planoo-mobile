@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:centro_partner/core/data_source/model.dart';
 import 'package:centro_partner/core/responses/api_response.dart';
 
@@ -64,7 +66,7 @@ class NotificationInfoModel extends BaseModel {
     body = json['body'];
     type = json['type'];
     isViewed = json['is_viewed'];
-    payload = json['payload'] != null ? Payload.fromJson(json['payload']) : null;
+    payload = _parsePayload(json['payload']);
     createdAt = json['created_at'];
   }
 
@@ -81,6 +83,17 @@ class NotificationInfoModel extends BaseModel {
     data['created_at'] = this.createdAt;
     return data;
   }
+
+  static Payload? _parsePayload(dynamic rawPayload) {
+    if (rawPayload is Map<String, dynamic>) return Payload.fromJson(rawPayload);
+    if (rawPayload is String) {
+      try {
+        final decoded = jsonDecode(rawPayload);
+        if (decoded is Map<String, dynamic>) return Payload.fromJson(decoded);
+      } catch (_) {}
+    }
+    return null;
+  }
 }
 
 
@@ -90,7 +103,7 @@ class Payload {
   String? appointment;
   String? course;
   String? event;
-  String? conflicts;
+  dynamic conflicts;
   Result? result;
 
   Payload({

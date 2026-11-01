@@ -1,13 +1,14 @@
 import 'package:centro_partner/core/results/result.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../models/get_list_request.dart';
+
 part 'pagination_state.dart';
 
 typedef RepositoryCallBack = Future<Result?> Function(dynamic data);
 
 class PaginationCubit<ListModel> extends Cubit<PaginationState> {
-
   final RepositoryCallBack getData;
 
   PaginationCubit(this.getData) : super(PaginationInitial());
@@ -48,25 +49,22 @@ class PaginationCubit<ListModel> extends Cubit<PaginationState> {
           list = newData;
         }
 
-        emit(GetListSuccessfully(
-          list: list.toList(),
-          noMoreData: newData.isEmpty,
-        ));
+        emit(
+          GetListSuccessfully(list: list.toList(), noMoreData: newData.isEmpty),
+        );
       } else if (response.hasErrorOnly) {
         if (loadMore) {
-          emit(GetListSuccessfully(
-            list: list.toList(),
-            noMoreData: true,
-          ));
+          emit(GetListSuccessfully(list: list.toList(), noMoreData: true));
         } else {
           emit(Error(response.error!.message.toString()));
         }
       } else {
         emit(PaginationInitial());
       }
-    } catch(e) {
+    } on Exception catch (e, s) {
       if (kDebugMode) {
         print(e.toString());
+        print(s);
       }
     }
   }

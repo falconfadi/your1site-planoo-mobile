@@ -21,6 +21,7 @@ class WorkdaysWidget extends StatefulWidget {
   final ValueChanged<String>? onFromTimeChanged;
   final ValueChanged<String>? onToTimeChanged;
   final ValueChanged<Set<String>>? onDaysChanged;
+  final bool showDays;
 
   WorkdaysWidget({super.key,
     required this.selectedDays,
@@ -28,7 +29,8 @@ class WorkdaysWidget extends StatefulWidget {
     required this.toTime,
     this.onFromTimeChanged,
     this.onToTimeChanged,
-    this.onDaysChanged
+    this.onDaysChanged,
+    this.showDays = true
   });
 
   @override
@@ -43,6 +45,7 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
       margin: EdgeInsets.zero,
       child: Column(
         children: [
+          if (widget.showDays)
           GetModel<DaysModel>(
             loadingHeight: 60.h,
             useCaseCallBack: () {
@@ -52,15 +55,15 @@ class _WorkdaysWidgetState extends State<WorkdaysWidget> {
               title: AppLocalization.of(context).translate("workdays"),
               list: model.daysList ?? [],
               selectedIds: widget.selectedDays,
-              labelBuilder: (item) => item,
+              labelBuilder: (item) => AppLocalization.of(context).translate(item.toLowerCase()),
               idBuilder: (item) => item,
               onSelect: (ids) {
                 widget.onDaysChanged!(ids.toSet());
               },
             )
           ),
-          SizedBox(height: widget.selectedDays.isEmpty ? 0 : 20.h),
-          widget.selectedDays.isEmpty ? Center() :
+          if (widget.showDays) SizedBox(height: widget.selectedDays.isEmpty ? 0 : 20.h),
+          widget.showDays && widget.selectedDays.isEmpty ? Center() :
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

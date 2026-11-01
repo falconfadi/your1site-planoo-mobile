@@ -16,7 +16,6 @@ class ModelsFactory {
       String modelName,
       dynamic Function(Map<String, dynamic>) modelCreator,
       ) {
-    debugPrint('in register $modelName');
     _modelsMap.update(
       modelName,
           (value) => modelCreator,
@@ -31,16 +30,11 @@ class ModelsFactory {
           return BaseModel as T;
         } else {
           final modelName = T.toString();
-          debugPrint('T value : $T');
-          debugPrint('in create model : ${T.toString()} , ${_modelsMap.containsKey(modelName)}');
           assert(_modelsMap.containsKey(modelName));
           final model = _modelsMap[modelName]!(json) as T;
           return model;
         }
       } else {
-        debugPrint('T value : $T');
-        debugPrint('strString value : $strString');
-        debugPrint('in create model : ${T.toString()} , ${_modelsMap.containsKey(strString)}');
         assert(_modelsMap.containsKey(strString));
         final model = (_modelsMap[strString]!(json) as T);
         return model;

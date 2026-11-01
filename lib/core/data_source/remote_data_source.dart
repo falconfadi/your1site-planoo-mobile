@@ -4,12 +4,12 @@ import 'package:centro_partner/core/utils/Navigation/Navigation.dart';
 import 'package:centro_partner/features/auth/ui/sign_in_screen.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:centro_partner/core/classes/app_storage.dart';
 import 'package:centro_partner/core/errors/custom_error.dart';
 import '../constants/end_point.dart';
 import '../errors/base_error.dart';
+import '../errors/unauthorized_error.dart';
 import '../http/api_provider.dart';
 import '../http/http_method.dart';
 import '../http/models_factory.dart';
@@ -18,7 +18,7 @@ import 'model.dart';
 
 abstract class RemoteDataSource {
 
-  static Completer<void>? _refreshCompleter;
+  static Completer<bool>? _refreshCompleter;
 
   static Future<Map<String, String>> _buildHeaders({bool withAuthentication = false}) async {
     final Map<String, String> headers = {
@@ -49,19 +49,18 @@ abstract class RemoteDataSource {
     ModelsFactory.getInstance()!.registerModel(responseStr, converter);
 
     try {
-      final headers = await _buildHeaders(
-          withAuthentication: withAuthentication);
-
-      final response = await ApiProvider.sendObjectRequest<Resp>(
-        method: method,
-        url: url,
-        headers: headers,
-        queryParameters: queryParameters,
-        data: data,
-        strString: responseStr,
+      final response = await _sendWithAuthRetry(
+        withAuthentication: withAuthentication,
+        send: (headers) => ApiProvider.sendObjectRequest<Resp>(
+          method: method,
+          url: url,
+          headers: headers,
+          queryParameters: queryParameters,
+          data: data,
+          strString: responseStr,
+        ),
       );
 
-      debugPrint('Request $url isRight: ${response.isRight()}');
 
       return response.fold(
             (error) => Left(error),
@@ -80,17 +79,17 @@ abstract class RemoteDataSource {
     bool withAuthentication = false,
   }) async {
     try {
-      final headers = await _buildHeaders(withAuthentication: withAuthentication);
-
-      final response = await ApiProvider.sendObjectWithOutResponseRequest(
-        method: method,
-        url: url,
-        headers: headers,
-        queryParameters: queryParameters,
-        data: data,
+      final response = await _sendWithAuthRetry(
+        withAuthentication: withAuthentication,
+        send: (headers) => ApiProvider.sendObjectWithOutResponseRequest(
+          method: method,
+          url: url,
+          headers: headers,
+          queryParameters: queryParameters,
+          data: data,
+        ),
       );
 
-      debugPrint('No model request $url isRight: ${response.isRight()}');
 
       return response.fold(
             (error) => Left(error),
@@ -115,21 +114,21 @@ abstract class RemoteDataSource {
   }) async {
     ModelsFactory.getInstance()!.registerModel(responseStr, converter);
     try {
-      final headers = await _buildHeaders(withAuthentication: withAuthentication);
-
-      final response = await ApiProvider.uploadFilesWithKeys<Data>(
-        url: url,
-        filesMap: filesMap,
-        data: data,
-        headers: headers,
-        queryParameters: queryParameters,
-        cancelToken: cancelToken,
-        onSendProgress: onSendProgress,
-        onReceiveProgress: onReceiveProgress,
-        strString: responseStr,
+      final response = await _sendWithAuthRetry(
+        withAuthentication: withAuthentication,
+        send: (headers) => ApiProvider.uploadFilesWithKeys<Data>(
+          url: url,
+          filesMap: filesMap,
+          data: data,
+          headers: headers,
+          queryParameters: queryParameters,
+          cancelToken: cancelToken,
+          onSendProgress: onSendProgress,
+          onReceiveProgress: onReceiveProgress,
+          strString: responseStr,
+        ),
       );
 
-      debugPrint('Upload $url isRight: ${response.isRight()}');
 
       return response.fold(
             (error) => Left(error),
@@ -140,49 +139,73 @@ abstract class RemoteDataSource {
     }
   }
 
+  static Future<Either<BaseError, T>> _sendWithAuthRetry<T>({
+    required bool withAuthentication,
+    required Future<Either<BaseError, T>> Function(Map<String, String> headers) send,
+  }) async {
+    final headers = await _buildHeaders(withAuthentication: withAuthentication);
+    final result = await send(headers);
+
+    final isUnauthorized = result.fold((error) => error is UnauthorizedError, (_) => false);
+    final sentToken = headers[headerAuth]?.replaceFirst('Bearer ', '');
+    if (!withAuthentication || !isUnauthorized || sentToken == null) return result;
+
+    if (!await _refreshOnce(sentToken)) {
+      await _logout();
+      return result;
+    }
+
+    return send(await _buildHeaders(withAuthentication: true));
+  }
+
   static Future<void> checkTokenValidation() async {
     final String? token = await AppStorage.getData(key: kAccessToken);
 
     if (token == null) {
-      _logout();
+      await _logout();
       return;
     }
 
     final decodedToken = JwtDecoder.decode(token);
     DateTime expirationDate = DateTime.fromMillisecondsSinceEpoch(decodedToken['exp'] * 1000);
 
-    final now = DateTime.now();
-    final minutesLeft = expirationDate.difference(now).inMinutes;
+    final hoursLeft = expirationDate.difference(DateTime.now()).inHours;
 
-    if (expirationDate.isBefore(now)) {
-      _logout();
-      return;
+    if (hoursLeft < 24) {
+      // Token expired or about to expire, refresh
+      if (!await _refreshOnce(token)) await _logout();
     }
+  }
 
-    if (minutesLeft <= 10) {
-      // Token about to expire, refresh
-      if (_refreshCompleter != null) {
-        // Refresh already in progress, wait for it
-        await _refreshCompleter!.future;
-      } else {
-        _refreshCompleter = Completer();
-        try {
-          final success = await _refreshToken(token);
-          if (!success) _logout();
-        } finally {
-          _refreshCompleter!.complete();
-          _refreshCompleter = null;
-        }
-      }
+  static Future<bool> _refreshOnce(String sentToken) async {
+    final String? token = await AppStorage.getData(key: kAccessToken);
+    if (token == null) return false;
+
+    // Refresh already in progress, wait for it
+    if (_refreshCompleter != null) return _refreshCompleter!.future;
+
+    if (token != sentToken) return true;
+
+    final completer = _refreshCompleter = Completer<bool>();
+    var success = false;
+    try {
+      success = await _refreshToken(token);
+    } finally {
+      completer.complete(success);
+      _refreshCompleter = null;
     }
+    return success;
   }
 
   static Future<bool> _refreshToken(String token) async {
     try {
       final dio = Dio();
-      final response = await dio.post(
+      final response = await dio.get(
         baseUrl + refreshTokenUrl,
-        options: Options(headers: {'Authorization': 'Bearer $token'}),
+        options: Options(headers: {
+          headerAuth: 'Bearer $token',
+          headerAccept: 'application/json',
+        }),
       );
 
       if (response.statusCode == 200 && response.data['success'] == true) {

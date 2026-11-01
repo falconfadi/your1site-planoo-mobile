@@ -7,7 +7,6 @@ import '../results/result.dart';
 abstract class CoreRepository {
   Result<Model> call<Model extends BaseModel>({required Either<BaseError, BaseModel> result}) {
     if (kDebugMode) {
-      print('in core repository : ${result.isRight()}');
     }
     if (result.isRight()) {
       return RemoteResult(
@@ -22,7 +21,6 @@ abstract class CoreRepository {
 
   Result<List<Model>> paginatedCall<Model extends BaseModel>({required Either<BaseError, BaseModel> result}) {
     if (kDebugMode) {
-      print('in core repository : ${result.isRight()}');
     }
     if (result.isRight()) {
       return PaginatedResult(
@@ -37,7 +35,6 @@ abstract class CoreRepository {
 
   Result<bool> noModelCall({required Either<BaseError, bool> result}) {
     if (kDebugMode) {
-      print('in core repository : ${result.isRight()}');
     }
     if (result.isRight()) {
       return Result(data: (result as Right).value);

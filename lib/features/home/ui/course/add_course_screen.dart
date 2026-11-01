@@ -22,6 +22,7 @@ import 'package:centro_partner/features/home/data/usecase/workday/course_duratio
 import 'package:centro_partner/features/home/widget/facilities_widget.dart';
 import 'package:centro_partner/features/home/widget/location_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/photos_widget.dart';
+import 'package:centro_partner/features/home/widget/edit_workdays_widget.dart';
 import 'package:centro_partner/features/home/widget/workdays_widget.dart';
 import 'package:centro_partner/core/ui/widgets/custom_button.dart';
 import 'package:centro_partner/features/home/data/home_repository/home_repository.dart';
@@ -208,7 +209,7 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                       AppColors.mediumGrayColor : AppColors.blackColor),
                     ),
                   ),
-                  if(widget.isEdit == false) SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   if(widget.isEdit == false)
                     WorkdaysWidget(
                       selectedDays: selectedDays,
@@ -223,6 +224,13 @@ class _AddCourseScreenState extends State<AddCourseScreen> with FormStateMinxin 
                       onDaysChanged: (days) {
                         setState(() => selectedDays = days);
                       },
+                    ),
+                  if(widget.isEdit == true)
+                    EditWorkdaysWidget(
+                      ownerType: "course",
+                      ownerId: widget.course!.iD!,
+                      workdaysList: widget.course!.workdaysList ?? [],
+                      onRefresh: widget.onRefresh,
                     ),
                   SizedBox(height: 20.h),
                   GetModel<CourseDurationModel>(

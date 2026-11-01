@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
 import '../constants/end_point.dart';
 import '../errors/bad_request_error.dart';
 import '../errors/base_error.dart';
@@ -21,20 +23,20 @@ import '../errors/unknown_error.dart';
 import 'http_method.dart';
 import 'models_factory.dart';
 
-
 class ApiProvider {
-
   static final BaseOptions options = BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
-          milliseconds: 30000),
-      receiveTimeout: kIsWeb ? const Duration(milliseconds: 0) : const Duration(
-          milliseconds: 30000),
-      followRedirects: false,
-      maxRedirects: 0,
-      validateStatus: (status) {
-        return status != null && status < 500;
-      }
+    baseUrl: baseUrl,
+    connectTimeout: kIsWeb
+        ? const Duration(milliseconds: 0)
+        : const Duration(milliseconds: 30000),
+    receiveTimeout: kIsWeb
+        ? const Duration(milliseconds: 0)
+        : const Duration(milliseconds: 30000),
+    followRedirects: false,
+    maxRedirects: 0,
+    validateStatus: (status) {
+      return status != null && status < 500;
+    },
   );
 
   static final Dio dio = _createDio();
@@ -42,19 +44,20 @@ class ApiProvider {
   static Dio _createDio() {
     final dio = Dio(options);
     if (kDebugMode) {
-      dio.interceptors.add(PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseHeader: false,
-        responseBody: true,
-        error: true,
-        compact: true,
-        maxWidth: 120,
-      ));
+      dio.interceptors.add(
+        PrettyDioLogger(
+          requestHeader: true,
+          requestBody: true,
+          responseHeader: false,
+          responseBody: true,
+          error: true,
+          compact: true,
+          maxWidth: 120,
+        ),
+      );
     }
     return dio;
   }
-
 
   static Future<Either<BaseError, T>> uploadFilesWithKeys<T>({
     required String url,
@@ -76,12 +79,16 @@ class ApiProvider {
     for (final entry in filesMap.entries) {
       final List<File> fileList = entry.value;
 
-      final multipartList = await Future.wait(fileList.map((file) async {
-        final fileName = file.path.split("/").last;
-        return MultipartFile.fromFile(file.path, filename: fileName);
-      }));
+      final multipartList = await Future.wait(
+        fileList.map((file) async {
+          final fileName = file.path.split("/").last;
+          return MultipartFile.fromFile(file.path, filename: fileName);
+        }),
+      );
 
-      dataMap[entry.key] = multipartList.length == 1 ? multipartList.first : multipartList;
+      dataMap[entry.key] = multipartList.length == 1
+          ? multipartList.first
+          : multipartList;
     }
 
     dataMap['MnD'] = 'MnD';
@@ -98,12 +105,16 @@ class ApiProvider {
       );
 
       final decodedJson = _normalizeResponse(response.data);
-      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
-        if ((decodedJson['message'] ?? '').isNotEmpty && decodedJson['payload'] != null) {
-          return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
+      if ((response.statusCode ?? 0) >= 200 &&
+          (response.statusCode ?? 0) < 300) {
+        if ((decodedJson['message'] ?? '').isNotEmpty &&
+            decodedJson['payload'] != null) {
+          return Right(
+            ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString),
+          );
         }
       }
-      return Left(CustomError(errorMessage: _extractErrorMessage(decodedJson)));
+      return Left(_errorFromResponse(response, decodedJson));
     } on DioError catch (e) {
       return Left(handleDioError(e));
     } on SocketException {
@@ -121,15 +132,25 @@ class ApiProvider {
     required String strString,
   }) async {
     try {
-      final response = await _sendRequest(method, url, data, headers, queryParameters);
+      final response = await _sendRequest(
+        method,
+        url,
+        data,
+        headers,
+        queryParameters,
+      );
       final decodedJson = _normalizeResponse(response.data);
 
-      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
-        if ((decodedJson['message'] ?? '').isNotEmpty && decodedJson['payload'] != null) {
-          return Right(ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString));
+      if ((response.statusCode ?? 0) >= 200 &&
+          (response.statusCode ?? 0) < 300) {
+        if ((decodedJson['message'] ?? '').isNotEmpty &&
+            decodedJson['payload'] != null) {
+          return Right(
+            ModelsFactory.getInstance()!.createModel<T>(decodedJson, strString),
+          );
         }
       }
-      return Left(CustomError(errorMessage: _extractErrorMessage(decodedJson)));
+      return Left(_errorFromResponse(response, decodedJson));
     } on DioException catch (e) {
       return Left(handleDioError(e));
     } on SocketException {
@@ -146,16 +167,24 @@ class ApiProvider {
     CancelToken? cancelToken,
   }) async {
     try {
-      final response = await _sendRequest(method, url, data, headers, queryParameters);
+      final response = await _sendRequest(
+        method,
+        url,
+        data,
+        headers,
+        queryParameters,
+      );
       final decodedJson = _normalizeResponse(response.data);
 
-      if ((response.statusCode ?? 0) >= 200 && (response.statusCode ?? 0) < 300) {
-        if ((decodedJson['message'] ?? '').isNotEmpty || decodedJson['status'] != null) {
+      if ((response.statusCode ?? 0) >= 200 &&
+          (response.statusCode ?? 0) < 300) {
+        if ((decodedJson['message'] ?? '').isNotEmpty ||
+            decodedJson['status'] != null) {
           return const Right(true);
         }
       }
 
-      return Left(CustomError(errorMessage: _extractErrorMessage(decodedJson)));
+      return Left(_errorFromResponse(response, decodedJson));
     } on DioError catch (e) {
       return Left(handleDioError(e));
     } on SocketException {
@@ -164,24 +193,48 @@ class ApiProvider {
   }
 
   static Future<Response> _sendRequest(
-      HttpMethod method,
-      String url,
-      Map<String, dynamic>? data,
-      Map<String, String>? headers,
-      Map<String, dynamic>? queryParameters,
-      ) async {
+    HttpMethod method,
+    String url,
+    Map<String, dynamic>? data,
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+  ) async {
     final options = Options(headers: headers);
     switch (method) {
       case HttpMethod.GET:
-        return await dio.get(url, queryParameters: queryParameters, options: options);
+        return await dio.get(
+          url,
+          queryParameters: queryParameters,
+          options: options,
+        );
       case HttpMethod.POST:
-        return await dio.post(url, data: data, queryParameters: queryParameters, options: options);
+        return await dio.post(
+          url,
+          data: data,
+          queryParameters: queryParameters,
+          options: options,
+        );
       case HttpMethod.PUT:
-        return await dio.put(url, data: data, queryParameters: queryParameters, options: options);
+        return await dio.put(
+          url,
+          data: data,
+          queryParameters: queryParameters,
+          options: options,
+        );
       case HttpMethod.DELETE:
-        return await dio.delete(url, data: data, queryParameters: queryParameters, options: options);
+        return await dio.delete(
+          url,
+          data: data,
+          queryParameters: queryParameters,
+          options: options,
+        );
       case HttpMethod.PATCH:
-        return await dio.patch(url, data: data, queryParameters: queryParameters, options: options);
+        return await dio.patch(
+          url,
+          data: data,
+          queryParameters: queryParameters,
+          options: options,
+        );
     }
   }
 
@@ -208,18 +261,28 @@ class ApiProvider {
     final responseData = error.response?.data;
     if (responseData != null) {
       try {
-        final decodedJson = responseData is String ? jsonDecode(responseData) : responseData;
+        final decodedJson = responseData is String
+            ? jsonDecode(responseData)
+            : responseData;
         switch (error.response!.statusCode) {
           case 400:
             return BadRequestError(message: _extractErrorMessage(decodedJson));
           case 401:
-            return UnauthorizedError(message: _extractErrorMessage(decodedJson));
+            return UnauthorizedError(
+              message: _extractErrorMessage(decodedJson),
+            );
           case 403:
             return ForbiddenError(message: decodedJson["error"]);
           case 404:
-            return NotFoundError(message: decodedJson['message'], code: decodedJson['code']);
+            return NotFoundError(
+              message: decodedJson['message'],
+              code: decodedJson['code'],
+            );
           case 409:
-            return ConflictError(message: decodedJson['message'], code: decodedJson['code']);
+            return ConflictError(
+              message: decodedJson['message'],
+              code: decodedJson['code'],
+            );
           case 500:
             return InternalServerError();
           default:
@@ -232,6 +295,15 @@ class ApiProvider {
     }
 
     return const HttpError(message: 'An unknown error occurred');
+  }
+
+  static BaseError _errorFromResponse(
+    Response response,
+    Map<String, dynamic> decodedJson,
+  ) {
+    final message = _extractErrorMessage(decodedJson);
+    if (response.statusCode == 401) return UnauthorizedError(message: message);
+    return CustomError(errorMessage: message);
   }
 
   static String _extractErrorMessage(Map<String, dynamic> decodedJson) {

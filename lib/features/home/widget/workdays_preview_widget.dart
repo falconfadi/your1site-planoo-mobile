@@ -58,7 +58,7 @@ class WorkdaysPreviewWidget extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Flexible(child: Text(workdaysList[index].day!,style: AppTheme.titleLarge.copyWith(color: AppColors.primaryColor))),
+                                Flexible(child: Text(AppLocalization.of(context).translate(workdaysList[index].day!.toLowerCase()),style: AppTheme.titleLarge.copyWith(color: AppColors.primaryColor))),
                                 Flexible(child: Text("${workdaysList[index].start} - ${workdaysList[index].end}",style: AppTheme.labelLarge)),
                               ],
                             ),

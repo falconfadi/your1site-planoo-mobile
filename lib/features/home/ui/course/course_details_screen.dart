@@ -27,7 +27,6 @@ import 'package:centro_partner/features/home/data/usecase/course/delete_course_u
 import 'package:centro_partner/features/home/data/usecase/course/toggle_activation_course_usecase.dart';
 import 'package:centro_partner/features/home/data/usecase/reviews_usecase.dart';
 import 'package:centro_partner/features/home/ui/course/add_course_screen.dart';
-import 'package:centro_partner/features/home/ui/workdays_screen.dart';
 import 'package:centro_partner/features/home/widget/customers_sheet.dart';
 import 'package:centro_partner/features/home/widget/facilities_preview_widget.dart';
 import 'package:centro_partner/features/home/widget/images_slider_widget.dart';
@@ -146,23 +145,6 @@ class _CourseDetailsScreenState extends State<CourseDetailsScreen> {
                                     onRefresh: () async {
                                       refreshCubit?.getModel();
                                       widget.onRefreshAllCourses?.call();
-                                    },
-                                  ))
-                              ),
-                              PopupMenuItem(
-                                  value: "",
-                                  height: 50.h,
-                                  child: Center(
-                                    child: Text(
-                                      AppLocalization.of(context).translate("edit_days"),
-                                      style: AppTheme.bodyLarge,
-                                    ),
-                                  ),
-                                  onTap: () => Navigation.push(WorkdaysScreen(
-                                    ownerType: "course",
-                                    ownerId: model.course!.iD!,
-                                    onRefresh: () async {
-                                      refreshCubit?.getModel();
                                     },
                                   ))
                               ),

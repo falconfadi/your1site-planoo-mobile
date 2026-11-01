@@ -117,7 +117,7 @@ class _WorkdaysScreenState extends State<WorkdaysScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(child: Text(getModel.workdaysList![index].day!,style: AppTheme.bodyLarge.copyWith(fontSize: 18.sp))),
+                            Expanded(child: Text(AppLocalization.of(context).translate(getModel.workdaysList![index].day!.toLowerCase()),style: AppTheme.bodyLarge.copyWith(fontSize: 18.sp))),
                             SizedBox(
                               width: 45.w,
                               height: 25.h,
